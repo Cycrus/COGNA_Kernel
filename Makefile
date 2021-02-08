@@ -23,4 +23,4 @@ build:
 	mkdir -p build/tests
 
 clean:
-	rm -rf $(TARGET) $(OBJECTS)
+	rm -rf $(TARGET_TEST) $(OBJECTS)
