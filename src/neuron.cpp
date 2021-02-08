@@ -1,4 +1,9 @@
-#include "neuron.h"
+#include "neuron.hpp"
+
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 
 int Neuron::s_max_id = 0;
 
