@@ -37,8 +37,6 @@ TARGET_TEST = $(subst src_test, build/tests, $(SRC_TEST:.cpp=))
 # Build Rules
 #
 
-check:
-	@echo $(OBJDIRS)
 
 tests: $(TARGET_TEST)
 	@echo "Tests done."
