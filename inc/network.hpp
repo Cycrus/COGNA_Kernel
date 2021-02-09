@@ -1,8 +1,7 @@
-#ifndef NETWORK
-#define NETWORK
+#ifndef INCLUDE_NETWORK_HPP
+#define INCLUDE_NETWORK_HPP
 
-#include <sys/time.h>
-#include "neuron.h"
+#include "neuron.hpp"
 
 extern int DATA_ANALYTIC_OUTPUT;
 
@@ -230,4 +229,4 @@ class NeuralNetwork{
 
 long get_time_microsec(struct timeval time);
 
-#endif
+#endif /* INCLUDE_NETWORK_HPP */

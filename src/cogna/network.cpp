@@ -1,4 +1,9 @@
-#include "network.h"
+#include "network.hpp"
+
+#include <cstdio>
+#include <ctime>
+#include <cmath>
+#include <sys/time.h>
 
 int DATA_ANALYTIC_OUTPUT = true;
 

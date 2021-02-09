@@ -1,12 +1,8 @@
-#ifndef NEURON
-#define NEURON
+#ifndef INCLUDE_NEURON_HPP
+#define INCLUDE_NEURON_HPP
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <vector>
-#include <stdint.h>
-#include <math.h>
-#include <time.h>
+#include <cstdint>
 
 #define false 0
 #define true 1
@@ -177,4 +173,4 @@ class Neuron{
 
 float choose_activation_function(Connection *con, float input);
 
-#endif
+#endif /* INCLUDE_NEURON_HPP */

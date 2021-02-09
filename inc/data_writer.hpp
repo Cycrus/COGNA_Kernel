@@ -1,13 +1,10 @@
-#ifndef DATA_WRITER
-#define DATA_WRITER
+#ifndef INCLUDE_DATA_WRITER_HPP
+#define INCLUDE_DATA_WRITER_HPP
 
 #include <fstream>
 #include <string>
-#include <ctime>
-#include <stdint.h>
-#include <iostream>
 
-#include "network.h"
+#include "network.hpp"
 
 class DataWriter{
 public:
@@ -22,4 +19,4 @@ public:
     void write_data(NeuralNetwork *nn);
 };
 
-#endif
+#endif /* INCLUDE_DATAWRITER_HPP */

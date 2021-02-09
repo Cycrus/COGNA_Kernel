@@ -1,7 +1,7 @@
-#include <time.h>
-#include "keyinput.h"
-#include "simplesound.h"
-#include "network.cpp"
+#include "network.hpp"
+
+#include <cstdio>
+#include <ctime>
 
 /***********************************************************
  * main()
@@ -11,8 +11,7 @@
  * Return:  int     Error code of program
  */
 int main(){
-    int keyboard = init_keyboard(false);
-    struct input_event key;
+    int key_ret = 0;
 
     struct timeval time;
     long start_time, end_time, d_time;
@@ -88,29 +87,27 @@ int main(){
     printf("Neural network started successfully!\n\n*********************START*********************\n\n");
 
     do{
-        get_key(keyboard, &key);
-        if(key.value == PRESS){
-            switch(key.code){
-                case K_7:
-                    nn->init_activation(3, 1.0f);
-                    break;
-                case K_8:
-                    nn->init_activation(3, 3.0f);
-                    break;
-                case K_9:
-                    nn->init_activation(3, 5.0f);
-                    break;
+        key_ret = getc(stdin);
+        switch(key_ret){
+            case '7':
+                nn->init_activation(3, 1.0f);
+                break;
+            case '8':
+                nn->init_activation(3, 3.0f);
+                break;
+            case '9':
+                nn->init_activation(3, 5.0f);
+                break;
 
-                case K_1:
-                    nn->init_activation(1, 1.0f);
-                    break;
-                case K_2:
-                    nn->init_activation(1, 3.0f);
-                    break;
-                case K_3:
-                    nn->init_activation(1, 5.0f);
-                    break;
-            }
+            case '1':
+                nn->init_activation(1, 1.0f);
+                break;
+            case '2':
+                nn->init_activation(1, 3.0f);
+                break;
+            case '3':
+                nn->init_activation(1, 5.0f);
+                break;
         }
 
         if(d_time >= TIME_BETWEEN_STEPS){
@@ -120,6 +117,7 @@ int main(){
 
             nn->feed_forward();
 
+            /* Useless without sound.
             if(nn->neuron_is_active(MOTONEURON)){
                 if(nn->get_neuron_activation(MOTONEURON) <= 2.0f)
                     play_wav(MAJOR_2, 100);
@@ -141,6 +139,8 @@ int main(){
                 else
                     play_wav(MAJOR_8, 100);
             }
+            */
+
             p_end_time = get_time_microsec(time);
             if(nn->get_neuron_activation(PROBE) > 0.05f)
                 printf("Neuron %d activation: %.3f\n", PROBE, nn->get_neuron_activation(PROBE));
@@ -151,7 +151,7 @@ int main(){
         // Time Calculation TODO Put into function
         end_time = get_time_microsec(time);
         d_time = end_time - start_time;
-    }while(key.code != K_ESC);
+    }while(key_ret != '\b');
 
     delete nn;
     return SUCCESS_CODE;
