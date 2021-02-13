@@ -2,6 +2,7 @@
 #define INCLUDE_NETWORK_HPP
 
 #include "Neuron.hpp"
+#include "NeuralNetworkParameterHandler.hpp"
 
 extern int DATA_ANALYTIC_OUTPUT;
 
@@ -13,24 +14,6 @@ extern int DEB_TRANSMITTER;
 extern int DEB_NEURON_BACKFALL;
 extern int DEB_LONG_LEARNING_WEIGHT;
 extern int DEB_PRESYNAPTIC;
-
-const int SUCCESS_CODE = 0;
-const int ERROR_CODE = -1;
-
-const int MICROSECOND_FACTOR = 1000000;
-const int MIN_NEURON_ID = 1;
-
-const int ADD = 1;
-const int SUBTRACT = -1;
-
-const int MIN_TRANSMITTER_WEIGHT = 0;
-const int MAX_TRANSMITTER_WEIGHT = 3;
-
-const float MIN_LONG_LEARNING_WEIGHT = 0.0f;
-const float MAX_LONG_LEARNING_WEIGHT = 1.0f;
-
-const long MAX_CHANCE = 100000000;
-
 
 class NeuralNetwork{
     private:
@@ -84,7 +67,9 @@ class NeuralNetwork{
         std::vector<Connection*> _next_connections;      // All connections which will be activated in the next step
         int64_t _network_step_counter;
 
-        float _max_activation;
+        NeuralNetworkParameterHandler *_parameter;
+
+        /*float _max_activation;
         float _min_activation;
 
         float _max_weight;
@@ -130,7 +115,7 @@ class NeuralNetwork{
         float _transmitter_change_curvature;
         float _transmitter_change_steepness;
         float _transmitter_backfall_curvature;
-        float _transmitter_backfall_steepness;
+        float _transmitter_backfall_steepness;*/
 
         NeuralNetwork();
         ~NeuralNetwork();

@@ -46,44 +46,6 @@ class Neuron{
         int _last_fired_step;                  /* Step when neuron last fired */
 
         NeuronParameterHandler *_parameter;
-/*
-        float _activation_backfall_curvature;
-        float _activation_backfall_steepness;
-
-        float _short_habituation_curvature;
-        float _short_habituation_steepness;
-        float _short_sensitization_curvature;
-        float _short_sensitization_steepness;
-        float _short_dehabituation_curvature;
-        float _short_dehabituation_steepness;
-        float _short_desensitization_curvature;
-        float _short_desensitization_steepness;
-
-        float _long_habituation_curvature;
-        float _long_habituation_steepness;
-        float _long_sensitization_curvature;
-        float _long_sensitization_steepness;
-        float _long_dehabituation_curvature;
-        float _long_dehabituation_steepness;
-        float _long_desensitization_curvature;
-        float _long_desensitization_steepness;
-
-        float _presynaptic_potential_curvature;
-        float _presynaptic_potential_steepness;
-        float _presynaptic_backfall_curvature;
-        float _presynaptic_backfall_steepness;
-
-        float _long_learning_weight_reduction_curvature;
-        float _long_learning_weight_reduction_steepness;
-        float _long_learning_weight_backfall_curvature;
-        float _long_learning_weight_backfall_steepness;
-
-        int _influenced_transmitter;
-        int _transmitter_influence_direction;
-
-        float _habituation_threshold;
-        float _sensitization_threshold;
-        */
 
         std::vector<Connection*> _connections;
 		std::vector<Neuron*> _previous;

@@ -3,6 +3,9 @@
 
 class ParameterHandler{
     public:
+        float max_activation;
+        float min_activation;
+
         float max_weight;
         float min_weight;
 

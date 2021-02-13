@@ -84,6 +84,8 @@ Neuron::~Neuron(){
         _connections[i] = NULL;
     }
     _connections.clear();
+
+    delete _parameter;
 }
 
 /************************************************************

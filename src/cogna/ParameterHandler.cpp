@@ -1,7 +1,10 @@
 #include "ParameterHandler.hpp"
 
 ParameterHandler::ParameterHandler(){
-    max_weight = 0.0f;
+    max_activation = 50.0f;
+    min_activation = 0.0f;
+
+    max_weight = 5.0f;
     min_weight = 0.0f;
 
     activation_backfall_curvature = 0.0f;

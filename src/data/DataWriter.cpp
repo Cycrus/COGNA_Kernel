@@ -179,16 +179,16 @@ void DataWriter::write_data(NeuralNetwork *nn){
         for(int i=0; i<network_param_gap_size; i++){
             _output << ",";
         }
-        _output << nn->_min_activation << ",";
-        _output << nn->_max_activation << ",";
-        _output << nn->_min_weight << ",";
-        _output << nn->_max_weight << ",";
-        _output << nn->_min_transmitter_weight << ",";
-        _output << nn->_max_transmitter_weight << ",";
-        _output << nn->_transmitter_change_curvature << ",";
-        _output << nn->_transmitter_change_steepness << ",";
-        _output << nn->_transmitter_backfall_curvature << ",";
-        _output << nn->_transmitter_backfall_steepness;
+        _output << nn->_parameter->min_activation << ",";
+        _output << nn->_parameter->max_activation << ",";
+        _output << nn->_parameter->min_weight << ",";
+        _output << nn->_parameter->max_weight << ",";
+        _output << nn->_parameter->min_transmitter_weight << ",";
+        _output << nn->_parameter->max_transmitter_weight << ",";
+        _output << nn->_parameter->transmitter_change_curvature << ",";
+        _output << nn->_parameter->transmitter_change_steepness << ",";
+        _output << nn->_parameter->transmitter_backfall_curvature << ",";
+        _output << nn->_parameter->transmitter_backfall_steepness;
         _output << "\n";
     }
 }

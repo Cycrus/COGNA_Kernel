@@ -34,52 +34,7 @@ NeuralNetwork::NeuralNetwork(){
     add_neuron(99999.0);
     _network_step_counter = 0;
 
-    _max_activation = 50.0f;
-    _min_activation = 0.0f;
-
-    _max_weight = 5.0f;
-    _min_weight = 0.0f;
-
-    _max_transmitter_weight = 3.0f;
-    _min_transmitter_weight = 0.0f;
-
-    _activation_backfall_curvature = 0.0f;
-    _activation_backfall_steepness = 0.0f;
-    _short_habituation_curvature = 0.0f;
-    _short_habituation_steepness = 0.0f;
-    _short_sensitization_curvature = 0.0f;
-    _short_sensitization_steepness = 0.0f;
-    _short_dehabituation_curvature = 0.0f;
-    _short_dehabituation_steepness = 0.0f;
-    _short_desensitization_curvature = 0.0f;
-    _short_desensitization_steepness = 0.0f;
-
-    _long_habituation_curvature = 0.0f;
-    _long_habituation_steepness = 0.0f;
-    _long_sensitization_curvature = 0.0f;
-    _long_sensitization_steepness = 0.0f;
-    _long_dehabituation_curvature = 0.0f;
-    _long_dehabituation_steepness = 0.0f;
-    _long_desensitization_curvature = 0.0f;
-    _long_desensitization_steepness = 0.0f;
-
-    _presynaptic_potential_curvature = 0.0f;
-    _presynaptic_potential_steepness = 0.0f;
-    _presynaptic_backfall_curvature = 0.0f;
-    _presynaptic_backfall_steepness = 0.0f;
-
-    _habituation_threshold = 0.0f;
-    _sensitization_threshold = 0.0f;
-
-    _transmitter_change_curvature = 0.0f;
-    _transmitter_change_steepness = 0.0f;
-    _transmitter_backfall_curvature = 0.0f;
-    _transmitter_backfall_steepness = 0.0f;
-
-    _long_learning_weight_reduction_curvature = 0.0f;
-    _long_learning_weight_reduction_steepness = 0.0f;
-    _long_learning_weight_backfall_curvature = 0.0f;
-    _long_learning_weight_backfall_steepness = 0.0f;
+    _parameter = new NeuralNetworkParameterHandler();
 
     _transmitter_weights.push_back(1.0f);
 }
@@ -101,6 +56,8 @@ NeuralNetwork::~NeuralNetwork(){
     _random_neurons.clear();
 
     _transmitter_weights.clear();
+
+    delete _parameter;
 }
 
 /***********************************************************
@@ -116,41 +73,39 @@ NeuralNetwork::~NeuralNetwork(){
 int NeuralNetwork::add_neuron(float threshold){
     Neuron *temp_neuron = new Neuron(threshold);
 
-    temp_neuron->_parameter->activation_backfall_curvature = _activation_backfall_curvature;
-    temp_neuron->_parameter->activation_backfall_steepness = _activation_backfall_steepness;
+    temp_neuron->_parameter->activation_backfall_curvature = _parameter->activation_backfall_curvature;
+    temp_neuron->_parameter->activation_backfall_steepness = _parameter->activation_backfall_steepness;
 
-    temp_neuron->_parameter->short_habituation_curvature = _short_habituation_curvature;
-    temp_neuron->_parameter->short_habituation_steepness = _short_habituation_steepness;
-    temp_neuron->_parameter->short_sensitization_curvature = _short_sensitization_curvature;
-    temp_neuron->_parameter->short_sensitization_steepness = _short_sensitization_steepness;
+    temp_neuron->_parameter->short_habituation_curvature = _parameter->short_habituation_curvature;
+    temp_neuron->_parameter->short_habituation_steepness = _parameter->short_habituation_steepness;
+    temp_neuron->_parameter->short_sensitization_curvature = _parameter->short_sensitization_curvature;
+    temp_neuron->_parameter->short_sensitization_steepness = _parameter->short_sensitization_steepness;
 
-    temp_neuron->_parameter->short_dehabituation_curvature = _short_dehabituation_curvature;
-    temp_neuron->_parameter->short_dehabituation_steepness = _short_dehabituation_steepness;
-    temp_neuron->_parameter->short_desensitization_curvature = _short_desensitization_curvature;
-    temp_neuron->_parameter->short_desensitization_steepness = _short_desensitization_steepness;
+    temp_neuron->_parameter->short_dehabituation_curvature = _parameter->short_dehabituation_curvature;
+    temp_neuron->_parameter->short_dehabituation_steepness = _parameter->short_dehabituation_steepness;
+    temp_neuron->_parameter->short_desensitization_curvature = _parameter->short_desensitization_curvature;
+    temp_neuron->_parameter->short_desensitization_steepness = _parameter->short_desensitization_steepness;
 
-    temp_neuron->_parameter->long_habituation_steepness = _long_habituation_steepness;
-    temp_neuron->_parameter->long_habituation_curvature = _long_habituation_curvature;
-    temp_neuron->_parameter->long_sensitization_steepness = _long_sensitization_steepness;
-    temp_neuron->_parameter->long_sensitization_curvature = _long_sensitization_curvature;
+    temp_neuron->_parameter->long_habituation_steepness = _parameter->long_habituation_steepness;
+    temp_neuron->_parameter->long_habituation_curvature = _parameter->long_habituation_curvature;
+    temp_neuron->_parameter->long_sensitization_steepness = _parameter->long_sensitization_steepness;
+    temp_neuron->_parameter->long_sensitization_curvature = _parameter->long_sensitization_curvature;
 
-    temp_neuron->_parameter->long_dehabituation_steepness = _long_dehabituation_steepness;
-    temp_neuron->_parameter->long_dehabituation_curvature = _long_dehabituation_curvature;
-    temp_neuron->_parameter->long_desensitization_steepness = _long_desensitization_steepness;
-    temp_neuron->_parameter->long_desensitization_curvature = _long_desensitization_curvature;
+    temp_neuron->_parameter->long_dehabituation_steepness = _parameter->long_dehabituation_steepness;
+    temp_neuron->_parameter->long_dehabituation_curvature = _parameter->long_dehabituation_curvature;
+    temp_neuron->_parameter->long_desensitization_steepness = _parameter->long_desensitization_steepness;
+    temp_neuron->_parameter->long_desensitization_curvature = _parameter->long_desensitization_curvature;
 
-    temp_neuron->_parameter->presynaptic_potential_curvature = _presynaptic_potential_curvature;
-    temp_neuron->_parameter->presynaptic_potential_steepness = _presynaptic_potential_steepness;
-    temp_neuron->_parameter->presynaptic_backfall_curvature = _presynaptic_backfall_curvature;
-    temp_neuron->_parameter->presynaptic_backfall_steepness = _presynaptic_backfall_steepness;
-    temp_neuron->_parameter->habituation_threshold = _habituation_threshold;
-    temp_neuron->_parameter->sensitization_threshold = _sensitization_threshold;
-    temp_neuron->_parameter->influenced_transmitter = NO_TRANSMITTER;
-    temp_neuron->_parameter->transmitter_influence_direction = POSITIVE_INFLUENCE;
-    temp_neuron->_parameter->long_learning_weight_reduction_curvature = _long_learning_weight_reduction_curvature;
-    temp_neuron->_parameter->long_learning_weight_reduction_steepness = _long_learning_weight_reduction_steepness;
-    temp_neuron->_parameter->long_learning_weight_backfall_curvature = _long_learning_weight_backfall_curvature;
-    temp_neuron->_parameter->long_learning_weight_backfall_steepness = _long_learning_weight_backfall_steepness;
+    temp_neuron->_parameter->presynaptic_potential_curvature = _parameter->presynaptic_potential_curvature;
+    temp_neuron->_parameter->presynaptic_potential_steepness = _parameter->presynaptic_potential_steepness;
+    temp_neuron->_parameter->presynaptic_backfall_curvature = _parameter->presynaptic_backfall_curvature;
+    temp_neuron->_parameter->presynaptic_backfall_steepness = _parameter->presynaptic_backfall_steepness;
+    temp_neuron->_parameter->habituation_threshold = _parameter->habituation_threshold;
+    temp_neuron->_parameter->sensitization_threshold = _parameter->sensitization_threshold;
+    temp_neuron->_parameter->long_learning_weight_reduction_curvature = _parameter->long_learning_weight_reduction_curvature;
+    temp_neuron->_parameter->long_learning_weight_reduction_steepness = _parameter->long_learning_weight_reduction_steepness;
+    temp_neuron->_parameter->long_learning_weight_backfall_curvature = _parameter->long_learning_weight_backfall_curvature;
+    temp_neuron->_parameter->long_learning_weight_backfall_steepness = _parameter->long_learning_weight_backfall_steepness;
 
     _neurons.push_back(temp_neuron);
     return SUCCESS_CODE;
@@ -600,8 +555,8 @@ void NeuralNetwork::calculate_neuron_backfall(Neuron *n){
                                                    this->_network_step_counter-n->get_step(),
                                                    n->_parameter->activation_backfall_curvature,
                                                    SUBTRACT,
-                                                   _max_activation,
-                                                   _min_activation);
+                                                   n->_parameter->max_activation,
+                                                   n->_parameter->min_activation);
     }
 
     if(DEBUG_MODE && DEB_NEURON_BACKFALL)
@@ -622,7 +577,7 @@ void NeuralNetwork::clear_neuron_activation(Neuron *n){
                _network_step_counter, n->_id, n->_activation);
 
     if(n->_activation >= n->_threshold){
-        n->_activation = _min_activation;
+        n->_activation = n->_parameter->min_activation;
     }
 
     if(DEBUG_MODE && DEB_NEURON_BACKFALL)
@@ -703,7 +658,7 @@ void NeuralNetwork::dehabituate(Connection *con){
                                                     con->prev_neuron->_parameter->long_dehabituation_curvature,
                                                     ADD,
                                                     con->base_weight,
-                                                    _min_weight);
+                                                    con->prev_neuron->_parameter->min_weight);
     }
 
     if(con->short_weight < con->long_weight){
@@ -713,7 +668,7 @@ void NeuralNetwork::dehabituate(Connection *con){
                                                      con->prev_neuron->_parameter->short_dehabituation_curvature,
                                                      ADD,
                                                      con->long_weight,
-                                                     _min_weight);
+                                                     con->prev_neuron->_parameter->min_weight);
     }
 
     if(DEBUG_MODE && DEB_HABITUATION){
@@ -746,7 +701,7 @@ void NeuralNetwork::desensitize(Connection *con){
                                                      this->_network_step_counter - con->last_activated_step,
                                                      con->prev_neuron->_parameter->long_desensitization_curvature,
                                                      SUBTRACT,
-                                                     _max_weight,
+                                                     con->prev_neuron->_parameter->max_weight,
                                                      con->base_weight);
     }
 
@@ -756,7 +711,7 @@ void NeuralNetwork::desensitize(Connection *con){
                                                       this->_network_step_counter - con->last_activated_step,
                                                       con->prev_neuron->_parameter->short_desensitization_curvature,
                                                       SUBTRACT,
-                                                      _max_weight,
+                                                      con->prev_neuron->_parameter->max_weight,
                                                       con->long_weight);
     }
 
@@ -806,16 +761,16 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
                                                activation,
                                                con->prev_neuron->_parameter->short_habituation_curvature,
                                                SUBTRACT,
-                                               _max_weight,
-                                               _min_weight);
+                                               con->prev_neuron->_parameter->max_weight,
+                                               con->prev_neuron->_parameter->min_weight);
 
         con->long_weight = calculate_dynamic_gradient(con->long_weight,
                                               con->prev_neuron->_parameter->long_habituation_steepness,
                                               activation * con->long_learning_weight,
                                               con->prev_neuron->_parameter->long_habituation_curvature,
                                               SUBTRACT,
-                                              _max_weight,
-                                              _min_weight);
+                                              con->prev_neuron->_parameter->max_weight,
+                                              con->prev_neuron->_parameter->min_weight);
 
         long_learning_weight_reduction(con);
 
@@ -869,16 +824,16 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
                                                activation,
                                                con->prev_neuron->_parameter->short_sensitization_curvature,
                                                ADD,
-                                               _max_weight,
-                                               _min_weight);
+                                               con->prev_neuron->_parameter->max_weight,
+                                               con->prev_neuron->_parameter->min_weight);
 
         con->long_weight = calculate_dynamic_gradient(con->long_weight,
                                               con->prev_neuron->_parameter->long_sensitization_steepness,
                                               activation * con->long_learning_weight,
                                               con->prev_neuron->_parameter->long_sensitization_curvature,
                                               ADD,
-                                              _max_weight,
-                                              _min_weight);
+                                              con->prev_neuron->_parameter->max_weight,
+                                              con->prev_neuron->_parameter->min_weight);
 
         long_learning_weight_reduction(con);
 
@@ -934,23 +889,23 @@ void NeuralNetwork::influence_transmitter(Neuron *n){
             if(n->_parameter->transmitter_influence_direction == POSITIVE_INFLUENCE){
                 change_transmitter_weight(n->_parameter->influenced_transmitter,
                                           calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
-                                          _transmitter_change_steepness,
+                                          n->_parameter->transmitter_change_steepness,
                                           n->_activation,
-                                          _transmitter_change_curvature,
+                                          n->_parameter->transmitter_change_curvature,
                                           ADD,
-                                          _max_transmitter_weight,
-                                          _min_transmitter_weight));
+                                          _parameter->max_transmitter_weight,
+                                          _parameter->min_transmitter_weight));
             }
 
             else if(n->_parameter->transmitter_influence_direction == NEGATIVE_INFLUENCE){
                 change_transmitter_weight(n->_parameter->influenced_transmitter,
                                           calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
-                                          _transmitter_change_steepness,
+                                          n->_parameter->transmitter_change_steepness,
                                           n->_activation,
-                                          _transmitter_change_curvature,
+                                          n->_parameter->transmitter_change_curvature,
                                           SUBTRACT,
-                                          _max_transmitter_weight,
-                                          _min_transmitter_weight));
+                                          _parameter->max_transmitter_weight,
+                                          _parameter->min_transmitter_weight));
             }
         }
     }
@@ -965,22 +920,22 @@ void NeuralNetwork::transmitter_backfall(){
     for(unsigned i=0; i<_transmitter_weights.size(); i++){
         if(_transmitter_weights[i] > 1.0f){
             _transmitter_weights[i] = calculate_static_gradient(_transmitter_weights[i],
-                                                                _transmitter_backfall_steepness,
+                                                                _parameter->transmitter_backfall_steepness,
                                                                 1,
-                                                                _transmitter_backfall_curvature,
+                                                                _parameter->transmitter_backfall_curvature,
                                                                 SUBTRACT,
-                                                                _max_transmitter_weight,
+                                                                _parameter->max_transmitter_weight,
                                                                 DEFAULT_TRANSMITTER_WEIGHT);
         }
 
         else if(_transmitter_weights[i] < 1.0f){
             _transmitter_weights[i] = calculate_dynamic_gradient(_transmitter_weights[i],
-                                                                 _transmitter_backfall_steepness,
+                                                                 _parameter->transmitter_backfall_steepness,
                                                                  1,
-                                                                 _transmitter_backfall_curvature,
+                                                                 _parameter->transmitter_backfall_curvature,
                                                                  ADD,
                                                                  DEFAULT_TRANSMITTER_WEIGHT,
-                                                                 _min_transmitter_weight);
+                                                                 _parameter->min_transmitter_weight);
         }
     }
 }
@@ -1002,7 +957,7 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
                                                      _network_step_counter - con->last_presynaptic_activated_step,
                                                      con->prev_neuron->_parameter->presynaptic_backfall_curvature,
                                                      SUBTRACT,
-                                                     _max_weight,
+                                                     con->prev_neuron->_parameter->max_weight,
                                                      DEFAULT_PRESYNAPTIC_POTENTIAL);
 
     if(DEBUG_MODE && DEB_PRESYNAPTIC)
