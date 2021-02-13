@@ -19,7 +19,7 @@ int main(){
     const long TIME_BETWEEN_STEPS = 1;//500 * 1000;
     start_time = get_time_microsec(time);
 
-    const int MOTONEURON = 7;
+    // const int MOTONEURON = 7;
     const int PROBE = 7;
     NeuralNetwork *nn = new NeuralNetwork();
 

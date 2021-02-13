@@ -696,13 +696,13 @@ float NeuralNetwork::calculate_static_gradient(float source_value,
  */
 void NeuralNetwork::change_transmitter_weight(int transmitter_id, float new_weight){
     if(DEBUG_MODE == true && DEB_TRANSMITTER == true)
-        printf("<%lld> T-%d -> Weight before change = %.3f\n",
+        printf("<%ld> T-%d -> Weight before change = %.3f\n",
                _network_step_counter, transmitter_id, _transmitter_weights[transmitter_id]);
 
     _transmitter_weights[transmitter_id] = new_weight;
 
     if(DEBUG_MODE == true && DEB_TRANSMITTER == true)
-        printf("<%lld> T-%d -> Weight after change = %.3f\n\n",
+        printf("<%ld> T-%d -> Weight after change = %.3f\n\n",
                _network_step_counter, transmitter_id, _transmitter_weights[transmitter_id]);
 }
 
@@ -715,7 +715,7 @@ void NeuralNetwork::change_transmitter_weight(int transmitter_id, float new_weig
  */
 void NeuralNetwork::calculate_neuron_backfall(Neuron *n){
     if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-        printf("<%lld> N-%d -> Activation before backfall = %.3f\n",
+        printf("<%ld> N-%d -> Activation before backfall = %.3f\n",
                _network_step_counter, n->_id, n->_activation);
 
     if(n->_was_activated == false){
@@ -729,7 +729,7 @@ void NeuralNetwork::calculate_neuron_backfall(Neuron *n){
     }
 
     if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-        printf("<%lld> N-%d -> Activation after backfall = %.3f\n\n",
+        printf("<%ld> N-%d -> Activation after backfall = %.3f\n\n",
                _network_step_counter, n->_id, n->_activation);
 }
 
@@ -742,7 +742,7 @@ void NeuralNetwork::calculate_neuron_backfall(Neuron *n){
  */
 void NeuralNetwork::clear_neuron_activation(Neuron *n){
     if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-        printf("<%lld> N-%d -> Activation before clearing = %.3f\n",
+        printf("<%ld> N-%d -> Activation before clearing = %.3f\n",
                _network_step_counter, n->_id, n->_activation);
 
     if(n->_activation >= n->_threshold){
@@ -750,7 +750,7 @@ void NeuralNetwork::clear_neuron_activation(Neuron *n){
     }
 
     if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-        printf("<%lld> N-%d -> Activation after clearing = %.3f\n\n",
+        printf("<%ld> N-%d -> Activation after clearing = %.3f\n\n",
                _network_step_counter, n->_id, n->_activation);
 }
 
@@ -764,7 +764,7 @@ void NeuralNetwork::clear_neuron_activation(Neuron *n){
  */
 void NeuralNetwork::long_learning_weight_backfall(Connection *con){
     if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%lld> C-%d -> Long learning weight before backfall = %.3f\n",
+        printf("<%ld> C-%d -> Long learning weight before backfall = %.3f\n",
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
     con->long_learning_weight = calculate_static_gradient(con->long_learning_weight,
@@ -776,7 +776,7 @@ void NeuralNetwork::long_learning_weight_backfall(Connection *con){
                                                           MIN_LONG_LEARNING_WEIGHT);
 
     if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%lld> C-%d -> Long learning weight after backfall = %.3f\n\n",
+        printf("<%ld> C-%d -> Long learning weight after backfall = %.3f\n\n",
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 }
 
@@ -790,7 +790,7 @@ void NeuralNetwork::long_learning_weight_backfall(Connection *con){
  */
 void NeuralNetwork::long_learning_weight_reduction(Connection *con){
     if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%lld> C-%d -> Long learning weight before reduction = %.3f\n",
+        printf("<%ld> C-%d -> Long learning weight before reduction = %.3f\n",
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
     con->long_learning_weight = calculate_static_gradient(con->long_learning_weight,
@@ -801,7 +801,7 @@ void NeuralNetwork::long_learning_weight_reduction(Connection *con){
                                                           MAX_LONG_LEARNING_WEIGHT,
                                                           MIN_LONG_LEARNING_WEIGHT);
     if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%lld> C-%d -> Long learning weight after reduction = %.3f\n\n",
+        printf("<%ld> C-%d -> Long learning weight after reduction = %.3f\n\n",
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 }
 
@@ -814,9 +814,9 @@ void NeuralNetwork::long_learning_weight_reduction(Connection *con){
  */
 void NeuralNetwork::dehabituate(Connection *con){
     if(DEBUG_MODE && DEB_HABITUATION){
-        printf("<%lld> N-%d -> Short before dehabituation = %.5f\n",
+        printf("<%ld> N-%d -> Short before dehabituation = %.5f\n",
                _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%lld> N-%d -> Long before dehabituation = %.5f\n",
+        printf("<%ld> N-%d -> Long before dehabituation = %.5f\n",
                _network_step_counter, con->prev_neuron->_id, con->long_weight);
     }
 
@@ -841,9 +841,9 @@ void NeuralNetwork::dehabituate(Connection *con){
     }
 
     if(DEBUG_MODE && DEB_HABITUATION){
-        printf("<%lld> N-%d -> Short after dehabituation = %.5f\n",
+        printf("<%ld> N-%d -> Short after dehabituation = %.5f\n",
                _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%lld> N-%d -> Long after dehabituation = %.5f\n\n",
+        printf("<%ld> N-%d -> Long after dehabituation = %.5f\n\n",
                _network_step_counter, con->prev_neuron->_id, con->long_weight);
     }
 }
@@ -858,9 +858,9 @@ void NeuralNetwork::dehabituate(Connection *con){
  */
 void NeuralNetwork::desensitize(Connection *con){
     if(DEBUG_MODE && DEB_SENSITIZATION){
-        printf("<%lld> N-%d -> Short before desensitization = %.5f\n",
+        printf("<%ld> N-%d -> Short before desensitization = %.5f\n",
                _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%lld> N-%d -> Long before desensitization = %.5f\n",
+        printf("<%ld> N-%d -> Long before desensitization = %.5f\n",
                _network_step_counter, con->prev_neuron->_id, con->long_weight);
     }
 
@@ -885,9 +885,9 @@ void NeuralNetwork::desensitize(Connection *con){
     }
 
     if(DEBUG_MODE && DEB_SENSITIZATION){
-        printf("<%lld> N-%d -> Short after desensitization = %.5f\n",
+        printf("<%ld> N-%d -> Short after desensitization = %.5f\n",
                _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%lld> N-%d -> Long after desensitization = %.5f\n\n",
+        printf("<%ld> N-%d -> Long after desensitization = %.5f\n\n",
                _network_step_counter, con->prev_neuron->_id, con->long_weight);
     }
 }
@@ -913,13 +913,13 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
     if((conditioning_type == NONDIRECTIONAL && activation < con->prev_neuron->_habituation_threshold) ||
        (conditioning_type == INHIBITORY)){
         if(DEBUG_MODE && DEB_HABITUATION){
-            printf("<%lld> N-%d -> Short before habituation = %.5f\n",
+            printf("<%ld> N-%d -> Short before habituation = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->short_weight);
-            printf("<%lld> N-%d -> Long before habituation = %.5f\n",
+            printf("<%ld> N-%d -> Long before habituation = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_weight);
         }
         if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%lld> N-%d -> Learner before habituation = %.5f\n",
+            printf("<%ld> N-%d -> Learner before habituation = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
         if(conditioning_type == NONDIRECTIONAL)
@@ -944,13 +944,13 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
         long_learning_weight_reduction(con);
 
         if(DEBUG_MODE && DEB_HABITUATION){
-            printf("<%lld> N-%d -> Short after habituation = %.5f\n",
+            printf("<%ld> N-%d -> Short after habituation = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->short_weight);
-            printf("<%lld> N-%d -> Long after habituation = %.5f\n",
+            printf("<%ld> N-%d -> Long after habituation = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_weight);
         }
         if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%lld> N-%d -> Learner after habituation = %.5f\n\n",
+            printf("<%ld> N-%d -> Learner after habituation = %.5f\n\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
     }
 }
@@ -976,13 +976,13 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
     if((conditioning_type == NONDIRECTIONAL && activation > con->prev_neuron->_sensitization_threshold) ||
        (conditioning_type == EXCITATORY)){
         if(DEBUG_MODE && DEB_SENSITIZATION){
-            printf("<%lld> N-%d -> Short before sensitization = %.5f\n",
+            printf("<%ld> N-%d -> Short before sensitization = %.5f\n",
                    _network_step_counter,  con->prev_neuron->_id, con->short_weight);
-            printf("<%lld> N-%d -> Long before sensitization = %.5f\n",
+            printf("<%ld> N-%d -> Long before sensitization = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_weight);
         }
         if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%lld> N-%d -> Learner before sensitization = %.5f\n",
+            printf("<%ld> N-%d -> Learner before sensitization = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
         if(conditioning_type == NONDIRECTIONAL)
@@ -1007,13 +1007,13 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
         long_learning_weight_reduction(con);
 
         if(DEBUG_MODE && DEB_SENSITIZATION){
-            printf("<%lld> N-%d -> Short after sensitization = %.5f\n",
+            printf("<%ld> N-%d -> Short after sensitization = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->short_weight);
-            printf("<%lld> N-%d -> Long after sensitization = %.5f\n",
+            printf("<%ld> N-%d -> Long after sensitization = %.5f\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_weight);
         }
         if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%lld> N-%d -> Learner after sensitization = %.5f\n\n",
+            printf("<%ld> N-%d -> Learner after sensitization = %.5f\n\n",
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
     }
 }
@@ -1118,7 +1118,7 @@ void NeuralNetwork::transmitter_backfall(){
  */
 void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
     if(DEBUG_MODE && DEB_PRESYNAPTIC)
-        printf("<%lld> C-%d -> Presynaptic potential before backfall = %.3f\n",
+        printf("<%ld> C-%d -> Presynaptic potential before backfall = %.3f\n",
                _network_step_counter, con->prev_neuron->_id, con->presynaptic_potential);
 
     con->presynaptic_potential = calculate_static_gradient(con->presynaptic_potential,
@@ -1130,7 +1130,7 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
                                                      DEFAULT_PRESYNAPTIC_POTENTIAL);
 
     if(DEBUG_MODE && DEB_PRESYNAPTIC)
-        printf("<%lld> C-%d -> Presynaptic potential after backfall = %.3f\n\n",
+        printf("<%ld> C-%d -> Presynaptic potential after backfall = %.3f\n\n",
                _network_step_counter, con->prev_neuron->_id, con->presynaptic_potential);
 }
 
@@ -1181,7 +1181,7 @@ void NeuralNetwork::activate_next_neuron(Connection *con){
 
     if(con->next_neuron->_id != 0){
         if(DEBUG_MODE && DEB_BASE){
-            printf("<%lld> N-%d~N-%d -> force = %.2f\n",
+            printf("<%ld> N-%d~N-%d -> force = %.2f\n",
                    _network_step_counter,
                    con->prev_neuron->_id,
                    con->next_neuron->_id,
@@ -1197,7 +1197,7 @@ void NeuralNetwork::activate_next_neuron(Connection *con){
  */
 void NeuralNetwork::activate_next_connection(Connection *con){
     if(DEBUG_MODE && DEB_PRESYNAPTIC){
-        printf("<%lld> C-%d -> Presynaptic potential before influence : %.3f\n",
+        printf("<%ld> C-%d -> Presynaptic potential before influence : %.3f\n",
                _network_step_counter,
                con->prev_neuron->_id,
                con->next_connection->presynaptic_potential);
@@ -1212,7 +1212,7 @@ void NeuralNetwork::activate_next_connection(Connection *con){
     con->next_connection->last_presynaptic_activated_step = _network_step_counter;
 
     if(DEBUG_MODE && DEB_PRESYNAPTIC){
-        printf("<%lld> C-%d -> Presynaptic potential after influence : %.3f\n",
+        printf("<%ld> C-%d -> Presynaptic potential after influence : %.3f\n",
                _network_step_counter,
                con->prev_neuron->_id,
                con->next_connection->presynaptic_potential);
