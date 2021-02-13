@@ -2,6 +2,7 @@
 #define INCLUDE_CONNECTION_HPP
 
 #include <cstdint>
+#include "ConnectionParameterHandler.hpp"
 
 const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
 const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;
@@ -14,10 +15,8 @@ class Connection{
         Neuron* next_neuron;      /* The neuron this connection is connected with */
         Connection* next_connection; /* The connection this connection is connected with */
         Neuron* prev_neuron;      /* The origin neuron of this connection */
-        int activation_type;      /* Defines if connection is inhibitory or excitatory */
-        int activation_function;  /* Defines what activation function the connection uses */
-        int learning_type;        /* Defines the kind of learning the connection is capable of */
-        int transmitter_type;     /* Type of neurotransmitter used for transmitting action potential */
+
+        ConnectionParameterHandler *_parameter;
 
         float base_weight;        /* Base weight where learning processes always slowly return to */
         float short_weight;       /* Weight of this connection changing for short term learning. This one is directly used */

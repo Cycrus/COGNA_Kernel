@@ -36,7 +36,6 @@ int Environment::try_machine(int num){
  */
 int main(){
     srandom(time(NULL));
-    int key_ret = 0;
 
     struct timeval time;
     long start_time, end_time, d_time = 0;
@@ -152,13 +151,6 @@ int main(){
     printf("Neural network started successfully!\n\n*********************START*********************\n\n");
 
     do{
-        key_ret = getc(stdin);
-        switch(key_ret){
-            case ' ':
-                nn->init_activation(1, 1.0f);
-                break;
-        }
-
         if(p_end_time - start_action_time > 1000000){
             nn->init_activation(1, 1.0f);
             start_action_time = get_time_microsec(time);
@@ -211,7 +203,7 @@ int main(){
         // Time Calculation TODO Put into function
         end_time = get_time_microsec(time);
         d_time = end_time - start_time;
-    }while(key_ret != 'q' && learning_counter <= 20);
+    }while(learning_counter <= 20);
 
     printf("\n\n#########################################\n\n");
     if(machine_connection[0]->short_weight > machine_connection[1]->short_weight){

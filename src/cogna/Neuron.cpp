@@ -166,10 +166,10 @@ Connection* Neuron::add_neuron_connection(Neuron *n,
         temp_con->long_weight = weight;
         temp_con->long_learning_weight = 1.0f;
         temp_con->presynaptic_potential = 1.0f;
-        temp_con->activation_type = con_type;
-        temp_con->activation_function = fun_type;
-        temp_con->learning_type = learn_type;
-        temp_con->transmitter_type = transmitter_type;
+        temp_con->_parameter->activation_type = con_type;
+        temp_con->_parameter->activation_function = fun_type;
+        temp_con->_parameter->learning_type = learn_type;
+        temp_con->_parameter->transmitter_type = transmitter_type;
         temp_con->last_presynaptic_activated_step = 0;
         temp_con->last_activated_step = 0;
         _connections.push_back(temp_con);
@@ -216,10 +216,10 @@ Connection* Neuron::add_synaptic_connection(Connection *con,
         temp_con->base_weight = weight;
         temp_con->short_weight = weight;
         temp_con->long_weight = weight;
-        temp_con->activation_type = con_type;
-        temp_con->activation_function = fun_type;
-        temp_con->learning_type = learn_type;
-        temp_con->transmitter_type = transmitter_type;
+        temp_con->_parameter->activation_type = con_type;
+        temp_con->_parameter->activation_function = fun_type;
+        temp_con->_parameter->learning_type = learn_type;
+        temp_con->_parameter->transmitter_type = transmitter_type;
         _connections.push_back(temp_con);
         return temp_con;
     }
@@ -311,7 +311,7 @@ void Neuron::set_random_activation(int chance, float activation_value){
 }
 
 float choose_activation_function(Connection *con, float input){
-    switch(con->activation_function){
+    switch(con->_parameter->activation_function){
       case FUNCTION_SIGMOID:
           return MathUtils::sigmoid(input);
           break;

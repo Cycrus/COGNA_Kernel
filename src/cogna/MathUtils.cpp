@@ -15,7 +15,6 @@ float MathUtils::relu(float input){
     else return 0;
 }
 
-
 /***********************************************************
  * MathUtils::calculate_dynamic_gradient()
  *

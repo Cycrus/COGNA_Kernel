@@ -2,13 +2,11 @@
 #include "Connection.hpp"
 
 Connection::Connection(){
+    _parameter = new ConnectionParameterHandler();
+
     next_neuron = NULL;
     next_connection = NULL;
     prev_neuron = NULL;
-    activation_type = 0;
-    activation_function = 0;
-    learning_type = 0;
-    transmitter_type = 0;
 
     base_weight = 0;
     short_weight = 0;

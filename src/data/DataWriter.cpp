@@ -165,10 +165,10 @@ void DataWriter::write_data(NeuralNetwork *nn){
                 _output << nn->_neurons[n]->_connections[con]->long_weight << ",";
                 _output << nn->_neurons[n]->_connections[con]->long_learning_weight << ",";
                 _output << nn->_neurons[n]->_connections[con]->presynaptic_potential << ",";
-                _output << nn->_neurons[n]->_connections[con]->activation_type << ",";
-                _output << nn->_neurons[n]->_connections[con]->activation_function << ",";
-                _output << nn->_neurons[n]->_connections[con]->learning_type << ",";
-                _output << nn->_neurons[n]->_connections[con]->transmitter_type;
+                _output << nn->_neurons[n]->_connections[con]->_parameter->activation_type << ",";
+                _output << nn->_neurons[n]->_connections[con]->_parameter->activation_function << ",";
+                _output << nn->_neurons[n]->_connections[con]->_parameter->learning_type << ",";
+                _output << nn->_neurons[n]->_connections[con]->_parameter->transmitter_type;
                 _output << "\n";
             }
         }

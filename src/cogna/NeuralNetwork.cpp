@@ -31,10 +31,10 @@ long get_time_microsec(struct timeval time){
  *              forbidden to access it.
  */
 NeuralNetwork::NeuralNetwork(){
+    _parameter = new NeuralNetworkParameterHandler();
+
     add_neuron(99999.0);
     _network_step_counter = 0;
-
-    _parameter = new NeuralNetworkParameterHandler();
 
     _transmitter_weights.push_back(1.0f);
 }
@@ -673,7 +673,7 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
 
     if(conditioning_con){
         activation = conditioning_con->prev_neuron->_activation;
-        conditioning_type = conditioning_con->activation_type;
+        conditioning_type = conditioning_con->_parameter->activation_type;
     }
 
     if((conditioning_type == NONDIRECTIONAL && activation < con->prev_neuron->_parameter->habituation_threshold) ||
@@ -736,7 +736,7 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
 
     if(conditioning_con){
         activation = conditioning_con->prev_neuron->_activation;
-        conditioning_type = conditioning_con->activation_type;
+        conditioning_type = conditioning_con->_parameter->activation_type;
     }
 
     if((conditioning_type == NONDIRECTIONAL && activation > con->prev_neuron->_parameter->sensitization_threshold) ||
@@ -795,14 +795,14 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
 void NeuralNetwork::basic_learning(Connection *con, Connection *conditioning_con){
     long_learning_weight_backfall(con);
 
-    if(con->learning_type == LEARNING_HABITUATION ||
-       con->learning_type == LEARNING_HABISENS){
+    if(con->_parameter->learning_type == LEARNING_HABITUATION ||
+       con->_parameter->learning_type == LEARNING_HABISENS){
         dehabituate(con);
         habituate(con, conditioning_con);
     }
 
-    if(con->learning_type == LEARNING_SENSITIZATION ||
-       con->learning_type == LEARNING_HABISENS){
+    if(con->_parameter->learning_type == LEARNING_SENSITIZATION ||
+       con->_parameter->learning_type == LEARNING_HABISENS){
          desensitize(con);
          sensitize(con, conditioning_con);
     }
@@ -940,8 +940,8 @@ void NeuralNetwork::activate_next_neuron(Connection *con){
 
     con->next_neuron->_activation +=
           choose_activation_function(con, con->prev_neuron->_temp_activation) *
-          con->activation_type *
-          _transmitter_weights[con->transmitter_type];
+          con->_parameter->activation_type *
+          _transmitter_weights[con->_parameter->transmitter_type];
 
     con->next_neuron->_was_activated = true;
 
