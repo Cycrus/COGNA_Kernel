@@ -36,37 +36,39 @@ Neuron::Neuron(float activation_threshold){
     _last_activated_step = 0;
     _last_fired_step = 0;
 
-    _activation_backfall_curvature = 0.0f;
-    _activation_backfall_steepness = 0.0f;
+    _parameter = new NeuronParameterHandler();
 
-    _short_habituation_curvature = 0.0f;
-    _short_habituation_steepness = 0.0f;
-    _short_sensitization_curvature = 0.0f;
-    _short_sensitization_steepness = 0.0f;
-    _short_dehabituation_curvature = 0.0f;
-    _short_dehabituation_steepness = 0.0f;
-    _short_desensitization_curvature = 0.0f;
-    _short_desensitization_steepness = 0.0f;
+    _parameter->activation_backfall_curvature = 0.0f;
+    _parameter->activation_backfall_steepness = 0.0f;
 
-    _long_habituation_curvature = 0.0f;
-    _long_habituation_steepness = 0.0f;
-    _long_sensitization_curvature = 0.0f;
-    _long_sensitization_steepness = 0.0f;
-    _long_dehabituation_curvature = 0.0f;
-    _long_dehabituation_steepness = 0.0f;
-    _long_desensitization_curvature = 0.0f;
-    _long_desensitization_steepness = 0.0f;
+    _parameter->short_habituation_curvature = 0.0f;
+    _parameter->short_habituation_steepness = 0.0f;
+    _parameter->short_sensitization_curvature = 0.0f;
+    _parameter->short_sensitization_steepness = 0.0f;
+    _parameter->short_dehabituation_curvature = 0.0f;
+    _parameter->short_dehabituation_steepness = 0.0f;
+    _parameter->short_desensitization_curvature = 0.0f;
+    _parameter->short_desensitization_steepness = 0.0f;
 
-    _presynaptic_potential_curvature = 0.0f;
-    _presynaptic_potential_steepness = 0.0f;
-    _presynaptic_backfall_curvature = 0.0f;
-    _presynaptic_backfall_steepness = 0.0f;
+    _parameter->long_habituation_curvature = 0.0f;
+    _parameter->long_habituation_steepness = 0.0f;
+    _parameter->long_sensitization_curvature = 0.0f;
+    _parameter->long_sensitization_steepness = 0.0f;
+    _parameter->long_dehabituation_curvature = 0.0f;
+    _parameter->long_dehabituation_steepness = 0.0f;
+    _parameter->long_desensitization_curvature = 0.0f;
+    _parameter->long_desensitization_steepness = 0.0f;
 
-    _habituation_threshold = 0.0f;
-    _sensitization_threshold = 0.0f;
+    _parameter->presynaptic_potential_curvature = 0.0f;
+    _parameter->presynaptic_potential_steepness = 0.0f;
+    _parameter->presynaptic_backfall_curvature = 0.0f;
+    _parameter->presynaptic_backfall_steepness = 0.0f;
 
-    _influenced_transmitter = NO_TRANSMITTER;
-    _transmitter_influence_direction = POSITIVE_INFLUENCE;
+    _parameter->habituation_threshold = 0.0f;
+    _parameter->sensitization_threshold = 0.0f;
+
+    _parameter->influenced_transmitter = NO_TRANSMITTER;
+    _parameter->transmitter_influence_direction = POSITIVE_INFLUENCE;
 }
 
 /************************************************************

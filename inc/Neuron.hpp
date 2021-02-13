@@ -3,32 +3,10 @@
 
 #include <vector>
 #include <cstdint>
+#include "NeuronParameterHandler.hpp"
 
 #define false 0
 #define true 1
-
-const int EXCITATORY = 1;
-const int INHIBITORY = -1;
-const int NONDIRECTIONAL = 0;
-
-const int FUNCTION_SIGMOID = 1;
-const int FUNCTION_LINEAR = 2;
-const int FUNCTION_RELU = 3;
-
-const int LEARNING_NONE = 1;
-const int LEARNING_HABITUATION = 2;
-const int LEARNING_SENSITIZATION = 3;
-const int LEARNING_HABISENS = 4;
-
-const int POSITIVE_INFLUENCE = 1;
-const int NEGATIVE_INFLUENCE = -1;
-
-const int NO_TRANSMITTER = -1;
-const int STD_TRANSMITTER = 0;
-
-const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
-
-const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;
 
 class Neuron;
 
@@ -54,7 +32,6 @@ struct Connection{
 };
 
 class Neuron{
-    // TODO Too powerful
 	public:
         int _id;
         static int s_max_id;                   /* Last neuron id which has been created. Used for new neuron ids */
@@ -68,6 +45,8 @@ class Neuron{
         int _was_activated;                    /* Indicates if neuron was activated last time or this time */
         int _last_fired_step;                  /* Step when neuron last fired */
 
+        NeuronParameterHandler *_parameter;
+/*
         float _activation_backfall_curvature;
         float _activation_backfall_steepness;
 
@@ -99,14 +78,15 @@ class Neuron{
         float _long_learning_weight_backfall_curvature;
         float _long_learning_weight_backfall_steepness;
 
-        int _influenced_transmitter;            /* Transmitter this neuron should influence if activated */
-        int _transmitter_influence_direction;   /* Defines if transmitter is influenced positively or negatively */
+        int _influenced_transmitter;
+        int _transmitter_influence_direction;
 
-        float _habituation_threshold;            /* Threshold until what activation level neuron shall habituate */
-        float _sensitization_threshold;          /* Threshold from what activation level neuron neuron shall sensitize */
+        float _habituation_threshold;
+        float _sensitization_threshold;
+        */
 
-        std::vector<Connection*> _connections; /* A list of all connections to other neurons */
-		std::vector<Neuron*> _previous;        /* A list of all neurons from which this one gets input */
+        std::vector<Connection*> _connections;
+		std::vector<Neuron*> _previous;
 
         long get_step();
         void set_step(long new_step);

@@ -33,7 +33,6 @@ const long MAX_CHANCE = 100000000;
 
 
 class NeuralNetwork{
-    // TODO Too powerful
     private:
         float calculate_dynamic_gradient(float source_value,
                                          float curve_factor,

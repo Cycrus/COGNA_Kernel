@@ -116,41 +116,41 @@ NeuralNetwork::~NeuralNetwork(){
 int NeuralNetwork::add_neuron(float threshold){
     Neuron *temp_neuron = new Neuron(threshold);
 
-    temp_neuron->_activation_backfall_curvature = _activation_backfall_curvature;
-    temp_neuron->_activation_backfall_steepness = _activation_backfall_steepness;
+    temp_neuron->_parameter->activation_backfall_curvature = _activation_backfall_curvature;
+    temp_neuron->_parameter->activation_backfall_steepness = _activation_backfall_steepness;
 
-    temp_neuron->_short_habituation_curvature = _short_habituation_curvature;
-    temp_neuron->_short_habituation_steepness = _short_habituation_steepness;
-    temp_neuron->_short_sensitization_curvature = _short_sensitization_curvature;
-    temp_neuron->_short_sensitization_steepness = _short_sensitization_steepness;
+    temp_neuron->_parameter->short_habituation_curvature = _short_habituation_curvature;
+    temp_neuron->_parameter->short_habituation_steepness = _short_habituation_steepness;
+    temp_neuron->_parameter->short_sensitization_curvature = _short_sensitization_curvature;
+    temp_neuron->_parameter->short_sensitization_steepness = _short_sensitization_steepness;
 
-    temp_neuron->_short_dehabituation_curvature = _short_dehabituation_curvature;
-    temp_neuron->_short_dehabituation_steepness = _short_dehabituation_steepness;
-    temp_neuron->_short_desensitization_curvature = _short_desensitization_curvature;
-    temp_neuron->_short_desensitization_steepness = _short_desensitization_steepness;
+    temp_neuron->_parameter->short_dehabituation_curvature = _short_dehabituation_curvature;
+    temp_neuron->_parameter->short_dehabituation_steepness = _short_dehabituation_steepness;
+    temp_neuron->_parameter->short_desensitization_curvature = _short_desensitization_curvature;
+    temp_neuron->_parameter->short_desensitization_steepness = _short_desensitization_steepness;
 
-    temp_neuron->_long_habituation_steepness = _long_habituation_steepness;
-    temp_neuron->_long_habituation_curvature = _long_habituation_curvature;
-    temp_neuron->_long_sensitization_steepness = _long_sensitization_steepness;
-    temp_neuron->_long_sensitization_curvature = _long_sensitization_curvature;
+    temp_neuron->_parameter->long_habituation_steepness = _long_habituation_steepness;
+    temp_neuron->_parameter->long_habituation_curvature = _long_habituation_curvature;
+    temp_neuron->_parameter->long_sensitization_steepness = _long_sensitization_steepness;
+    temp_neuron->_parameter->long_sensitization_curvature = _long_sensitization_curvature;
 
-    temp_neuron->_long_dehabituation_steepness = _long_dehabituation_steepness;
-    temp_neuron->_long_dehabituation_curvature = _long_dehabituation_curvature;
-    temp_neuron->_long_desensitization_steepness = _long_desensitization_steepness;
-    temp_neuron->_long_desensitization_curvature = _long_desensitization_curvature;
+    temp_neuron->_parameter->long_dehabituation_steepness = _long_dehabituation_steepness;
+    temp_neuron->_parameter->long_dehabituation_curvature = _long_dehabituation_curvature;
+    temp_neuron->_parameter->long_desensitization_steepness = _long_desensitization_steepness;
+    temp_neuron->_parameter->long_desensitization_curvature = _long_desensitization_curvature;
 
-    temp_neuron->_presynaptic_potential_curvature = _presynaptic_potential_curvature;
-    temp_neuron->_presynaptic_potential_steepness = _presynaptic_potential_steepness;
-    temp_neuron->_presynaptic_backfall_curvature = _presynaptic_backfall_curvature;
-    temp_neuron->_presynaptic_backfall_steepness = _presynaptic_backfall_steepness;
-    temp_neuron->_habituation_threshold = _habituation_threshold;
-    temp_neuron->_sensitization_threshold = _sensitization_threshold;
-    temp_neuron->_influenced_transmitter = NO_TRANSMITTER;
-    temp_neuron->_transmitter_influence_direction = POSITIVE_INFLUENCE;
-    temp_neuron->_long_learning_weight_reduction_curvature = _long_learning_weight_reduction_curvature;
-    temp_neuron->_long_learning_weight_reduction_steepness = _long_learning_weight_reduction_steepness;
-    temp_neuron->_long_learning_weight_backfall_curvature = _long_learning_weight_backfall_curvature;
-    temp_neuron->_long_learning_weight_backfall_steepness = _long_learning_weight_backfall_steepness;
+    temp_neuron->_parameter->presynaptic_potential_curvature = _presynaptic_potential_curvature;
+    temp_neuron->_parameter->presynaptic_potential_steepness = _presynaptic_potential_steepness;
+    temp_neuron->_parameter->presynaptic_backfall_curvature = _presynaptic_backfall_curvature;
+    temp_neuron->_parameter->presynaptic_backfall_steepness = _presynaptic_backfall_steepness;
+    temp_neuron->_parameter->habituation_threshold = _habituation_threshold;
+    temp_neuron->_parameter->sensitization_threshold = _sensitization_threshold;
+    temp_neuron->_parameter->influenced_transmitter = NO_TRANSMITTER;
+    temp_neuron->_parameter->transmitter_influence_direction = POSITIVE_INFLUENCE;
+    temp_neuron->_parameter->long_learning_weight_reduction_curvature = _long_learning_weight_reduction_curvature;
+    temp_neuron->_parameter->long_learning_weight_reduction_steepness = _long_learning_weight_reduction_steepness;
+    temp_neuron->_parameter->long_learning_weight_backfall_curvature = _long_learning_weight_backfall_curvature;
+    temp_neuron->_parameter->long_learning_weight_backfall_steepness = _long_learning_weight_backfall_steepness;
 
     _neurons.push_back(temp_neuron);
     return SUCCESS_CODE;
@@ -174,8 +174,8 @@ int NeuralNetwork::set_neural_transmitter_influence(int neuron_id,
         if(transmitter_id >= 0 && (unsigned)transmitter_id < _transmitter_weights.size()){
             if(influence_direction == POSITIVE_INFLUENCE ||
                influence_direction == NEGATIVE_INFLUENCE){
-                   _neurons[neuron_id]->_influenced_transmitter = transmitter_id;
-                   _neurons[neuron_id]->_transmitter_influence_direction = influence_direction;
+                   _neurons[neuron_id]->_parameter->influenced_transmitter = transmitter_id;
+                   _neurons[neuron_id]->_parameter->transmitter_influence_direction = influence_direction;
                    return SUCCESS_CODE;
             }
         }
@@ -596,9 +596,9 @@ void NeuralNetwork::calculate_neuron_backfall(Neuron *n){
 
     if(n->_was_activated == false){
         n->_activation = calculate_static_gradient(n->_activation,
-                                                   n->_activation_backfall_steepness,
+                                                   n->_parameter->activation_backfall_steepness,
                                                    this->_network_step_counter-n->get_step(),
-                                                   n->_activation_backfall_curvature,
+                                                   n->_parameter->activation_backfall_curvature,
                                                    SUBTRACT,
                                                    _max_activation,
                                                    _min_activation);
@@ -644,9 +644,9 @@ void NeuralNetwork::long_learning_weight_backfall(Connection *con){
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
     con->long_learning_weight = calculate_static_gradient(con->long_learning_weight,
-                                                          con->prev_neuron->_long_learning_weight_backfall_steepness,
+                                                          con->prev_neuron->_parameter->long_learning_weight_backfall_steepness,
                                                           this->_network_step_counter - con->last_activated_step,
-                                                          con->prev_neuron->_long_learning_weight_backfall_curvature,
+                                                          con->prev_neuron->_parameter->long_learning_weight_backfall_curvature,
                                                           ADD,
                                                           MAX_LONG_LEARNING_WEIGHT,
                                                           MIN_LONG_LEARNING_WEIGHT);
@@ -670,9 +670,9 @@ void NeuralNetwork::long_learning_weight_reduction(Connection *con){
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
     con->long_learning_weight = calculate_static_gradient(con->long_learning_weight,
-                                                          con->prev_neuron->_long_learning_weight_reduction_steepness,
+                                                          con->prev_neuron->_parameter->long_learning_weight_reduction_steepness,
                                                           1,
-                                                          con->prev_neuron->_long_learning_weight_reduction_curvature,
+                                                          con->prev_neuron->_parameter->long_learning_weight_reduction_curvature,
                                                           SUBTRACT,
                                                           MAX_LONG_LEARNING_WEIGHT,
                                                           MIN_LONG_LEARNING_WEIGHT);
@@ -698,9 +698,9 @@ void NeuralNetwork::dehabituate(Connection *con){
 
     if(con->long_weight < con->base_weight){
        con->long_weight = calculate_static_gradient(con->long_weight,
-                                                    con->prev_neuron->_long_dehabituation_steepness,
+                                                    con->prev_neuron->_parameter->long_dehabituation_steepness,
                                                     this->_network_step_counter - con->last_activated_step,
-                                                    con->prev_neuron->_long_dehabituation_curvature,
+                                                    con->prev_neuron->_parameter->long_dehabituation_curvature,
                                                     ADD,
                                                     con->base_weight,
                                                     _min_weight);
@@ -708,9 +708,9 @@ void NeuralNetwork::dehabituate(Connection *con){
 
     if(con->short_weight < con->long_weight){
        con->short_weight = calculate_static_gradient(con->short_weight,
-                                                     con->prev_neuron->_short_dehabituation_steepness,
+                                                     con->prev_neuron->_parameter->short_dehabituation_steepness,
                                                      this->_network_step_counter - con->last_activated_step,
-                                                     con->prev_neuron->_short_dehabituation_curvature,
+                                                     con->prev_neuron->_parameter->short_dehabituation_curvature,
                                                      ADD,
                                                      con->long_weight,
                                                      _min_weight);
@@ -742,9 +742,9 @@ void NeuralNetwork::desensitize(Connection *con){
 
     if(con->long_weight > con->base_weight){
         con->long_weight = calculate_static_gradient(con->long_weight,
-                                                     con->prev_neuron->_long_desensitization_steepness,
+                                                     con->prev_neuron->_parameter->long_desensitization_steepness,
                                                      this->_network_step_counter - con->last_activated_step,
-                                                     con->prev_neuron->_long_desensitization_curvature,
+                                                     con->prev_neuron->_parameter->long_desensitization_curvature,
                                                      SUBTRACT,
                                                      _max_weight,
                                                      con->base_weight);
@@ -752,9 +752,9 @@ void NeuralNetwork::desensitize(Connection *con){
 
     if(con->short_weight > con->long_weight){
         con->short_weight = calculate_static_gradient(con->short_weight,
-                                                      con->prev_neuron->_short_desensitization_steepness,
+                                                      con->prev_neuron->_parameter->short_desensitization_steepness,
                                                       this->_network_step_counter - con->last_activated_step,
-                                                      con->prev_neuron->_short_desensitization_curvature,
+                                                      con->prev_neuron->_parameter->short_desensitization_curvature,
                                                       SUBTRACT,
                                                       _max_weight,
                                                       con->long_weight);
@@ -786,7 +786,7 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
         conditioning_type = conditioning_con->activation_type;
     }
 
-    if((conditioning_type == NONDIRECTIONAL && activation < con->prev_neuron->_habituation_threshold) ||
+    if((conditioning_type == NONDIRECTIONAL && activation < con->prev_neuron->_parameter->habituation_threshold) ||
        (conditioning_type == INHIBITORY)){
         if(DEBUG_MODE && DEB_HABITUATION){
             printf("<%ld> N-%d -> Short before habituation = %.5f\n",
@@ -799,20 +799,20 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
         if(conditioning_type == NONDIRECTIONAL)
-            activation = con->prev_neuron->_habituation_threshold - activation;
+            activation = con->prev_neuron->_parameter->habituation_threshold - activation;
 
         con->short_weight = calculate_dynamic_gradient(con->short_weight,
-                                               con->prev_neuron->_short_habituation_steepness,
+                                               con->prev_neuron->_parameter->short_habituation_steepness,
                                                activation,
-                                               con->prev_neuron->_short_habituation_curvature,
+                                               con->prev_neuron->_parameter->short_habituation_curvature,
                                                SUBTRACT,
                                                _max_weight,
                                                _min_weight);
 
         con->long_weight = calculate_dynamic_gradient(con->long_weight,
-                                              con->prev_neuron->_long_habituation_steepness,
+                                              con->prev_neuron->_parameter->long_habituation_steepness,
                                               activation * con->long_learning_weight,
-                                              con->prev_neuron->_long_habituation_curvature,
+                                              con->prev_neuron->_parameter->long_habituation_curvature,
                                               SUBTRACT,
                                               _max_weight,
                                               _min_weight);
@@ -849,7 +849,7 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
         conditioning_type = conditioning_con->activation_type;
     }
 
-    if((conditioning_type == NONDIRECTIONAL && activation > con->prev_neuron->_sensitization_threshold) ||
+    if((conditioning_type == NONDIRECTIONAL && activation > con->prev_neuron->_parameter->sensitization_threshold) ||
        (conditioning_type == EXCITATORY)){
         if(DEBUG_MODE && DEB_SENSITIZATION){
             printf("<%ld> N-%d -> Short before sensitization = %.5f\n",
@@ -862,20 +862,20 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
         if(conditioning_type == NONDIRECTIONAL)
-            activation = activation - con->prev_neuron->_sensitization_threshold;
+            activation = activation - con->prev_neuron->_parameter->sensitization_threshold;
 
         con->short_weight = calculate_dynamic_gradient(con->short_weight,
-                                               con->prev_neuron->_short_sensitization_steepness,
+                                               con->prev_neuron->_parameter->short_sensitization_steepness,
                                                activation,
-                                               con->prev_neuron->_short_sensitization_curvature,
+                                               con->prev_neuron->_parameter->short_sensitization_curvature,
                                                ADD,
                                                _max_weight,
                                                _min_weight);
 
         con->long_weight = calculate_dynamic_gradient(con->long_weight,
-                                              con->prev_neuron->_long_sensitization_steepness,
+                                              con->prev_neuron->_parameter->long_sensitization_steepness,
                                               activation * con->long_learning_weight,
-                                              con->prev_neuron->_long_sensitization_curvature,
+                                              con->prev_neuron->_parameter->long_sensitization_curvature,
                                               ADD,
                                               _max_weight,
                                               _min_weight);
@@ -930,10 +930,10 @@ void NeuralNetwork::basic_learning(Connection *con, Connection *conditioning_con
  */
 void NeuralNetwork::influence_transmitter(Neuron *n){
     if(n->_last_fired_step < _network_step_counter){
-        if(n->_influenced_transmitter > NO_TRANSMITTER){
-            if(n->_transmitter_influence_direction == POSITIVE_INFLUENCE){
-                change_transmitter_weight(n->_influenced_transmitter,
-                                          calculate_dynamic_gradient(_transmitter_weights[n->_influenced_transmitter],
+        if(n->_parameter->influenced_transmitter > NO_TRANSMITTER){
+            if(n->_parameter->transmitter_influence_direction == POSITIVE_INFLUENCE){
+                change_transmitter_weight(n->_parameter->influenced_transmitter,
+                                          calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
                                           _transmitter_change_steepness,
                                           n->_activation,
                                           _transmitter_change_curvature,
@@ -942,9 +942,9 @@ void NeuralNetwork::influence_transmitter(Neuron *n){
                                           _min_transmitter_weight));
             }
 
-            else if(n->_transmitter_influence_direction == NEGATIVE_INFLUENCE){
-                change_transmitter_weight(n->_influenced_transmitter,
-                                          calculate_dynamic_gradient(_transmitter_weights[n->_influenced_transmitter],
+            else if(n->_parameter->transmitter_influence_direction == NEGATIVE_INFLUENCE){
+                change_transmitter_weight(n->_parameter->influenced_transmitter,
+                                          calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
                                           _transmitter_change_steepness,
                                           n->_activation,
                                           _transmitter_change_curvature,
@@ -998,9 +998,9 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
                _network_step_counter, con->prev_neuron->_id, con->presynaptic_potential);
 
     con->presynaptic_potential = calculate_static_gradient(con->presynaptic_potential,
-                                                     con->prev_neuron->_presynaptic_backfall_steepness,
+                                                     con->prev_neuron->_parameter->presynaptic_backfall_steepness,
                                                      _network_step_counter - con->last_presynaptic_activated_step,
-                                                     con->prev_neuron->_presynaptic_backfall_curvature,
+                                                     con->prev_neuron->_parameter->presynaptic_backfall_curvature,
                                                      SUBTRACT,
                                                      _max_weight,
                                                      DEFAULT_PRESYNAPTIC_POTENTIAL);
