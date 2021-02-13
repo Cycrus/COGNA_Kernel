@@ -1,6 +1,6 @@
-#include "data_writer.hpp"
-#include "neuron.hpp"
-#include "network.hpp"
+#include "DataWriter.hpp"
+#include "Neuron.hpp"
+#include "NeuralNetwork.hpp"
 
 #include <cstdio>
 

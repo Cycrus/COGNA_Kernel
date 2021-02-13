@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 
-#include "network.hpp"
+#include "NeuralNetwork.hpp"
 
 class DataWriter{
 public:

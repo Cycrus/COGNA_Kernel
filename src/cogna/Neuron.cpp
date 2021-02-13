@@ -1,4 +1,4 @@
-#include "neuron.hpp"
+#include "Neuron.hpp"
 
 #include <cstdio>
 #include <cstdlib>

@@ -1,4 +1,4 @@
-#include "network.hpp"
+#include "NeuralNetwork.hpp"
 
 #include <cstdio>
 #include <ctime>

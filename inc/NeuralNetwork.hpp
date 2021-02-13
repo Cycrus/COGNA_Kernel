@@ -1,7 +1,7 @@
 #ifndef INCLUDE_NETWORK_HPP
 #define INCLUDE_NETWORK_HPP
 
-#include "neuron.hpp"
+#include "Neuron.hpp"
 
 extern int DATA_ANALYTIC_OUTPUT;
 
