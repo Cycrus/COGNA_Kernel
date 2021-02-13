@@ -3,35 +3,21 @@
 
 #include "Neuron.hpp"
 #include "NeuralNetworkParameterHandler.hpp"
+#include "MathUtils.hpp"
 
-extern int DATA_ANALYTIC_OUTPUT;
+extern bool DATA_ANALYTIC_OUTPUT;
 
-extern int DEBUG_MODE;
-extern int DEB_BASE;
-extern int DEB_HABITUATION;
-extern int DEB_SENSITIZATION;
-extern int DEB_TRANSMITTER;
-extern int DEB_NEURON_BACKFALL;
-extern int DEB_LONG_LEARNING_WEIGHT;
-extern int DEB_PRESYNAPTIC;
+extern bool DEBUG_MODE;
+extern bool DEB_BASE;
+extern bool DEB_HABITUATION;
+extern bool DEB_SENSITIZATION;
+extern bool DEB_TRANSMITTER;
+extern bool DEB_NEURON_BACKFALL;
+extern bool DEB_LONG_LEARNING_WEIGHT;
+extern bool DEB_PRESYNAPTIC;
 
 class NeuralNetwork{
     private:
-        float calculate_dynamic_gradient(float source_value,
-                                         float curve_factor,
-                                         double x,
-                                         float power_factor,
-                                         int method=ADD,
-                                         float max=100.0f,
-                                         float min=0.0f);
-        float calculate_static_gradient(float source_value,
-                                        float curve_factor,
-                                        double x,
-                                        float power_factor,
-                                        int method=ADD,
-                                        float max=100.0f,
-                                        float min=0.0f);
-
         void change_transmitter_weight(int transmitter_id,
                                        float new_weight);
 
@@ -68,54 +54,6 @@ class NeuralNetwork{
         int64_t _network_step_counter;
 
         NeuralNetworkParameterHandler *_parameter;
-
-        /*float _max_activation;
-        float _min_activation;
-
-        float _max_weight;
-        float _min_weight;
-
-        float _activation_backfall_curvature;
-        float _activation_backfall_steepness;
-
-        float _max_transmitter_weight;
-        float _min_transmitter_weight;
-
-        float _short_habituation_curvature;
-        float _short_habituation_steepness;
-        float _short_sensitization_curvature;
-        float _short_sensitization_steepness;
-        float _short_dehabituation_curvature;
-        float _short_dehabituation_steepness;
-        float _short_desensitization_curvature;
-        float _short_desensitization_steepness;
-
-        float _long_habituation_curvature;
-        float _long_habituation_steepness;
-        float _long_sensitization_curvature;
-        float _long_sensitization_steepness;
-        float _long_dehabituation_curvature;
-        float _long_dehabituation_steepness;
-        float _long_desensitization_curvature;
-        float _long_desensitization_steepness;
-
-        float _presynaptic_potential_curvature;
-        float _presynaptic_potential_steepness;
-        float _presynaptic_backfall_curvature;
-        float _presynaptic_backfall_steepness;
-
-        float _long_learning_weight_reduction_curvature;
-        float _long_learning_weight_reduction_steepness;
-        float _long_learning_weight_backfall_curvature;
-        float _long_learning_weight_backfall_steepness;
-
-        float _habituation_threshold;
-        float _sensitization_threshold;
-
-        float _transmitter_change_curvature;
-        float _transmitter_change_steepness;
-        float _transmitter_backfall_curvature;
-        float _transmitter_backfall_steepness;*/
 
         NeuralNetwork();
         ~NeuralNetwork();

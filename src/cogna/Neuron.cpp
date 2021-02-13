@@ -2,8 +2,8 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
 #include <ctime>
+#include "MathUtils.hpp"
 
 int Neuron::s_max_id = 0;
 
@@ -165,7 +165,7 @@ Connection* Neuron::add_neuron_connection(Neuron *n,
         temp_con->short_weight = weight;
         temp_con->long_weight = weight;
         temp_con->long_learning_weight = 1.0f;
-        temp_con->presynaptic_potential = DEFAULT_PRESYNAPTIC_POTENTIAL;
+        temp_con->presynaptic_potential = 1.0f;
         temp_con->activation_type = con_type;
         temp_con->activation_function = fun_type;
         temp_con->learning_type = learn_type;
@@ -216,14 +216,10 @@ Connection* Neuron::add_synaptic_connection(Connection *con,
         temp_con->base_weight = weight;
         temp_con->short_weight = weight;
         temp_con->long_weight = weight;
-        temp_con->long_learning_weight = 1.0f;
-        temp_con->presynaptic_potential = 1.0f;
         temp_con->activation_type = con_type;
         temp_con->activation_function = fun_type;
         temp_con->learning_type = learn_type;
         temp_con->transmitter_type = transmitter_type;
-        temp_con->last_presynaptic_activated_step = 0;
-        temp_con->last_activated_step = 0;
         _connections.push_back(temp_con);
         return temp_con;
     }
@@ -314,31 +310,18 @@ void Neuron::set_random_activation(int chance, float activation_value){
     _random_activation_value = activation_value;
 }
 
-float sigmoid(float input){
-    return (float)(1.0 / (1.0 + (float)exp(-input)));
-}
-
-float linear(float input){
-    return (float)input;
-}
-
-float relu(float input){
-    if(input > 0) return (float)input;
-    else return 0;
-}
-
 float choose_activation_function(Connection *con, float input){
     switch(con->activation_function){
       case FUNCTION_SIGMOID:
-          return sigmoid(input);
+          return MathUtils::sigmoid(input);
           break;
 
       case FUNCTION_LINEAR:
-          return linear(input);
+          return MathUtils::linear(input);
           break;
 
       case FUNCTION_RELU:
-          return relu(input);
+          return MathUtils::relu(input);
           break;
 
       default:

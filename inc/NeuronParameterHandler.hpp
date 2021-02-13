@@ -22,10 +22,6 @@ const int NEGATIVE_INFLUENCE = -1;
 const int NO_TRANSMITTER = -1;
 const int STD_TRANSMITTER = 0;
 
-const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
-
-const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;
-
 class NeuronParameterHandler: public ParameterHandler{
     public:
         int influenced_transmitter;            /* Transmitter this neuron should influence if activated */
