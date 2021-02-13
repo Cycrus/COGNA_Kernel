@@ -85,48 +85,48 @@ class NeuralNetwork{
         std::vector<Connection*> _next_connections;      // All connections which will be activated in the next step
         int64_t _network_step_counter;
 
-        float _global_max_activation;
-        float _global_min_activation;
+        float _max_activation;
+        float _min_activation;
 
-        float _global_max_weight;
-        float _global_min_weight;
+        float _max_weight;
+        float _min_weight;
 
-        float _global_backfall_curvature;
-        float _global_backfall_steepness;
+        float _activation_backfall_curvature;
+        float _activation_backfall_steepness;
 
-        float _global_max_transmitter_weight;
-        float _global_min_transmitter_weight;
+        float _max_transmitter_weight;
+        float _min_transmitter_weight;
 
-        float _global_short_habituation_curvature;
-        float _global_short_habituation_steepness;
-        float _global_short_sensitization_curvature;
-        float _global_short_sensitization_steepness;
-        float _global_short_dehabituation_curvature;
-        float _global_short_dehabituation_steepness;
-        float _global_short_desensitization_curvature;
-        float _global_short_desensitization_steepness;
+        float _short_habituation_curvature;
+        float _short_habituation_steepness;
+        float _short_sensitization_curvature;
+        float _short_sensitization_steepness;
+        float _short_dehabituation_curvature;
+        float _short_dehabituation_steepness;
+        float _short_desensitization_curvature;
+        float _short_desensitization_steepness;
 
-        float _global_long_habituation_curvature;
-        float _global_long_habituation_steepness;
-        float _global_long_sensitization_curvature;
-        float _global_long_sensitization_steepness;
-        float _global_long_dehabituation_curvature;
-        float _global_long_dehabituation_steepness;
-        float _global_long_desensitization_curvature;
-        float _global_long_desensitization_steepness;
+        float _long_habituation_curvature;
+        float _long_habituation_steepness;
+        float _long_sensitization_curvature;
+        float _long_sensitization_steepness;
+        float _long_dehabituation_curvature;
+        float _long_dehabituation_steepness;
+        float _long_desensitization_curvature;
+        float _long_desensitization_steepness;
 
-        float _global_presynaptic_potential_curvature;
-        float _global_presynaptic_potential_steepness;
-        float _global_presynaptic_backfall_curvature;
-        float _global_presynaptic_backfall_steepness;
+        float _presynaptic_potential_curvature;
+        float _presynaptic_potential_steepness;
+        float _presynaptic_backfall_curvature;
+        float _presynaptic_backfall_steepness;
 
-        float _global_long_learning_weight_reduction_curvature;
-        float _global_long_learning_weight_reduction_steepness;
-        float _global_long_learning_weight_backfall_curvature;
-        float _global_long_learning_weight_backfall_steepness;
+        float _long_learning_weight_reduction_curvature;
+        float _long_learning_weight_reduction_steepness;
+        float _long_learning_weight_backfall_curvature;
+        float _long_learning_weight_backfall_steepness;
 
-        float _global_habituation_threshold;
-        float _global_sensitization_threshold;
+        float _habituation_threshold;
+        float _sensitization_threshold;
 
         float _transmitter_change_curvature;
         float _transmitter_change_steepness;
@@ -177,54 +177,6 @@ class NeuralNetwork{
         int neuron_is_active(int neuron_id);
         float get_neuron_activation(int neuron_id);
         float get_transmitter_weight(int transmitter_id);
-
-        void set_max_activation(float value);
-        void set_min_activation(float value);
-
-        void set_max_weight(float value);
-        void set_min_weight(float value);
-
-        void set_max_transmitter_weight(float value);
-        void set_min_transmitter_weight(float value);
-
-        void set_activation_backfall_curvature(float value);
-        void set_activation_backfall_steepness(float value);
-
-        void set_short_habituation_curvature(float value);
-        void set_short_habituation_steepness(float value);
-        void set_short_sensitization_curvature(float value);
-        void set_short_sensitization_steepness(float value);
-        void set_short_dehabituation_curvature(float value);
-        void set_short_dehabituation_steepness(float value);
-        void set_short_desensitization_curvature(float value);
-        void set_short_desensitization_steepness(float value);
-
-        void set_long_habituation_curvature(float value);
-        void set_long_habituation_steepness(float value);
-        void set_long_sensitization_curvature(float value);
-        void set_long_sensitization_steepness(float value);
-        void set_long_dehabituation_curvature(float value);
-        void set_long_dehabituation_steepness(float value);
-        void set_long_desensitization_curvature(float value);
-        void set_long_desensitization_steepness(float value);
-
-        void set_presynaptic_potential_curvature(float value);
-        void set_presynaptic_potential_steepness(float value);
-        void set_presynaptic_backfall_curvature(float value);
-        void set_presynaptic_backfall_steepness(float value);
-
-        void set_long_learning_weight_reduction_curvature(float value);
-        void set_long_learning_weight_reduction_steepness(float value);
-        void set_long_learning_weight_backfall_curvature(float value);
-        void set_long_learning_weight_backfall_steepness(float value);
-
-        void set_habituation_threshold(float value);
-        void set_sensitization_threshold(float value);
-
-        void set_transmitter_change_curvature(float value);
-        void set_transmitter_change_steepness(float value);
-        void set_transmitter_backfall_curvature(float value);
-        void set_transmitter_backfall_steepness(float value);
 };
 
 long get_time_microsec(struct timeval time);

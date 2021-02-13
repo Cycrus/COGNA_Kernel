@@ -108,45 +108,6 @@ class Neuron{
         std::vector<Connection*> _connections; /* A list of all connections to other neurons */
 		std::vector<Neuron*> _previous;        /* A list of all neurons from which this one gets input */
 
-        void set_activation_backfall_curvature(float value);
-        void set_activation_backfall_steepness(float value);
-
-        void set_short_habituation_curvature(float value);
-        void set_short_habituation_steepness(float value);
-        void set_short_sensitization_curvature(float value);
-        void set_short_sensitization_steepness(float value);
-
-        void set_short_dehabituation_curvature(float value);
-        void set_short_dehabituation_steepness(float value);
-        void set_short_desensitization_curvature(float value);
-        void set_short_desensitization_steepness(float value);
-
-        void set_long_habituation_curvature(float value);
-        void set_long_habituation_steepness(float value);
-        void set_long_sensitization_curvature(float value);
-        void set_long_sensitization_steepness(float value);
-
-        void set_long_dehabituation_curvature(float value);
-        void set_long_dehabituation_steepness(float value);
-        void set_long_desensitization_curvature(float value);
-        void set_long_desensitization_steepness(float value);
-
-        void set_presynaptic_potential_curvature(float value);
-        void set_presynaptic_potential_steepness(float value);
-        void set_presynaptic_backfall_curvature(float value);
-        void set_presynaptic_backfall_steepness(float value);
-
-        void set_long_learning_weight_reduction_curvature(float value);
-        void set_long_learning_weight_reduction_steepness(float value);
-        void set_long_learning_weight_backfall_curvature(float value);
-        void set_long_learning_weight_backfall_steepness(float value);
-
-        void set_habituation_threshold(float value);
-        void set_sensitization_threshold(float value);
-
-        void set_influenced_transmitter(int value);
-        void set_transmitter_influence_direction(int value);
-
         long get_step();
         void set_step(long new_step);
 

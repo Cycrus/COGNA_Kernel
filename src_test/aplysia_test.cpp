@@ -24,46 +24,46 @@ int main(){
     NeuralNetwork *nn = new NeuralNetwork();
 
     /* Learning Parameter */
-    nn->set_activation_backfall_curvature(1.00f);
-    nn->set_activation_backfall_steepness(0.047f);
+    nn->_activation_backfall_curvature = 1.00f;
+    nn->_activation_backfall_steepness = 0.047f;
 
-    nn->set_short_habituation_curvature(1.02f);
-    nn->set_short_habituation_steepness(0.09f);
-    nn->set_short_sensitization_curvature(1.02f);
-    nn->set_short_sensitization_steepness(0.09f);
+    nn->_short_habituation_curvature = 1.02f;
+    nn->_short_habituation_steepness = 0.09f;
+    nn->_short_sensitization_curvature = 1.02f;
+    nn->_short_sensitization_steepness = 0.09f;
 
-    nn->set_long_habituation_curvature(0.35f);
-    nn->set_long_habituation_steepness(0.00005f);
-    nn->set_long_sensitization_curvature(1.02f);
-    nn->set_long_sensitization_steepness(0.0001f);
+    nn->_long_habituation_curvature = 0.35f;
+    nn->_long_habituation_steepness = 0.00005f;
+    nn->_long_sensitization_curvature = 1.02f;
+    nn->_long_sensitization_steepness = 0.0001f;
 
-    nn->set_short_dehabituation_curvature(1.00f);
-    nn->set_short_dehabituation_steepness(0.00000005f);
-    nn->set_short_desensitization_curvature(1.00f);
-    nn->set_short_desensitization_steepness(0.00000005f);
+    nn->_short_dehabituation_curvature = 1.00f;
+    nn->_short_dehabituation_steepness = 0.00000005f;
+    nn->_short_desensitization_curvature = 1.00f;
+    nn->_short_desensitization_steepness = 0.00000005f;
 
-    nn->set_long_dehabituation_curvature(1.00f);
-    nn->set_long_dehabituation_steepness(0.000000000001f);
-    nn->set_long_desensitization_curvature(1.00f);
-    nn->set_long_desensitization_steepness(0.000000000001f);
+    nn->_long_dehabituation_curvature = 1.00f;
+    nn->_long_dehabituation_steepness = 0.000000000001f;
+    nn->_long_desensitization_curvature = 1.00f;
+    nn->_long_desensitization_steepness = 0.000000000001f;
 
-    nn->set_presynaptic_potential_curvature(0.60f);
-    nn->set_presynaptic_potential_steepness(0.3f);
-    nn->set_presynaptic_backfall_curvature(1.00f);
-    nn->set_presynaptic_backfall_steepness(0.0000002f);
+    nn->_presynaptic_potential_curvature = 0.60f;
+    nn->_presynaptic_potential_steepness = 0.3f;
+    nn->_presynaptic_backfall_curvature = 1.00f;
+    nn->_presynaptic_backfall_steepness = 0.0000002f;
 
-    nn->set_habituation_threshold(2.0f);
-    nn->set_sensitization_threshold(4.0f);
+    nn->_habituation_threshold = 2.0f;
+    nn->_sensitization_threshold = 4.0f;
 
-    nn->set_long_learning_weight_reduction_curvature(0.5f);
-    nn->set_long_learning_weight_reduction_steepness(0.5f);
-    nn->set_long_learning_weight_backfall_curvature(1.0f);
-    nn->set_long_learning_weight_backfall_steepness(0.00000006f);
+    nn->_long_learning_weight_reduction_curvature = 0.5f;
+    nn->_long_learning_weight_reduction_steepness = 0.5f;
+    nn->_long_learning_weight_backfall_curvature = 1.0f;
+    nn->_long_learning_weight_backfall_steepness = 0.00000006f;
 
-    nn->set_transmitter_change_curvature(1.02f);
-    nn->set_transmitter_change_steepness(0.02f);
-    nn->set_transmitter_backfall_curvature(1.00f);
-    nn->set_transmitter_backfall_steepness(0.0000001f);
+    nn->_transmitter_change_curvature = 1.02f;
+    nn->_transmitter_change_steepness = 0.02f;
+    nn->_transmitter_backfall_curvature = 1.00f;
+    nn->_transmitter_backfall_steepness = 0.0000001f;
 
     /* Assembly of connection system */
     for(unsigned i=1; i<=7; i++){
