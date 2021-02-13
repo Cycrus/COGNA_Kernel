@@ -14,22 +14,22 @@ extern int DEB_NEURON_BACKFALL;
 extern int DEB_LONG_LEARNING_WEIGHT;
 extern int DEB_PRESYNAPTIC;
 
-#define SUCCESS_CODE 0
-#define ERROR_CODE -1
+const int SUCCESS_CODE = 0;
+const int ERROR_CODE = -1;
 
-#define MICROSECOND_FACTOR 1000000
-#define MIN_NEURON_ID 1
+const int MICROSECOND_FACTOR = 1000000;
+const int MIN_NEURON_ID = 1;
 
-#define ADD 1
-#define SUBTRACT -1
+const int ADD = 1;
+const int SUBTRACT = -1;
 
-#define MIN_TRANSMITTER_WEIGHT 0
-#define MAX_TRANSMITTER_WEIGHT 3
+const int MIN_TRANSMITTER_WEIGHT = 0;
+const int MAX_TRANSMITTER_WEIGHT = 3;
 
-#define MIN_LONG_LEARNING_WEIGHT 0.0f
-#define MAX_LONG_LEARNING_WEIGHT 1.0f
+const float MIN_LONG_LEARNING_WEIGHT = 0.0f;
+const float MAX_LONG_LEARNING_WEIGHT = 1.0f;
 
-#define MAX_CHANCE 100000000
+const long MAX_CHANCE = 100000000;
 
 
 class NeuralNetwork{

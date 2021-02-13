@@ -1,5 +1,4 @@
 #include "DataWriter.hpp"
-#include "Neuron.hpp"
 #include "NeuralNetwork.hpp"
 
 #include <cstdio>

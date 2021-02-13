@@ -7,28 +7,28 @@
 #define false 0
 #define true 1
 
-#define EXCITATORY 1
-#define INHIBITORY -1
-#define NONDIRECTIONAL 0
+const int EXCITATORY = 1;
+const int INHIBITORY = -1;
+const int NONDIRECTIONAL = 0;
 
-#define FUNCTION_SIGMOID 1
-#define FUNCTION_LINEAR 2
-#define FUNCTION_RELU 3
+const int FUNCTION_SIGMOID = 1;
+const int FUNCTION_LINEAR = 2;
+const int FUNCTION_RELU = 3;
 
-#define LEARNING_NONE 1
-#define LEARNING_HABITUATION 2
-#define LEARNING_SENSITIZATION 3
-#define LEARNING_HABISENS 4
+const int LEARNING_NONE = 1;
+const int LEARNING_HABITUATION = 2;
+const int LEARNING_SENSITIZATION = 3;
+const int LEARNING_HABISENS = 4;
 
-#define POSITIVE_INFLUENCE 1
-#define NEGATIVE_INFLUENCE -1
+const int POSITIVE_INFLUENCE = 1;
+const int NEGATIVE_INFLUENCE = -1;
 
-#define NO_TRANSMITTER -1
-#define STD_TRANSMITTER 0
+const int NO_TRANSMITTER = -1;
+const int STD_TRANSMITTER = 0;
 
-#define DEFAULT_TRANSMITTER_WEIGHT 1.0f
+const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
 
-#define DEFAULT_PRESYNAPTIC_POTENTIAL 1.0f
+const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;
 
 class Neuron;
 

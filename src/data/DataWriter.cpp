@@ -16,7 +16,6 @@ DataWriter::DataWriter(){
     std::string datetime(buffer);
     std::string short_filename("network_output_" + datetime);
     std::string fullname(short_filename + ".csv");
-    // std::string temp_filename("/home/pi/05_data-output/" + fullname);
     std::string temp_filename(fullname);
     filename = temp_filename;
 }
