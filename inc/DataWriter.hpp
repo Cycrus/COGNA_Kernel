@@ -6,17 +6,19 @@
 
 #include "NeuralNetwork.hpp"
 
-class DataWriter{
-public:
-    std::ofstream _output;
-    std::string filename;
+namespace COGNA{
+    class DataWriter{
+    public:
+        std::ofstream _output;
+        std::string filename;
 
-    DataWriter();
-    ~DataWriter();
+        DataWriter();
+        ~DataWriter();
 
-    int open_file();
-    void write_head();
-    void write_data(NeuralNetwork *nn);
-};
+        int open_file();
+        void write_head();
+        void write_data(COGNA::NeuralNetwork *nn);
+    };
+}
 
 #endif /* INCLUDE_DATAWRITER_HPP */

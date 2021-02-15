@@ -3,6 +3,8 @@
 
 #include <cstdio>
 
+using namespace COGNA;
+
 #define POSITIVE_RESULT 1
 #define NEGATIVE_RESULT 0
 

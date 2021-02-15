@@ -17,11 +17,11 @@ int main(){
     long start_time, end_time, d_time;
     long p_end_time;
     const long TIME_BETWEEN_STEPS = 1;//500 * 1000;
-    start_time = get_time_microsec(time);
+    start_time = COGNA::get_time_microsec(time);
 
     // const int MOTONEURON = 7;
     const int PROBE = 7;
-    NeuralNetwork *nn = new NeuralNetwork();
+    COGNA::NeuralNetwork *nn = new COGNA::NeuralNetwork();
 
     /* Learning Parameter */
     nn->_parameter->activation_backfall_curvature = 1.00f;
@@ -70,18 +70,26 @@ int main(){
         nn->add_neuron(0.1f);
     }
 
-    if(!nn->add_neuron_connection(1, 2, 1.0f, EXCITATORY, FUNCTION_RELU, LEARNING_NONE)) goto exit;
-    if(!nn->add_neuron_connection(2, 5, 1.0f, EXCITATORY, FUNCTION_RELU, LEARNING_HABISENS)) goto exit;
-    if(!nn->add_neuron_connection(3, 4, 1.0f, EXCITATORY, FUNCTION_RELU, LEARNING_NONE)) goto exit;
-    if(!nn->add_neuron_connection(4, 5, 1.0f, EXCITATORY, FUNCTION_RELU, LEARNING_HABISENS)) goto exit;
-    if(!nn->add_neuron_connection(6, 5, 1.0f, EXCITATORY, FUNCTION_RELU, LEARNING_NONE)) goto exit;
-    if(!nn->add_neuron_connection(5, 7, 1.0f, EXCITATORY, FUNCTION_RELU, LEARNING_NONE)) goto exit;
-    if(!nn->add_synaptic_connection(2, 4, 5, 1.0f, NONDIRECTIONAL, FUNCTION_RELU, LEARNING_NONE)) goto exit;
-    if(!nn->add_synaptic_connection(4, 2, 5, 1.0f, NONDIRECTIONAL, FUNCTION_RELU, LEARNING_NONE)) goto exit;
+    if(!nn->add_neuron_connection(1, 2, 1.0f, COGNA::EXCITATORY, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_NONE)) goto exit;
+    if(!nn->add_neuron_connection(2, 5, 1.0f, COGNA::EXCITATORY, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_HABISENS)) goto exit;
+    if(!nn->add_neuron_connection(3, 4, 1.0f, COGNA::EXCITATORY, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_NONE)) goto exit;
+    if(!nn->add_neuron_connection(4, 5, 1.0f, COGNA::EXCITATORY, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_HABISENS)) goto exit;
+    if(!nn->add_neuron_connection(6, 5, 1.0f, COGNA::EXCITATORY, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_NONE)) goto exit;
+    if(!nn->add_neuron_connection(5, 7, 1.0f, COGNA::EXCITATORY, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_NONE)) goto exit;
+    if(!nn->add_synaptic_connection(2, 4, 5, 1.0f, COGNA::NONDIRECTIONAL, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_NONE)) goto exit;
+    if(!nn->add_synaptic_connection(4, 2, 5, 1.0f, COGNA::NONDIRECTIONAL, COGNA::FUNCTION_RELU,
+        COGNA::LEARNING_NONE)) goto exit;
 
-    if(nn->set_random_neuron_activation(6, 20, 1.0) == ERROR_CODE) goto exit;
+    if(nn->set_random_neuron_activation(6, 20, 1.0) == COGNA::ERROR_CODE) goto exit;
 
-    if(nn->setup_network() == ERROR_CODE) goto exit;
+    if(nn->setup_network() == COGNA::ERROR_CODE) goto exit;
 
     /* Start of network loop */
     printf("Neural network started successfully!\n\n*********************START*********************\n\n");
@@ -111,8 +119,8 @@ int main(){
         }
 
         if(d_time >= TIME_BETWEEN_STEPS){
-            start_time = get_time_microsec(time);
-            if(DEBUG_MODE && DEB_BASE)
+            start_time = COGNA::get_time_microsec(time);
+            if(COGNA::DEBUG_MODE && COGNA::DEB_BASE)
                 nn->print_activation();
 
             nn->feed_forward();
@@ -141,7 +149,7 @@ int main(){
             }
             */
 
-            p_end_time = get_time_microsec(time);
+            p_end_time = COGNA::get_time_microsec(time);
             if(nn->get_neuron_activation(PROBE) > 0.05f)
                 printf("Neuron %d activation: %.3f\n", PROBE, nn->get_neuron_activation(PROBE));
             if((p_end_time-start_time) > 100){
@@ -149,14 +157,14 @@ int main(){
             }
         }
         // Time Calculation TODO Put into function
-        end_time = get_time_microsec(time);
+        end_time = COGNA::get_time_microsec(time);
         d_time = end_time - start_time;
     }while(key_ret != '\b');
 
     delete nn;
-    return SUCCESS_CODE;
+    return COGNA::SUCCESS_CODE;
 
     exit:
     delete nn;
-    return ERROR_CODE;
+    return COGNA::ERROR_CODE;
 }
