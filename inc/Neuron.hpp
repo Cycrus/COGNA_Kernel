@@ -10,7 +10,7 @@ class Neuron{
 	public:
         int _id;
         static int s_max_id;                   /* Last neuron id which has been created. Used for new neuron ids */
-		float _threshold;
+		float _activation_threshold;
         bool _random_activation;                /* Determines if neuron sometimes fires randomly */
         int _random_chance;                    /* Chance of random activation per tick */
         float _random_activation_value;        /* How strong is the neuron activated when randomly activated */

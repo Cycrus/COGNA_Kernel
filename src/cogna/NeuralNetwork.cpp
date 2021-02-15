@@ -511,7 +511,7 @@ void NeuralNetwork::clear_neuron_activation(Neuron *n){
         printf("<%ld> N-%d -> Activation before clearing = %.3f\n",
                _network_step_counter, n->_id, n->_activation);
 
-    if(n->_activation >= n->_threshold){
+    if(n->_activation >= n->_activation_threshold){
         n->_activation = n->_parameter->min_activation;
     }
 
@@ -908,7 +908,7 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
  */
 void NeuralNetwork::activate_next_entities(){
     for(unsigned int con=0; con<_curr_connections.size(); con++){
-        if(_curr_connections[con]->prev_neuron->_activation >= _curr_connections[con]->prev_neuron->_threshold){
+        if(_curr_connections[con]->prev_neuron->_activation >= _curr_connections[con]->prev_neuron->_activation_threshold){
             basic_learning(_curr_connections[con]);
             _curr_connections[con]->presynaptic_potential = 2.0f;
             influence_transmitter(_curr_connections[con]->prev_neuron);

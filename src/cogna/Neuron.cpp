@@ -27,7 +27,7 @@ void Neuron::set_step(long new_step){
 Neuron::Neuron(float activation_threshold){
     _id = s_max_id;
     s_max_id++;
-    this->_threshold = activation_threshold;
+    this->_activation_threshold = activation_threshold;
     this->_random_activation = false;
     _random_chance = 0;
     _random_activation_value = 0.0f;
@@ -288,7 +288,7 @@ void Neuron::del_connection(Neuron *n){
  * Return:      int   Boolean value if neuron is active
  */
 int Neuron::is_active(){
-    if(_activation >= _threshold){
+    if(_activation >= _activation_threshold){
         return true;
     }
     else{

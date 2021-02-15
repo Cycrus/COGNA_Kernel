@@ -113,7 +113,7 @@ void DataWriter::write_data(NeuralNetwork *nn){
             _output << nn->_neurons[n]->_id << ",";
             _output << nn->_neurons[n]->_activation << ",";
             _output << nn->_neurons[n]->_random_chance << ",";
-            _output << nn->_neurons[n]->_threshold << ",";
+            _output << nn->_neurons[n]->_activation_threshold << ",";
             _output << nn->_neurons[n]->_parameter->activation_backfall_curvature << ",";
             _output << nn->_neurons[n]->_parameter->activation_backfall_steepness << ",";
             _output << nn->_neurons[n]->_parameter->habituation_threshold << ",";
