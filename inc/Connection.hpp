@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "ConnectionParameterHandler.hpp"
+#include "NeuronParameterHandler.hpp"
 
 const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
 const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;
@@ -28,7 +29,7 @@ class Connection{
 
         int64_t last_activated_step;  /* Stores the global network step when this connection was last activated */
 
-        Connection();
+        Connection(NeuronParameterHandler *default_parameter);
 };
 
 #endif /* INCLUDE_CONNECTION_HPP */

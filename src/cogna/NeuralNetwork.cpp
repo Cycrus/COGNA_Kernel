@@ -32,10 +32,8 @@ long get_time_microsec(struct timeval time){
  */
 NeuralNetwork::NeuralNetwork(){
     _parameter = new NeuralNetworkParameterHandler();
-
     add_neuron(99999.0);
     _network_step_counter = 0;
-
     _transmitter_weights.push_back(1.0f);
 }
 
@@ -71,41 +69,9 @@ NeuralNetwork::~NeuralNetwork(){
  * Return:      int      error code
  */
 int NeuralNetwork::add_neuron(float threshold){
-    Neuron *temp_neuron = new Neuron(threshold);
+    Neuron *temp_neuron = new Neuron(_parameter);
 
-    temp_neuron->_parameter->activation_backfall_curvature = _parameter->activation_backfall_curvature;
-    temp_neuron->_parameter->activation_backfall_steepness = _parameter->activation_backfall_steepness;
-
-    temp_neuron->_parameter->short_habituation_curvature = _parameter->short_habituation_curvature;
-    temp_neuron->_parameter->short_habituation_steepness = _parameter->short_habituation_steepness;
-    temp_neuron->_parameter->short_sensitization_curvature = _parameter->short_sensitization_curvature;
-    temp_neuron->_parameter->short_sensitization_steepness = _parameter->short_sensitization_steepness;
-
-    temp_neuron->_parameter->short_dehabituation_curvature = _parameter->short_dehabituation_curvature;
-    temp_neuron->_parameter->short_dehabituation_steepness = _parameter->short_dehabituation_steepness;
-    temp_neuron->_parameter->short_desensitization_curvature = _parameter->short_desensitization_curvature;
-    temp_neuron->_parameter->short_desensitization_steepness = _parameter->short_desensitization_steepness;
-
-    temp_neuron->_parameter->long_habituation_steepness = _parameter->long_habituation_steepness;
-    temp_neuron->_parameter->long_habituation_curvature = _parameter->long_habituation_curvature;
-    temp_neuron->_parameter->long_sensitization_steepness = _parameter->long_sensitization_steepness;
-    temp_neuron->_parameter->long_sensitization_curvature = _parameter->long_sensitization_curvature;
-
-    temp_neuron->_parameter->long_dehabituation_steepness = _parameter->long_dehabituation_steepness;
-    temp_neuron->_parameter->long_dehabituation_curvature = _parameter->long_dehabituation_curvature;
-    temp_neuron->_parameter->long_desensitization_steepness = _parameter->long_desensitization_steepness;
-    temp_neuron->_parameter->long_desensitization_curvature = _parameter->long_desensitization_curvature;
-
-    temp_neuron->_parameter->presynaptic_potential_curvature = _parameter->presynaptic_potential_curvature;
-    temp_neuron->_parameter->presynaptic_potential_steepness = _parameter->presynaptic_potential_steepness;
-    temp_neuron->_parameter->presynaptic_backfall_curvature = _parameter->presynaptic_backfall_curvature;
-    temp_neuron->_parameter->presynaptic_backfall_steepness = _parameter->presynaptic_backfall_steepness;
-    temp_neuron->_parameter->habituation_threshold = _parameter->habituation_threshold;
-    temp_neuron->_parameter->sensitization_threshold = _parameter->sensitization_threshold;
-    temp_neuron->_parameter->long_learning_weight_reduction_curvature = _parameter->long_learning_weight_reduction_curvature;
-    temp_neuron->_parameter->long_learning_weight_reduction_steepness = _parameter->long_learning_weight_reduction_steepness;
-    temp_neuron->_parameter->long_learning_weight_backfall_curvature = _parameter->long_learning_weight_backfall_curvature;
-    temp_neuron->_parameter->long_learning_weight_backfall_steepness = _parameter->long_learning_weight_backfall_steepness;
+    temp_neuron->_parameter->activation_threshold = threshold;
 
     _neurons.push_back(temp_neuron);
     return SUCCESS_CODE;
@@ -511,7 +477,7 @@ void NeuralNetwork::clear_neuron_activation(Neuron *n){
         printf("<%ld> N-%d -> Activation before clearing = %.3f\n",
                _network_step_counter, n->_id, n->_activation);
 
-    if(n->_activation >= n->_activation_threshold){
+    if(n->_activation >= n->_parameter->activation_threshold){
         n->_activation = n->_parameter->min_activation;
     }
 
@@ -908,7 +874,7 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
  */
 void NeuralNetwork::activate_next_entities(){
     for(unsigned int con=0; con<_curr_connections.size(); con++){
-        if(_curr_connections[con]->prev_neuron->_activation >= _curr_connections[con]->prev_neuron->_activation_threshold){
+        if(_curr_connections[con]->prev_neuron->_activation >= _curr_connections[con]->prev_neuron->_parameter->activation_threshold){
             basic_learning(_curr_connections[con]);
             _curr_connections[con]->presynaptic_potential = 2.0f;
             influence_transmitter(_curr_connections[con]->prev_neuron);

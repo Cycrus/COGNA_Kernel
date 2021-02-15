@@ -1,8 +1,7 @@
 #ifndef INCLUDE_NEURALNETWORKPARAMETERHANDLER_HPP
 #define INCLUDE_NEURALNETWORKPARAMETERHANDLER_HPP
 
-#include "ParameterHandler.hpp"
-
+#include "NeuronParameterHandler.hpp"
 
 const int SUCCESS_CODE = 0;
 const int ERROR_CODE = -1;
@@ -18,10 +17,15 @@ const float MAX_LONG_LEARNING_WEIGHT = 1.0f;
 
 const long MAX_CHANCE = 100000000;
 
-class NeuralNetworkParameterHandler: public ParameterHandler{
+class NeuralNetworkParameterHandler: public NeuronParameterHandler{
     public:
+        int transmitter_amount;
+
         float max_transmitter_weight;
         float min_transmitter_weight;
+
+        float transmitter_backfall_curvature;
+        float transmitter_backfall_steepness;
 
         NeuralNetworkParameterHandler();
 };

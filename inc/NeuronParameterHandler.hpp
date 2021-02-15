@@ -1,7 +1,7 @@
 #ifndef INCLUDE_NEURONPARAMETERHANDLER_HPP
 #define INCLUDE_NEURONPARAMETERHANDLER_HPP
 
-#include "ParameterHandler.hpp"
+#include "ConnectionParameterHandler.hpp"
 
 const int EXCITATORY = 1;
 const int INHIBITORY = -1;
@@ -22,8 +22,19 @@ const int NEGATIVE_INFLUENCE = -1;
 const int NO_TRANSMITTER = -1;
 const int STD_TRANSMITTER = 0;
 
-class NeuronParameterHandler: public ParameterHandler{
+class NeuronParameterHandler: public ConnectionParameterHandler{
     public:
+        float activation_threshold;
+
+        float max_activation;
+        float min_activation;
+
+        float activation_backfall_curvature;
+        float activation_backfall_steepness;
+
+        float transmitter_change_curvature;
+        float transmitter_change_steepness;
+
         int influenced_transmitter;            /* Transmitter this neuron should influence if activated */
         int transmitter_influence_direction;   /* Defines if transmitter is influenced positively or negatively */
 

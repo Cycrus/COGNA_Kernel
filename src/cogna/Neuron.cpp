@@ -24,10 +24,63 @@ void Neuron::set_step(long new_step){
  *
  * description: initializes general neuron object.
  */
-Neuron::Neuron(float activation_threshold){
+Neuron::Neuron(NeuralNetworkParameterHandler *default_parameter){
+    _parameter = new NeuronParameterHandler();
+
+    _parameter->activation_type = default_parameter->activation_type;
+    _parameter->activation_function = default_parameter->activation_function;
+    _parameter->max_activation = default_parameter->max_activation;
+    _parameter->min_activation = default_parameter->min_activation;
+    _parameter->activation_backfall_curvature = default_parameter->activation_backfall_curvature;
+    _parameter->activation_backfall_steepness = default_parameter->activation_backfall_steepness;
+    _parameter->influenced_transmitter = default_parameter->influenced_transmitter;
+    _parameter->transmitter_influence_direction = default_parameter->transmitter_influence_direction;
+
+    _parameter->max_weight = default_parameter->max_weight;
+    _parameter->min_weight = default_parameter->min_weight;
+
+    _parameter->learning_type = default_parameter->learning_type;
+    _parameter->transmitter_type = default_parameter->transmitter_type;
+
+    _parameter->activation_backfall_curvature = default_parameter->activation_backfall_curvature;
+    _parameter->activation_backfall_steepness = default_parameter->activation_backfall_steepness;
+
+    _parameter->short_habituation_curvature = default_parameter->short_habituation_curvature;
+    _parameter->short_habituation_steepness = default_parameter->short_habituation_steepness;
+    _parameter->short_sensitization_curvature = default_parameter->short_sensitization_curvature;
+    _parameter->short_sensitization_steepness = default_parameter->short_sensitization_steepness;
+
+    _parameter->short_dehabituation_curvature = default_parameter->short_dehabituation_curvature;
+    _parameter->short_dehabituation_steepness = default_parameter->short_dehabituation_steepness;
+    _parameter->short_desensitization_curvature = default_parameter->short_desensitization_curvature;
+    _parameter->short_desensitization_steepness = default_parameter->short_desensitization_steepness;
+
+    _parameter->long_habituation_steepness = default_parameter->long_habituation_steepness;
+    _parameter->long_habituation_curvature = default_parameter->long_habituation_curvature;
+    _parameter->long_sensitization_steepness = default_parameter->long_sensitization_steepness;
+    _parameter->long_sensitization_curvature = default_parameter->long_sensitization_curvature;
+
+    _parameter->long_dehabituation_steepness = default_parameter->long_dehabituation_steepness;
+    _parameter->long_dehabituation_curvature = default_parameter->long_dehabituation_curvature;
+    _parameter->long_desensitization_steepness = default_parameter->long_desensitization_steepness;
+    _parameter->long_desensitization_curvature = default_parameter->long_desensitization_curvature;
+
+    _parameter->presynaptic_potential_curvature = default_parameter->presynaptic_potential_curvature;
+    _parameter->presynaptic_potential_steepness = default_parameter->presynaptic_potential_steepness;
+    _parameter->presynaptic_backfall_curvature = default_parameter->presynaptic_backfall_curvature;
+    _parameter->presynaptic_backfall_steepness = default_parameter->presynaptic_backfall_steepness;
+
+    _parameter->habituation_threshold = default_parameter->habituation_threshold;
+    _parameter->sensitization_threshold = default_parameter->sensitization_threshold;
+
+    _parameter->long_learning_weight_reduction_curvature = default_parameter->long_learning_weight_reduction_curvature;
+    _parameter->long_learning_weight_reduction_steepness = default_parameter->long_learning_weight_reduction_steepness;
+    _parameter->long_learning_weight_backfall_curvature = default_parameter->long_learning_weight_backfall_curvature;
+    _parameter->long_learning_weight_backfall_steepness = default_parameter->long_learning_weight_backfall_steepness;
+
     _id = s_max_id;
     s_max_id++;
-    this->_activation_threshold = activation_threshold;
+    //this->_activation_threshold = activation_threshold;
     this->_random_activation = false;
     _random_chance = 0;
     _random_activation_value = 0.0f;
@@ -35,40 +88,6 @@ Neuron::Neuron(float activation_threshold){
     _was_activated = true;
     _last_activated_step = 0;
     _last_fired_step = 0;
-
-    _parameter = new NeuronParameterHandler();
-
-    _parameter->activation_backfall_curvature = 0.0f;
-    _parameter->activation_backfall_steepness = 0.0f;
-
-    _parameter->short_habituation_curvature = 0.0f;
-    _parameter->short_habituation_steepness = 0.0f;
-    _parameter->short_sensitization_curvature = 0.0f;
-    _parameter->short_sensitization_steepness = 0.0f;
-    _parameter->short_dehabituation_curvature = 0.0f;
-    _parameter->short_dehabituation_steepness = 0.0f;
-    _parameter->short_desensitization_curvature = 0.0f;
-    _parameter->short_desensitization_steepness = 0.0f;
-
-    _parameter->long_habituation_curvature = 0.0f;
-    _parameter->long_habituation_steepness = 0.0f;
-    _parameter->long_sensitization_curvature = 0.0f;
-    _parameter->long_sensitization_steepness = 0.0f;
-    _parameter->long_dehabituation_curvature = 0.0f;
-    _parameter->long_dehabituation_steepness = 0.0f;
-    _parameter->long_desensitization_curvature = 0.0f;
-    _parameter->long_desensitization_steepness = 0.0f;
-
-    _parameter->presynaptic_potential_curvature = 0.0f;
-    _parameter->presynaptic_potential_steepness = 0.0f;
-    _parameter->presynaptic_backfall_curvature = 0.0f;
-    _parameter->presynaptic_backfall_steepness = 0.0f;
-
-    _parameter->habituation_threshold = 0.0f;
-    _parameter->sensitization_threshold = 0.0f;
-
-    _parameter->influenced_transmitter = NO_TRANSMITTER;
-    _parameter->transmitter_influence_direction = POSITIVE_INFLUENCE;
 }
 
 /************************************************************
@@ -157,7 +176,7 @@ Connection* Neuron::add_neuron_connection(Neuron *n,
                this->_id, n->_id);
     }
     else{
-        Connection *temp_con = new Connection();
+        Connection *temp_con = new Connection(_parameter);
         temp_con->next_neuron = n;
         temp_con->next_connection = NULL;
         temp_con->prev_neuron = this;
@@ -209,7 +228,7 @@ Connection* Neuron::add_synaptic_connection(Connection *con,
         }
     }
     else{
-        Connection *temp_con = new Connection();
+        Connection *temp_con = new Connection(_parameter);
         temp_con->next_connection = con;
         temp_con->next_neuron = NULL;
         temp_con->prev_neuron = this;
@@ -288,7 +307,7 @@ void Neuron::del_connection(Neuron *n){
  * Return:      int   Boolean value if neuron is active
  */
 int Neuron::is_active(){
-    if(_activation >= _activation_threshold){
+    if(_activation >= _parameter->activation_threshold){
         return true;
     }
     else{

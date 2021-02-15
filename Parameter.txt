@@ -1,0 +1,45 @@
+Network Parameter:
+    Transmitter count
+    Transmitter backfall curvature/steepness
+    Max transmitter weight
+    Min transmitter weight
+
+Neuron Parameter:
+    Activation threshold
+    Transmitter change curvature/steepness
+    Max activation
+    Min activation
+    Activation backfall curvature/steepness
+    Random chance
+    Random activation value
+    Influenced transmitter
+    Transmitter influence direction
+
+Connection Parameter:
+    Max weight
+    Min weight
+    Long learning weight reduction curvature/steepness
+    Long learning weight backfall curvature/steepness
+    Habituation threshold
+    Short habituation curvature/steepness
+    Short dehabituation curvature/steepness
+    Long habituation curvature/steepness
+    Long dehabituation curvature/steepness
+    Sensitization threshold
+    Short sensitization curvature/steepness
+    Short desensitization curvature/steepness
+    Long sensitization curvature/steepness
+    Long desensitization curvature/steepness
+    Presynaptic potential curvature/steepness
+    Presynaptic backfall curvature/steepness
+    Activation type
+    Activation function
+    Learning type
+    Transmitter type
+
+Dynamic Connection Parameter:
+    Base weight
+    Short weight
+    Long weight
+    Long learning weight
+    Presynaptic potential

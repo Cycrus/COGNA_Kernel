@@ -4,13 +4,14 @@
 #include <vector>
 #include <cstdint>
 #include "NeuronParameterHandler.hpp"
+#include "NeuralNetworkParameterHandler.hpp"
 #include "Connection.hpp"
 
 class Neuron{
 	public:
         int _id;
         static int s_max_id;                   /* Last neuron id which has been created. Used for new neuron ids */
-		float _activation_threshold;
+		//float _activation_threshold;
         bool _random_activation;                /* Determines if neuron sometimes fires randomly */
         int _random_chance;                    /* Chance of random activation per tick */
         float _random_activation_value;        /* How strong is the neuron activated when randomly activated */
@@ -28,7 +29,7 @@ class Neuron{
         long get_step();
         void set_step(long new_step);
 
-        Neuron(float threshold);
+        Neuron(NeuralNetworkParameterHandler *default_parameter);
         ~Neuron();
 
         int check_neuron_connection(Neuron *n);
