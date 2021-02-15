@@ -500,9 +500,9 @@ void NeuralNetwork::long_learning_weight_backfall(Connection *con){
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
     con->long_learning_weight =  MathUtils::calculate_static_gradient(con->long_learning_weight,
-                                                          con->prev_neuron->_parameter->long_learning_weight_backfall_steepness,
+                                                          con->_parameter->long_learning_weight_backfall_steepness,
                                                           this->_network_step_counter - con->last_activated_step,
-                                                          con->prev_neuron->_parameter->long_learning_weight_backfall_curvature,
+                                                          con->_parameter->long_learning_weight_backfall_curvature,
                                                           ADD,
                                                           MAX_LONG_LEARNING_WEIGHT,
                                                           MIN_LONG_LEARNING_WEIGHT);
@@ -526,9 +526,9 @@ void NeuralNetwork::long_learning_weight_reduction(Connection *con){
                _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
     con->long_learning_weight =  MathUtils::calculate_static_gradient(con->long_learning_weight,
-                                                          con->prev_neuron->_parameter->long_learning_weight_reduction_steepness,
+                                                          con->_parameter->long_learning_weight_reduction_steepness,
                                                           1,
-                                                          con->prev_neuron->_parameter->long_learning_weight_reduction_curvature,
+                                                          con->_parameter->long_learning_weight_reduction_curvature,
                                                           SUBTRACT,
                                                           MAX_LONG_LEARNING_WEIGHT,
                                                           MIN_LONG_LEARNING_WEIGHT);
@@ -554,22 +554,22 @@ void NeuralNetwork::dehabituate(Connection *con){
 
     if(con->long_weight < con->base_weight){
        con->long_weight =  MathUtils::calculate_static_gradient(con->long_weight,
-                                                    con->prev_neuron->_parameter->long_dehabituation_steepness,
+                                                    con->_parameter->long_dehabituation_steepness,
                                                     this->_network_step_counter - con->last_activated_step,
-                                                    con->prev_neuron->_parameter->long_dehabituation_curvature,
+                                                    con->_parameter->long_dehabituation_curvature,
                                                     ADD,
                                                     con->base_weight,
-                                                    con->prev_neuron->_parameter->min_weight);
+                                                    con->_parameter->min_weight);
     }
 
     if(con->short_weight < con->long_weight){
        con->short_weight =  MathUtils::calculate_static_gradient(con->short_weight,
-                                                     con->prev_neuron->_parameter->short_dehabituation_steepness,
+                                                     con->_parameter->short_dehabituation_steepness,
                                                      this->_network_step_counter - con->last_activated_step,
-                                                     con->prev_neuron->_parameter->short_dehabituation_curvature,
+                                                     con->_parameter->short_dehabituation_curvature,
                                                      ADD,
                                                      con->long_weight,
-                                                     con->prev_neuron->_parameter->min_weight);
+                                                     con->_parameter->min_weight);
     }
 
     if(DEBUG_MODE && DEB_HABITUATION){
@@ -598,21 +598,21 @@ void NeuralNetwork::desensitize(Connection *con){
 
     if(con->long_weight > con->base_weight){
         con->long_weight =  MathUtils::calculate_static_gradient(con->long_weight,
-                                                     con->prev_neuron->_parameter->long_desensitization_steepness,
+                                                     con->_parameter->long_desensitization_steepness,
                                                      this->_network_step_counter - con->last_activated_step,
-                                                     con->prev_neuron->_parameter->long_desensitization_curvature,
+                                                     con->_parameter->long_desensitization_curvature,
                                                      SUBTRACT,
-                                                     con->prev_neuron->_parameter->max_weight,
+                                                     con->_parameter->max_weight,
                                                      con->base_weight);
     }
 
     if(con->short_weight > con->long_weight){
         con->short_weight =  MathUtils::calculate_static_gradient(con->short_weight,
-                                                      con->prev_neuron->_parameter->short_desensitization_steepness,
+                                                      con->_parameter->short_desensitization_steepness,
                                                       this->_network_step_counter - con->last_activated_step,
-                                                      con->prev_neuron->_parameter->short_desensitization_curvature,
+                                                      con->_parameter->short_desensitization_curvature,
                                                       SUBTRACT,
-                                                      con->prev_neuron->_parameter->max_weight,
+                                                      con->_parameter->max_weight,
                                                       con->long_weight);
     }
 
@@ -642,7 +642,7 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
         conditioning_type = conditioning_con->_parameter->activation_type;
     }
 
-    if((conditioning_type == NONDIRECTIONAL && activation < con->prev_neuron->_parameter->habituation_threshold) ||
+    if((conditioning_type == NONDIRECTIONAL && activation < con->_parameter->habituation_threshold) ||
        (conditioning_type == INHIBITORY)){
         if(DEBUG_MODE && DEB_HABITUATION){
             printf("<%ld> N-%d -> Short before habituation = %.5f\n",
@@ -655,23 +655,23 @@ void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
         if(conditioning_type == NONDIRECTIONAL)
-            activation = con->prev_neuron->_parameter->habituation_threshold - activation;
+            activation = con->_parameter->habituation_threshold - activation;
 
         con->short_weight =  MathUtils::calculate_dynamic_gradient(con->short_weight,
-                                               con->prev_neuron->_parameter->short_habituation_steepness,
+                                               con->_parameter->short_habituation_steepness,
                                                activation,
-                                               con->prev_neuron->_parameter->short_habituation_curvature,
+                                               con->_parameter->short_habituation_curvature,
                                                SUBTRACT,
-                                               con->prev_neuron->_parameter->max_weight,
-                                               con->prev_neuron->_parameter->min_weight);
+                                               con->_parameter->max_weight,
+                                               con->_parameter->min_weight);
 
         con->long_weight =  MathUtils::calculate_dynamic_gradient(con->long_weight,
-                                              con->prev_neuron->_parameter->long_habituation_steepness,
+                                              con->_parameter->long_habituation_steepness,
                                               activation * con->long_learning_weight,
-                                              con->prev_neuron->_parameter->long_habituation_curvature,
+                                              con->_parameter->long_habituation_curvature,
                                               SUBTRACT,
-                                              con->prev_neuron->_parameter->max_weight,
-                                              con->prev_neuron->_parameter->min_weight);
+                                              con->_parameter->max_weight,
+                                              con->_parameter->min_weight);
 
         long_learning_weight_reduction(con);
 
@@ -705,7 +705,7 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
         conditioning_type = conditioning_con->_parameter->activation_type;
     }
 
-    if((conditioning_type == NONDIRECTIONAL && activation > con->prev_neuron->_parameter->sensitization_threshold) ||
+    if((conditioning_type == NONDIRECTIONAL && activation > con->_parameter->sensitization_threshold) ||
        (conditioning_type == EXCITATORY)){
         if(DEBUG_MODE && DEB_SENSITIZATION){
             printf("<%ld> N-%d -> Short before sensitization = %.5f\n",
@@ -718,23 +718,23 @@ void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
                    _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
 
         if(conditioning_type == NONDIRECTIONAL)
-            activation = activation - con->prev_neuron->_parameter->sensitization_threshold;
+            activation = activation - con->_parameter->sensitization_threshold;
 
         con->short_weight =  MathUtils::calculate_dynamic_gradient(con->short_weight,
-                                               con->prev_neuron->_parameter->short_sensitization_steepness,
+                                               con->_parameter->short_sensitization_steepness,
                                                activation,
-                                               con->prev_neuron->_parameter->short_sensitization_curvature,
+                                               con->_parameter->short_sensitization_curvature,
                                                ADD,
-                                               con->prev_neuron->_parameter->max_weight,
-                                               con->prev_neuron->_parameter->min_weight);
+                                               con->_parameter->max_weight,
+                                               con->_parameter->min_weight);
 
         con->long_weight =  MathUtils::calculate_dynamic_gradient(con->long_weight,
-                                              con->prev_neuron->_parameter->long_sensitization_steepness,
+                                              con->_parameter->long_sensitization_steepness,
                                               activation * con->long_learning_weight,
-                                              con->prev_neuron->_parameter->long_sensitization_curvature,
+                                              con->_parameter->long_sensitization_curvature,
                                               ADD,
-                                              con->prev_neuron->_parameter->max_weight,
-                                              con->prev_neuron->_parameter->min_weight);
+                                              con->_parameter->max_weight,
+                                              con->_parameter->min_weight);
 
         long_learning_weight_reduction(con);
 
@@ -854,11 +854,11 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
                _network_step_counter, con->prev_neuron->_id, con->presynaptic_potential);
 
     con->presynaptic_potential =  MathUtils::calculate_static_gradient(con->presynaptic_potential,
-                                                     con->prev_neuron->_parameter->presynaptic_backfall_steepness,
+                                                     con->_parameter->presynaptic_backfall_steepness,
                                                      _network_step_counter - con->last_presynaptic_activated_step,
-                                                     con->prev_neuron->_parameter->presynaptic_backfall_curvature,
+                                                     con->_parameter->presynaptic_backfall_curvature,
                                                      SUBTRACT,
-                                                     con->prev_neuron->_parameter->max_weight,
+                                                     con->_parameter->max_weight,
                                                      DEFAULT_PRESYNAPTIC_POTENTIAL);
 
     if(DEBUG_MODE && DEB_PRESYNAPTIC)
