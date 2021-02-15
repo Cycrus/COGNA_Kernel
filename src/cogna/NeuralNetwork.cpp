@@ -4,17 +4,7 @@
 #include <ctime>
 #include <cmath>
 #include <sys/time.h>
-
-bool DATA_ANALYTIC_OUTPUT = true;
-
-bool DEBUG_MODE = false;
-bool DEB_BASE = true;
-bool DEB_HABITUATION = false;
-bool DEB_SENSITIZATION = false;
-bool DEB_TRANSMITTER = false;
-bool DEB_NEURON_BACKFALL = false;
-bool DEB_LONG_LEARNING_WEIGHT = false;
-bool DEB_PRESYNAPTIC = false;
+#include "Constants.hpp"
 
 long get_time_microsec(struct timeval time){
     gettimeofday(&time, NULL);
@@ -119,6 +109,8 @@ int NeuralNetwork::set_neural_transmitter_influence(int neuron_id,
  * Parameters:  int     number      number of transmitter types in network
  */
  int NeuralNetwork::define_transmitters(int number){
+    _parameter->transmitter_amount = number;
+
     if(number > 0){
         for(int i=1; i<number; i++){
             _transmitter_weights.push_back(1.0f);
@@ -487,296 +479,6 @@ void NeuralNetwork::clear_neuron_activation(Neuron *n){
 }
 
 /***********************************************************
- * NeuralNetwork::long_learning_weight_backfall(Connection *con)
- *
- * Description: Calculates the backfall of the "long learning weight" variable
- *              used to control the learning rate of long term weights
- *
- * Params:      Connection*     con     target neuron of learner weight backfall
- */
-void NeuralNetwork::long_learning_weight_backfall(Connection *con){
-    if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%ld> C-%d -> Long learning weight before backfall = %.3f\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-
-    con->long_learning_weight =  MathUtils::calculate_static_gradient(con->long_learning_weight,
-                                                          con->_parameter->long_learning_weight_backfall_steepness,
-                                                          this->_network_step_counter - con->last_activated_step,
-                                                          con->_parameter->long_learning_weight_backfall_curvature,
-                                                          ADD,
-                                                          MAX_LONG_LEARNING_WEIGHT,
-                                                          MIN_LONG_LEARNING_WEIGHT);
-
-    if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%ld> C-%d -> Long learning weight after backfall = %.3f\n\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-}
-
-/***********************************************************
- * NeuralNetwork::long_learning_weight_reduction(Connection *con)
- *
- * Description: Calculates the reduction of the "long learning weight" variable
- *              used to control the learning rate of long term weights
- *
- * Params:      Connection*     con     target neuron of learner weight reduction
- */
-void NeuralNetwork::long_learning_weight_reduction(Connection *con){
-    if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%ld> C-%d -> Long learning weight before reduction = %.3f\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-
-    con->long_learning_weight =  MathUtils::calculate_static_gradient(con->long_learning_weight,
-                                                          con->_parameter->long_learning_weight_reduction_steepness,
-                                                          1,
-                                                          con->_parameter->long_learning_weight_reduction_curvature,
-                                                          SUBTRACT,
-                                                          MAX_LONG_LEARNING_WEIGHT,
-                                                          MIN_LONG_LEARNING_WEIGHT);
-    if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-        printf("<%ld> C-%d -> Long learning weight after reduction = %.3f\n\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-}
-
-/***********************************************************
- * NeuralNetwork::dehabituate(Connection *con)
- *
- * Description: Calculates the backfall of learning functions
- *
- * Params:     Connection *     con     the connection which should be transformed
- */
-void NeuralNetwork::dehabituate(Connection *con){
-    if(DEBUG_MODE && DEB_HABITUATION){
-        printf("<%ld> N-%d -> Short before dehabituation = %.5f\n",
-               _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%ld> N-%d -> Long before dehabituation = %.5f\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_weight);
-    }
-
-    if(con->long_weight < con->base_weight){
-       con->long_weight =  MathUtils::calculate_static_gradient(con->long_weight,
-                                                    con->_parameter->long_dehabituation_steepness,
-                                                    this->_network_step_counter - con->last_activated_step,
-                                                    con->_parameter->long_dehabituation_curvature,
-                                                    ADD,
-                                                    con->base_weight,
-                                                    con->_parameter->min_weight);
-    }
-
-    if(con->short_weight < con->long_weight){
-       con->short_weight =  MathUtils::calculate_static_gradient(con->short_weight,
-                                                     con->_parameter->short_dehabituation_steepness,
-                                                     this->_network_step_counter - con->last_activated_step,
-                                                     con->_parameter->short_dehabituation_curvature,
-                                                     ADD,
-                                                     con->long_weight,
-                                                     con->_parameter->min_weight);
-    }
-
-    if(DEBUG_MODE && DEB_HABITUATION){
-        printf("<%ld> N-%d -> Short after dehabituation = %.5f\n",
-               _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%ld> N-%d -> Long after dehabituation = %.5f\n\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_weight);
-    }
-}
-
-
-/***********************************************************
- * NeuralNetwork::desensitize(Connection *con)
- *
- * Description: Calculates the backfall of learning functions
- *
- * Params:     Connection *     con     the connection which should be transformed
- */
-void NeuralNetwork::desensitize(Connection *con){
-    if(DEBUG_MODE && DEB_SENSITIZATION){
-        printf("<%ld> N-%d -> Short before desensitization = %.5f\n",
-               _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%ld> N-%d -> Long before desensitization = %.5f\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_weight);
-    }
-
-    if(con->long_weight > con->base_weight){
-        con->long_weight =  MathUtils::calculate_static_gradient(con->long_weight,
-                                                     con->_parameter->long_desensitization_steepness,
-                                                     this->_network_step_counter - con->last_activated_step,
-                                                     con->_parameter->long_desensitization_curvature,
-                                                     SUBTRACT,
-                                                     con->_parameter->max_weight,
-                                                     con->base_weight);
-    }
-
-    if(con->short_weight > con->long_weight){
-        con->short_weight =  MathUtils::calculate_static_gradient(con->short_weight,
-                                                      con->_parameter->short_desensitization_steepness,
-                                                      this->_network_step_counter - con->last_activated_step,
-                                                      con->_parameter->short_desensitization_curvature,
-                                                      SUBTRACT,
-                                                      con->_parameter->max_weight,
-                                                      con->long_weight);
-    }
-
-    if(DEBUG_MODE && DEB_SENSITIZATION){
-        printf("<%ld> N-%d -> Short after desensitization = %.5f\n",
-               _network_step_counter, con->prev_neuron->_id, con->short_weight);
-        printf("<%ld> N-%d -> Long after desensitization = %.5f\n\n",
-               _network_step_counter, con->prev_neuron->_id, con->long_weight);
-    }
-}
-
-/***********************************************************
- * NeuralNetwork::habituate(Connection *con)
- *
- * Description: Calculates the basic learning process habituation for a connection
- *
- * Params:     Connection *     con                 the connection which should be transformed
- *             Connection *     coniditioning_con   the connection that points to con (if it exists)
- */
-void NeuralNetwork::habituate(Connection *con, Connection *conditioning_con){
-    // TODO first part not good
-    float activation = con->prev_neuron->_activation;
-    float conditioning_type = NONDIRECTIONAL;
-
-    if(conditioning_con){
-        activation = conditioning_con->prev_neuron->_activation;
-        conditioning_type = conditioning_con->_parameter->activation_type;
-    }
-
-    if((conditioning_type == NONDIRECTIONAL && activation < con->_parameter->habituation_threshold) ||
-       (conditioning_type == INHIBITORY)){
-        if(DEBUG_MODE && DEB_HABITUATION){
-            printf("<%ld> N-%d -> Short before habituation = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->short_weight);
-            printf("<%ld> N-%d -> Long before habituation = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_weight);
-        }
-        if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%ld> N-%d -> Learner before habituation = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-
-        if(conditioning_type == NONDIRECTIONAL)
-            activation = con->_parameter->habituation_threshold - activation;
-
-        con->short_weight =  MathUtils::calculate_dynamic_gradient(con->short_weight,
-                                               con->_parameter->short_habituation_steepness,
-                                               activation,
-                                               con->_parameter->short_habituation_curvature,
-                                               SUBTRACT,
-                                               con->_parameter->max_weight,
-                                               con->_parameter->min_weight);
-
-        con->long_weight =  MathUtils::calculate_dynamic_gradient(con->long_weight,
-                                              con->_parameter->long_habituation_steepness,
-                                              activation * con->long_learning_weight,
-                                              con->_parameter->long_habituation_curvature,
-                                              SUBTRACT,
-                                              con->_parameter->max_weight,
-                                              con->_parameter->min_weight);
-
-        long_learning_weight_reduction(con);
-
-        if(DEBUG_MODE && DEB_HABITUATION){
-            printf("<%ld> N-%d -> Short after habituation = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->short_weight);
-            printf("<%ld> N-%d -> Long after habituation = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_weight);
-        }
-        if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%ld> N-%d -> Learner after habituation = %.5f\n\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-    }
-}
-
-/***********************************************************
- * NeuralNetwork::sensitize()
- *
- * Description: Calculates the basic learning process sensitization for a connection
- *
- * Params:     Connection *     con                 the connection which should be transformed
- *             Connection *     coniditioning_con   the connection that points to con (if it exists)
- */
-void NeuralNetwork::sensitize(Connection *con, Connection *conditioning_con){
-    // TODO first part not good
-    float activation = con->prev_neuron->_activation;
-    float conditioning_type = NONDIRECTIONAL;
-
-    if(conditioning_con){
-        activation = conditioning_con->prev_neuron->_activation;
-        conditioning_type = conditioning_con->_parameter->activation_type;
-    }
-
-    if((conditioning_type == NONDIRECTIONAL && activation > con->_parameter->sensitization_threshold) ||
-       (conditioning_type == EXCITATORY)){
-        if(DEBUG_MODE && DEB_SENSITIZATION){
-            printf("<%ld> N-%d -> Short before sensitization = %.5f\n",
-                   _network_step_counter,  con->prev_neuron->_id, con->short_weight);
-            printf("<%ld> N-%d -> Long before sensitization = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_weight);
-        }
-        if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%ld> N-%d -> Learner before sensitization = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-
-        if(conditioning_type == NONDIRECTIONAL)
-            activation = activation - con->_parameter->sensitization_threshold;
-
-        con->short_weight =  MathUtils::calculate_dynamic_gradient(con->short_weight,
-                                               con->_parameter->short_sensitization_steepness,
-                                               activation,
-                                               con->_parameter->short_sensitization_curvature,
-                                               ADD,
-                                               con->_parameter->max_weight,
-                                               con->_parameter->min_weight);
-
-        con->long_weight =  MathUtils::calculate_dynamic_gradient(con->long_weight,
-                                              con->_parameter->long_sensitization_steepness,
-                                              activation * con->long_learning_weight,
-                                              con->_parameter->long_sensitization_curvature,
-                                              ADD,
-                                              con->_parameter->max_weight,
-                                              con->_parameter->min_weight);
-
-        long_learning_weight_reduction(con);
-
-        if(DEBUG_MODE && DEB_SENSITIZATION){
-            printf("<%ld> N-%d -> Short after sensitization = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->short_weight);
-            printf("<%ld> N-%d -> Long after sensitization = %.5f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_weight);
-        }
-        if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
-            printf("<%ld> N-%d -> Learner after sensitization = %.5f\n\n",
-                   _network_step_counter, con->prev_neuron->_id, con->long_learning_weight);
-    }
-}
-
-/***********************************************************
- * NeuralNetwork::basic_learning()
- *
- * Description: Calculates the basic learning process sensitization for a connection
- *
- * Params:     Connection *     con                 the connection which should be transformed
- *             Connection *     coniditioning_con   the connection that points to con (if it exists)
- */
-void NeuralNetwork::basic_learning(Connection *con, Connection *conditioning_con){
-    long_learning_weight_backfall(con);
-
-    if(con->_parameter->learning_type == LEARNING_HABITUATION ||
-       con->_parameter->learning_type == LEARNING_HABISENS){
-        dehabituate(con);
-        habituate(con, conditioning_con);
-    }
-
-    if(con->_parameter->learning_type == LEARNING_SENSITIZATION ||
-       con->_parameter->learning_type == LEARNING_HABISENS){
-         desensitize(con);
-         sensitize(con, conditioning_con);
-    }
-
-    con->last_activated_step = _network_step_counter;
-}
-
-/***********************************************************
  * NeuralNetwork::activate_next_entities()
  *
  * Description: Allows predefined neurons to change the weight of a single Neurotransmitter
@@ -875,7 +577,7 @@ void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
 void NeuralNetwork::activate_next_entities(){
     for(unsigned int con=0; con<_curr_connections.size(); con++){
         if(_curr_connections[con]->prev_neuron->_activation >= _curr_connections[con]->prev_neuron->_parameter->activation_threshold){
-            basic_learning(_curr_connections[con]);
+            _curr_connections[con]->basic_learning(_network_step_counter);
             _curr_connections[con]->presynaptic_potential = 2.0f;
             influence_transmitter(_curr_connections[con]->prev_neuron);
 
@@ -937,7 +639,7 @@ void NeuralNetwork::activate_next_connection(Connection *con){
 
     presynaptic_potential_backfall(con->next_connection);
     if(con->next_connection->presynaptic_potential > DEFAULT_PRESYNAPTIC_POTENTIAL){
-        basic_learning(con->next_connection, con);
+        con->next_connection->basic_learning(_network_step_counter, con);
         con->next_connection->presynaptic_potential = DEFAULT_PRESYNAPTIC_POTENTIAL;
     }
 

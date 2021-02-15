@@ -1,8 +1,7 @@
 #ifndef INCLUDE_MATHUTILS_HPP
 #define INCLUDE_MATHUTILS
 
-const int ADD = 1;
-const int SUBTRACT = -1;
+#include "Constants.hpp"
 
 class MathUtils{
     public:

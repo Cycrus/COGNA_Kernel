@@ -4,9 +4,7 @@
 #include <cstdint>
 #include "ConnectionParameterHandler.hpp"
 #include "NeuronParameterHandler.hpp"
-
-const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
-const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;
+#include "Constants.hpp"
 
 class Neuron;
 
@@ -30,6 +28,17 @@ class Connection{
         int64_t last_activated_step;  /* Stores the global network step when this connection was last activated */
 
         Connection(NeuronParameterHandler *default_parameter);
+
+        void long_learning_weight_backfall(int64_t network_step);
+        void long_learning_weight_reduction(int64_t network_step);
+
+        void habituate(int64_t network_step, Connection *conditioning_con=NULL);
+        void sensitize(int64_t network_step, Connection *conditioning_con=NULL);
+
+        void dehabituate(int64_t network_step);
+        void desensitize(int64_t network_step);
+
+        void basic_learning(int64_t network_step, Connection *conditioning_con=NULL);
 };
 
 #endif /* INCLUDE_CONNECTION_HPP */

@@ -5,17 +5,6 @@
 #include "NeuralNetworkParameterHandler.hpp"
 #include "MathUtils.hpp"
 
-extern bool DATA_ANALYTIC_OUTPUT;
-
-extern bool DEBUG_MODE;
-extern bool DEB_BASE;
-extern bool DEB_HABITUATION;
-extern bool DEB_SENSITIZATION;
-extern bool DEB_TRANSMITTER;
-extern bool DEB_NEURON_BACKFALL;
-extern bool DEB_LONG_LEARNING_WEIGHT;
-extern bool DEB_PRESYNAPTIC;
-
 class NeuralNetwork{
     private:
         void change_transmitter_weight(int transmitter_id,
@@ -23,15 +12,6 @@ class NeuralNetwork{
 
         void calculate_neuron_backfall(Neuron *n);
         void clear_neuron_activation(Neuron *n);
-
-        void long_learning_weight_backfall(Connection *con);
-        void long_learning_weight_reduction(Connection *con);
-
-        void dehabituate(Connection *con);
-        void desensitize(Connection *con);
-        void habituate(Connection *con, Connection *conditioning_con=NULL);
-        void sensitize(Connection *con, Connection *conditioning_con=NULL);
-        void basic_learning(Connection *con, Connection *conditioning_con=NULL);
 
         void influence_transmitter(Neuron *n);
         void transmitter_backfall();
