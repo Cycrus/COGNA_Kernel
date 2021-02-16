@@ -1,9 +1,22 @@
+/**
+ * @file Connection.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of Connection class and memberfunctions.
+ *
+ * @date 2021-02-16
+ *
+ */
+
 #include "Connection.hpp"
 
 #include <cstdio>
+
 #include "Neuron.hpp"
 #include "MathUtils.hpp"
 #include "Constants.hpp"
+#include "NeuronParameterHandler.hpp"
+#include "ConnectionParameterHandler.hpp"
 
 using namespace COGNA;
 
@@ -67,14 +80,15 @@ namespace COGNA{
         last_activated_step = 0;
     }
 
-    /***********************************************************
-     * Connection::long_learning_weight_backfall(Connection *con)
-     *
-     * Description: Calculates the backfall of the "long learning weight" variable
-     *              used to control the learning rate of long term weights
-     *
-     * Params:      Connection*     con     target neuron of learner weight backfall
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    Connection::~Connection(){
+        delete _parameter;
+        _parameter = NULL;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::long_learning_weight_backfall(int64_t network_step){
         if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
             printf("<%ld> C-%d -> Long learning weight before backfall = %.3f\n",
@@ -93,14 +107,8 @@ namespace COGNA{
                    network_step, prev_neuron->_id, long_learning_weight);
     }
 
-    /***********************************************************
-     * Connection::long_learning_weight_reduction(Connection *con)
-     *
-     * Description: Calculates the reduction of the "long learning weight" variable
-     *              used to control the learning rate of long term weights
-     *
-     * Params:      Connection*     con     target neuron of learner weight reduction
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::long_learning_weight_reduction(int64_t network_step){
         if(DEBUG_MODE && DEB_LONG_LEARNING_WEIGHT)
             printf("<%ld> C-%d -> Long learning weight before reduction = %.3f\n",
@@ -118,14 +126,8 @@ namespace COGNA{
                    network_step, prev_neuron->_id, long_learning_weight);
     }
 
-    /***********************************************************
-     * Connection::habituate(Connection *con)
-     *
-     * Description: Calculates the basic learning process habituation for a connection
-     *
-     * Params:     Connection *     con                 the connection which should be transformed
-     *             Connection *     coniditioning_con   the connection that points to con (if it exists)
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::habituate(int64_t network_step, Connection *conditioning_con){
         // TODO first part not good
         float activation = prev_neuron->_activation;
@@ -181,14 +183,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * Connection::sensitize()
-     *
-     * Description: Calculates the basic learning process sensitization for a connection
-     *
-     * Params:     Connection *     con                 the connection which should be transformed
-     *             Connection *     coniditioning_con   the connection that points to con (if it exists)
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::sensitize(int64_t network_step, Connection *conditioning_con){
         // TODO first part not good
         float activation = prev_neuron->_activation;
@@ -244,13 +240,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * Connection::dehabituate(Connection *con)
-     *
-     * Description: Calculates the backfall of learning functions
-     *
-     * Params:     Connection *     con     the connection which should be transformed
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::dehabituate(int64_t network_step){
         if(DEBUG_MODE && DEB_HABITUATION){
             printf("<%ld> N-%d -> Short before dehabituation = %.5f\n",
@@ -287,14 +278,8 @@ namespace COGNA{
         }
     }
 
-
-    /***********************************************************
-     * Connection::desensitize(Connection *con)
-     *
-     * Description: Calculates the backfall of learning functions
-     *
-     * Params:     Connection *     con     the connection which should be transformed
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::desensitize(int64_t network_step){
         if(DEBUG_MODE && DEB_SENSITIZATION){
             printf("<%ld> N-%d -> Short before desensitization = %.5f\n",
@@ -331,14 +316,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * Connection::basic_learning()
-     *
-     * Description: Calculates the basic learning process sensitization for a connection
-     *
-     * Params:     Connection *     con                 the connection which should be transformed
-     *             Connection *     coniditioning_con   the connection that points to con (if it exists)
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Connection::basic_learning(int64_t network_step, Connection *conditioning_con){
         long_learning_weight_backfall(network_step);
 

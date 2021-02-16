@@ -50,6 +50,7 @@ namespace COGNA{
         _transmitter_weights.clear();
 
         delete _parameter;
+        _parameter = NULL;
     }
 
     /***********************************************************

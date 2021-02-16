@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
+#include "NeuralNetwork.hpp"
+
 using namespace COGNA;
 
 namespace COGNA{
@@ -23,12 +25,16 @@ namespace COGNA{
         filename = temp_filename;
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     DataWriter::~DataWriter(){
         if(_output.is_open()){
             _output.close();
         }
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     int DataWriter::open_file(){
         _output.open(filename, std::ios::in | std::ios::app);
 
@@ -42,6 +48,8 @@ namespace COGNA{
         return ERROR_CODE;
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void DataWriter::write_head(){
         //_output << "time" << ",";
         _output << "step" << ",";
@@ -104,6 +112,8 @@ namespace COGNA{
         _output << "NET_transmitter_backfall_steepness" << "\n";
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void DataWriter::write_data(NeuralNetwork *nn){
         int connection_param_gap_size = 32;
         int network_param_gap_size = connection_param_gap_size + 11;

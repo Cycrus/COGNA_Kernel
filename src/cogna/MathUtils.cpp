@@ -1,3 +1,13 @@
+/**
+ * @file MathUtils.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of math utility functions
+ *
+ * @date 2021-02-16
+ *
+ */
+
 #include "MathUtils.hpp"
 
 #include <cmath>

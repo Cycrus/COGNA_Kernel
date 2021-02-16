@@ -108,6 +108,7 @@ namespace COGNA{
         _connections.clear();
 
         delete _parameter;
+        _parameter = NULL;
     }
 
     /************************************************************
