@@ -1,3 +1,13 @@
+/**
+ * @file NeuralNetwork.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of NeuralNetwork class
+ *
+ * @date 2021-02-18
+ *
+ */
+
 #include "NeuralNetwork.hpp"
 
 #include <cstdio>

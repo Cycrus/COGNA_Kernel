@@ -1,3 +1,13 @@
+/**
+ * @file NeuronParameterHandler.hpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief A class containing all behavior parameters of neurons.
+ *
+ * @date 2021-02-18
+ *
+ */
+
 #ifndef INCLUDE_NEURONPARAMETERHANDLER_HPP
 #define INCLUDE_NEURONPARAMETERHANDLER_HPP
 
@@ -5,6 +15,13 @@
 #include "Constants.hpp"
 
 namespace COGNA{
+    /**
+     * @brief A class containing all behavior parameters used by the Neuron class.
+     *
+     * Also contains all behavior parameters of Connection class, to be used
+     * as default parameters for those connections with their origin in this
+     * neuron.
+     */
     class NeuronParameterHandler: public COGNA::ConnectionParameterHandler{
         public:
             float activation_threshold;
@@ -21,6 +38,11 @@ namespace COGNA{
             int influenced_transmitter;            /* Transmitter this neuron should influence if activated */
             int transmitter_influence_direction;   /* Defines if transmitter is influenced positively or negatively */
 
+            /**
+             * @brief Initializes neuron parameters by copying the relevant
+             *        parameter values from the neural network.
+             *
+             */
             NeuronParameterHandler();
     };
 }

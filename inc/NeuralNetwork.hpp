@@ -1,3 +1,16 @@
+/**
+ * @file NeuralNetwork.hpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief A class containing every neuron and the functions for enabling communication between those.
+ *
+ * The NeuralNetwork class contains various functions to build the network by adding
+ * neurons, connections, neurotransmitters, etc.
+ *
+ * @date 2021-02-16
+ *
+ */
+
 #ifndef INCLUDE_NETWORK_HPP
 #define INCLUDE_NETWORK_HPP
 
@@ -5,8 +18,21 @@
 #include "NeuralNetworkParameterHandler.hpp"
 
 namespace COGNA{
+    /**
+     * @brief The class containing the whole network.
+     *
+     * Contains every neuron in the network and enables communication between those.
+     *
+     */
     class NeuralNetwork{
         private:
+            /**
+             * @brief Sets a new weight value to a certain neurotransmitter.
+             *
+             * @param transmitter_id    ID of the neurotransmitter to change
+             * @param new_weight        The new weight to set the neurotransmitter
+             *
+             */
             void change_transmitter_weight(int transmitter_id,
                                            float new_weight);
 
@@ -14,6 +40,14 @@ namespace COGNA{
             void clear_neuron_activation(COGNA::Neuron *n);
 
             void influence_transmitter(COGNA::Neuron *n);
+
+            /**
+             * @brief Calculates the slow backfall of neurotransmitter weight to 1 after it has been changed.
+             *
+             * Transmitter backfall uses the network parameters transmitter_backfall_curvature
+             * und transmitter_backfall_steepness for backfall calculation.
+             *
+             */
             void transmitter_backfall();
 
             void presynaptic_potential_backfall(COGNA::Connection *con);

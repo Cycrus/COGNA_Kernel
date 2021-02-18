@@ -1,3 +1,13 @@
+/**
+ * @file NeuronParameterHandler.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of NeuronParameterHandler class
+ *
+ * @date 2021-02-18
+ *
+ */
+
 #include "NeuronParameterHandler.hpp"
 
 using namespace COGNA;

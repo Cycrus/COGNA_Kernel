@@ -1,3 +1,13 @@
+/**
+ * @file Neuron.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of Neuron class
+ *
+ * @date 2021-02-18
+ *
+ */
+
 #include "Neuron.hpp"
 
 #include <cstdio>
