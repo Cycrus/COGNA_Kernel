@@ -60,7 +60,7 @@ namespace COGNA{
              * Inherits the connection-specific parameters of the neuron, where
              * the connection is stored in.
              *
-             * @param default_parameter    Parameters from source neuron
+             * @param default_parameter    Parameters from source neuron.
              *
              */
             Connection(COGNA::NeuronParameterHandler *default_parameter);
@@ -74,7 +74,7 @@ namespace COGNA{
              * longterm learning is calculated. The longer the connection did not
              * fire, the more long_learning_weight falls back to 1.0.
              *
-             * @param network_step    The current step/tick count of the network
+             * @param network_step    The current step/tick count of the network.
              *
              */
             void long_learning_weight_backfall(int64_t network_step);
@@ -86,7 +86,7 @@ namespace COGNA{
              * is calculated. The more often the connection is activated, the
              * more reduction happens.
              *
-             * @param network_step    The current step/tick count of the network
+             * @param network_step    The current step/tick count of the network.
              *
              */
             void long_learning_weight_reduction(int64_t network_step);
@@ -97,8 +97,8 @@ namespace COGNA{
              * Can happen directly by weak activation of this connection, or by
              * a presynaptic connection, which acts as a conditioning input.
              *
-             * @param network_step        The current step/tick count of the network
-             * @param conditioning_con    Another connection which is connected to this one
+             * @param network_step        The current step/tick count of the network.
+             * @param conditioning_con    Another connection which is connected to this one.
              *
              */
             void habituate(int64_t network_step, Connection *conditioning_con=NULL);
@@ -109,8 +109,8 @@ namespace COGNA{
              * Can happen directly by strong activation of this connection, or by
              * a presynaptic connection, which acts as a conditioning input.
              *
-             * @param network_step        The current step/tick count of the network
-             * @param conditioning_con    Another connection which is connected to this one
+             * @param network_step        The current step/tick count of the network.
+             * @param conditioning_con    Another connection which is connected to this one.
              *
              */
             void sensitize(int64_t network_step, Connection *conditioning_con=NULL);
@@ -121,7 +121,7 @@ namespace COGNA{
              * The more steps/ticks pass since last activation, the more the
              * connection dehabituates.
              *
-             * @param network_step    The current step/tick count of the network
+             * @param network_step    The current step/tick count of the network.
              *
              */
             void dehabituate(int64_t network_step);
@@ -132,22 +132,43 @@ namespace COGNA{
              * The more steps/ticks pass since last activation, the more the
              * connection desensitizes.
              *
-             * @param network_step    The current step/tick count of the network
+             * @param network_step    The current step/tick count of the network.
              *
              */
             void desensitize(int64_t network_step);
 
             /**
-             * @brief A wrapper including all different learning functions
+             * @brief A wrapper including all learning functions of a connection
              *
              * Also contains logic controlling if specific learning behaviors
              * should activate at every given moment.
              *
-             * @param network_step        The current step/tick count of the network
-             * @param conditioning_con    Another connection which is connected to this one
+             * @param network_step        The current step/tick count of the network.
+             * @param conditioning_con    Another connection which is connected to this one.
              *
              */
             void basic_learning(int64_t network_step, Connection *conditioning_con=NULL);
+
+            /**
+             * @brief Calculates backfall of presynaptic potential, if the connection is not presynaptically activated.
+             *
+             * The more steps/ticks pass since last activation, the more the
+             * presynaptic potential falls back to a neutral state.
+             *
+             * @param network_step        The current step/tick count of the network.
+             *
+             */
+            void presynaptic_potential_backfall(int64_t network_step);
+
+            /**
+             * @brief Decides which activation function should be used for activation.
+             *
+             * @param input    The input value for the function.
+             *
+             * @return         The result of the function.
+             *
+             */
+            float choose_activation_function(float input);
     };
 }
 

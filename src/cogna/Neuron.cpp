@@ -20,23 +20,8 @@ using namespace COGNA;
 namespace COGNA{
     int COGNA::Neuron::s_max_id = 0;
 
-    /************************************************************
-     * Getter & Setter
-     *
-     * Description: Functions for getting and setting various values in the neuron.
-     */
-    long COGNA::Neuron::get_step(){
-        return _last_activated_step;
-    }
-    void Neuron::set_step(long new_step){
-        _last_activated_step = new_step;
-    }
-
-    /************************************************************
-     * Neuron::Neuron()
-     *
-     * description: initializes general neuron object.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Neuron::Neuron(NeuralNetworkParameterHandler *default_parameter){
         _parameter = new NeuronParameterHandler();
 
@@ -93,7 +78,6 @@ namespace COGNA{
 
         _id = s_max_id;
         s_max_id++;
-        //this->_activation_threshold = activation_threshold;
         this->_random_activation = false;
         _random_chance = 0;
         _random_activation_value = 0.0f;
@@ -103,12 +87,8 @@ namespace COGNA{
         _last_fired_step = 0;
     }
 
-    /************************************************************
-     * Neuron::~Neuron()
-     *
-     * Description: Deletes all reserved memory for this single
-     *              neuron.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Neuron::~Neuron(){
         _previous.clear();
         for(unsigned int i=0; i<_connections.size(); i++){
@@ -121,17 +101,14 @@ namespace COGNA{
         _parameter = NULL;
     }
 
-    /************************************************************
-     * Neuron::check_next_connection(Neuron *n)
-     *
-     * Description: Checks if this neuron is connected with
-     *              another neuron.
-     *
-     * Parameters: Neuron*  n       The neuron to be checked
-     *
-     * Return:     int      0       if false, 1 if true
-     */
-    int Neuron::check_neuron_connection(Neuron *n){
+
+    void Neuron::set_step(long new_step){
+        _last_activated_step = new_step;
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    bool Neuron::check_neuron_connection(Neuron *n){
         for(unsigned int i=0; i<_connections.size(); i++){
             if(n->_id == _connections[i]->next_neuron->_id){
                 return true;
@@ -140,17 +117,9 @@ namespace COGNA{
         return false;
     }
 
-    /************************************************************
-     * Neuron::check_synaptic_connection(Neuron *n)
-     *
-     * Description: Checks if this neuron is connected with
-     *              a certain connection.
-     *
-     * Parameters: Connection*  con       The connection to be checked
-     *
-     * Return:     int          0         if false, 1 if true
-     */
-    int Neuron::check_synaptic_connection(Connection *con){
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    bool Neuron::check_synaptic_connection(Connection *con){
         for(unsigned int i=0; i<_connections.size(); i++){
             if(_connections[i]->next_connection){
                 if(con->prev_neuron == _connections[i]->next_connection->prev_neuron){
@@ -166,19 +135,8 @@ namespace COGNA{
         return false;
     }
 
-    /************************************************************
-     * Neuron::add_neuron_connection()
-     *
-     * Description: Adds a new feed forward connection to another
-     *              neuron in the network.
-     *
-     * Parameters:  Neuron* n   The neuron to which the connection shall happen
-     *              float   w   The weight of the connection
-     *              int     a   The type of connection (EXCITATORY/INHIBITORY)
-     *              int     f   Activation function used to activate next neuron
-     *
-     * Return:      Connection* pointer to the new connection
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Connection* Neuron::add_neuron_connection(Neuron *n,
                                               float weight,
                                               int con_type,
@@ -212,19 +170,8 @@ namespace COGNA{
         return NULL;
     }
 
-    /************************************************************
-     * Neuron::add_synaptic_connection()
-     *
-     * Description: Adds a new feed forward connection to another
-     *              connection in the network.
-     *
-     * Parameters:  Connection* con The connection to which the connection shall happen
-     *              float       w   The weight of the connection
-     *              int         a   The type of connection (EXCITATORY/INHIBITORY)
-     *              int         f   Activation function used to activate next neuron
-     *
-     * Return:      Connection* pointer to the new connection
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Connection* Neuron::add_synaptic_connection(Connection *con,
                                                 float weight,
                                                 int con_type,
@@ -259,37 +206,8 @@ namespace COGNA{
         return NULL;
     }
 
-    /************************************************************
-     * Neuron::get_weight(Neuron *n)
-     *
-     * Description: Returns the weight to the given neuron.
-     *
-     * Params:  Neuron* n   defines what connection is meant
-     *          int type    defines what type of connection is meant
-     */
-    float Neuron::get_weight(Neuron *n, int type){
-        for(unsigned int i=0; i<_connections.size(); i++){
-            if(_connections[i]->next_neuron->_id == n->_id){
-                if(type == 0)
-                    return _connections[i]->base_weight;
-                else if(type == 1)
-                    return _connections[i]->long_weight;
-                else if(type == 2)
-                    return _connections[i]->short_weight;
-            }
-        }
-        printf("[ERROR] There is no connection between N-%d and N-%d.",
-               this->_id, n->_id);
-        return 0;
-    }
-
-    /************************************************************
-     * Neuron::del_connection(Neuron *n)
-     *
-     * Description: Deletes a feed forward connection to another
-     *              neuron in the network.
-     *
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Neuron::del_connection(Neuron *n){
         if(check_neuron_connection(n) == false){
             printf("[WARNING] N-%d is not connected with N-%d.\n", this->_id, n->_id);
@@ -312,15 +230,9 @@ namespace COGNA{
         }
     }
 
-    /************************************************************
-     * Neuron::is_active()
-     *
-     * Description: Returns true if activation is greater than
-     *              neural threshold.
-     *
-     * Return:      int   Boolean value if neuron is active
-     */
-    int Neuron::is_active(){
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    bool Neuron::is_active(){
         if(_activation >= _parameter->activation_threshold){
             return true;
         }
@@ -329,39 +241,47 @@ namespace COGNA{
         }
     }
 
-    /************************************************************
-     * Neuron::set_random_activation()
-     *
-     * Description: Sets random activation potential to neuron
-     *
-     * Param:       int     chance              Sets chance for random activation per tick (0-10000)
-     *              float   activation_value    Sets the random activation strenght
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void Neuron::set_random_activation(int chance, float activation_value){
         _random_activation = true;
         _random_chance = chance;
         _random_activation_value = activation_value;
     }
 
-    float choose_activation_function(Connection *con, float input){
-        switch(con->_parameter->activation_function){
-          case FUNCTION_SIGMOID:
-              return MathUtils::sigmoid(input);
-              break;
+    void Neuron::calculate_neuron_backfall(int64_t network_step){
+        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
+            printf("<%ld> N-%d -> Activation before backfall = %.3f\n",
+                   network_step, _id, _activation);
 
-          case FUNCTION_LINEAR:
-              return MathUtils::linear(input);
-              break;
-
-          case FUNCTION_RELU:
-              return MathUtils::relu(input);
-              break;
-
-          default:
-              printf("[WARNING] Invalid activation function for connection of N-%d\n",
-                     con->prev_neuron->_id);
-              return 0.0f;
-              break;
+        if(_was_activated == false){
+            _activation =  MathUtils::calculate_static_gradient(_activation,
+                                                       _parameter->activation_backfall_steepness,
+                                                       network_step - _last_activated_step,
+                                                       _parameter->activation_backfall_curvature,
+                                                       SUBTRACT,
+                                                       _parameter->max_activation,
+                                                       _parameter->min_activation);
         }
+
+        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
+            printf("<%ld> N-%d -> Activation after backfall = %.3f\n\n",
+                   network_step, _id, _activation);
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    void Neuron::clear_neuron_activation(int64_t network_step){
+        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
+            printf("<%ld> N-%d -> Activation before clearing = %.3f\n",
+                   network_step, _id, _activation);
+
+        if(_activation >= _parameter->activation_threshold){
+            _activation = _parameter->min_activation;
+        }
+
+        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
+            printf("<%ld> N-%d -> Activation after clearing = %.3f\n\n",
+                   network_step, _id, _activation);
     }
 }

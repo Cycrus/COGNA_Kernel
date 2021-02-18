@@ -335,4 +335,48 @@ namespace COGNA{
 
         last_activated_step = network_step;
     }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    void Connection::presynaptic_potential_backfall(int64_t network_step){
+        if(DEBUG_MODE && DEB_PRESYNAPTIC)
+            printf("<%ld> C-%d -> Presynaptic potential before backfall = %.3f\n",
+                   network_step, prev_neuron->_id, presynaptic_potential);
+
+        presynaptic_potential =  MathUtils::calculate_static_gradient(presynaptic_potential,
+                                                         _parameter->presynaptic_backfall_steepness,
+                                                         network_step - last_presynaptic_activated_step,
+                                                         _parameter->presynaptic_backfall_curvature,
+                                                         SUBTRACT,
+                                                         _parameter->max_weight,
+                                                         DEFAULT_PRESYNAPTIC_POTENTIAL);
+
+        if(DEBUG_MODE && DEB_PRESYNAPTIC)
+            printf("<%ld> C-%d -> Presynaptic potential after backfall = %.3f\n\n",
+                   network_step, prev_neuron->_id, presynaptic_potential);
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    float Connection::choose_activation_function(float input){
+        switch(_parameter->activation_function){
+          case FUNCTION_SIGMOID:
+              return MathUtils::sigmoid(input);
+              break;
+
+          case FUNCTION_LINEAR:
+              return MathUtils::linear(input);
+              break;
+
+          case FUNCTION_RELU:
+              return MathUtils::relu(input);
+              break;
+
+          default:
+              printf("[WARNING] Invalid activation function for connection of N-%d\n",
+                     prev_neuron->_id);
+              return 0.0f;
+              break;
+        }
+    }
 }
