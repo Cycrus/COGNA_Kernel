@@ -35,8 +35,8 @@ namespace COGNA{
             float transmitter_change_curvature;
             float transmitter_change_steepness;
 
-            int influenced_transmitter;            /* Transmitter this neuron should influence if activated */
-            int transmitter_influence_direction;   /* Defines if transmitter is influenced positively or negatively */
+            int influenced_transmitter;            /**< Transmitter this neuron should influence if activated */
+            int transmitter_influence_direction;   /**< Defines if transmitter is influenced positively or negatively */
 
             /**
              * @brief Initializes neuron parameters by copying the relevant

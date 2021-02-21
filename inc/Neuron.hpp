@@ -26,15 +26,15 @@ namespace COGNA{
 	class Neuron{
 		public:
 	        int _id;
-	        static int s_max_id;                   /* Last neuron id which has been created. Used for new neuron ids */
-	        bool _random_activation;                /* Determines if neuron sometimes fires randomly */
-	        int _random_chance;                    /* Chance of random activation per tick */
-	        float _random_activation_value;        /* How strong is the neuron activated when randomly activated */
-	        float _activation;                     /* Current activation potential level */
-	        float _temp_activation;                /* A temporary variable to calculate activation of next neurons */
-	        int64_t _last_activated_step;             /* Network step count, when neuron was last activated */
-	        bool _was_activated;                    /* Indicates if neuron was activated last time or this time */
-	        int _last_fired_step;                  /* Step when neuron last fired */
+	        static int s_max_id;
+	        bool _random_activation;               /**< Determines if neuron sometimes fires randomly */
+	        int _random_chance;                    /**< Chance of random activation per tick */
+	        float _random_activation_value;        /**< How strong is the neuron activated when randomly activated */
+	        float _activation;                     /**< Current activation potential level */
+	        float _temp_activation;                /**< A temporary variable to calculate activation of next neurons */
+	        int64_t _last_activated_step;          /**< Network step count, when neuron was last activated */
+	        bool _was_activated;                   /**< Indicates if neuron was activated last time or this time */
+	        int _last_fired_step;                  /**< Step when neuron last fired */
 
 	        COGNA::NeuronParameterHandler *_parameter;
 
