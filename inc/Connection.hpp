@@ -44,15 +44,15 @@ namespace COGNA{
              */
             COGNA::ConnectionParameterHandler *_parameter;
 
-            float base_weight;        /* Base weight where learning processes always slowly return to */
-            float short_weight;       /* Weight of this connection changing for short term learning. This one is directly used */
-            float long_weight;        /* Weight of this connection changing for long term learning */
-            float long_learning_weight; /* Factor that controls the learning processes of long_weight */
+            float base_weight;        /**< Base weight where learning processes always slowly return to */
+            float short_weight;       /**< Weight of this connection changing for short term learning. This one is directly used */
+            float long_weight;        /**< Weight of this connection changing for long term learning */
+            float long_learning_weight; /**< Factor that controls the learning processes of long_weight */
 
-            float presynaptic_potential;   /* Defines the additional activation by presynaptic connection */
-            int64_t last_presynaptic_activated_step;  /* Stores the global network step when this connection was last presynaptic activated */
+            float presynaptic_potential;   /**< Defines the additional activation by presynaptic connection */
+            int64_t last_presynaptic_activated_step;  /**< Stores the global network step when this connection was last presynaptic activated */
 
-            int64_t last_activated_step;  /* Stores the global network step when this connection was last activated */
+            int64_t last_activated_step;  /**< Stores the global network step when this connection was last activated */
 
             /**
              * @brief Initializes all behavior relevant parameter of Connection.
@@ -72,7 +72,7 @@ namespace COGNA{
              *
              * Based on a static gradient, the backfall of the reducing factor for
              * longterm learning is calculated. The longer the connection did not
-             * fire, the more long_learning_weight falls back to 1.0.
+             * fire, the more @c #long_learning_weight falls back to 1.0.
              *
              * @param network_step    The current step/tick count of the network.
              *

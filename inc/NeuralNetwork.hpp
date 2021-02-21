@@ -39,8 +39,8 @@ namespace COGNA{
             /**
              * @brief Calculates the change of a certain neurotransmitter if a certain neuron fires.
              *
-             * Uses a dynamic gradient and the behavior parameters transmitter_change_curvature
-             * and transmitter_change_steepness for calculations.
+             * Uses a dynamic gradient and the behavior parameters @c #transmitter_change_curvature
+             * and @c #transmitter_change_steepness for calculations.
              *
              * @param n    The neuron which should influence the neurotransmitter
              *
