@@ -1,3 +1,13 @@
+/**
+ * @file ConnectionParameterHandler.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of ConnectionParameterHandler constructor.
+ *
+ * @date 2021-02-16
+ *
+ */
+
 #include "ConnectionParameterHandler.hpp"
 
 using namespace COGNA;

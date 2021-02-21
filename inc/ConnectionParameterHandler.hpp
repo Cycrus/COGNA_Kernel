@@ -1,7 +1,21 @@
+/**
+ * @file ConnectionParameterHandler.hpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief A class containing all behavior parameter for Connection.
+ *
+ * @date 2021-02-16
+ *
+ */
+
 #ifndef INCLUDE_CONNECTIONPARAMETERHANDLER_HPP
 #define INCLUDE_CONNECTIONPARAMETERHANDLER_HPP
 
 namespace COGNA{
+    /**
+     * @brief A class containing all parameters for a connection
+     *
+     */
     class ConnectionParameterHandler{
         public:
             int activation_type;      /* Defines if connection is inhibitory or excitatory */
@@ -43,6 +57,9 @@ namespace COGNA{
             float habituation_threshold;
             float sensitization_threshold;
 
+            /**
+             * @brief First definition of parameters
+             */
             ConnectionParameterHandler();
     };
 }

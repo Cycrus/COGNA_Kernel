@@ -1,3 +1,13 @@
+/**
+ * @file Constants.hpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Various global constants currently used in COGNA.
+ *
+ * @date 2021-02-16
+ *
+ */
+
 #ifndef INCLUDE_CONSTANTS_HPP
 #define INCLUDE_CONSTANTS_HPP
 

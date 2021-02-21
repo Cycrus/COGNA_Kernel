@@ -1,3 +1,13 @@
+/**
+ * @file NeuralNetworkParameterHandler.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of NeuralNetworkParameterHandler class
+ *
+ * @date 2021-02-18
+ *
+ */
+
 #include "NeuralNetworkParameterHandler.hpp"
 
 #include "Constants.hpp"

@@ -1,3 +1,13 @@
+/**
+ * @file NeuralNetwork.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of NeuralNetwork class
+ *
+ * @date 2021-02-18
+ *
+ */
+
 #include "NeuralNetwork.hpp"
 
 #include <cstdio>
@@ -15,15 +25,8 @@ namespace COGNA{
         return ((time.tv_sec * MICROSECOND_FACTOR + time.tv_usec));
     }
 
-    /***********************************************************
-     * NeuralNetwork::NeuralNetwork
-     *
-     * Description: Initializes Neural Network by adding the NULL-neuron, which is
-     *              needed for tangling neurons (without progressive connections) to
-     *              get recognized by the algorithm. The setup_network() function
-     *              connects all tangling neurons with this NULL-neuron. It is
-     *              forbidden to access it.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     NeuralNetwork::NeuralNetwork(){
         _parameter = new NeuralNetworkParameterHandler();
         add_neuron(99999.0);
@@ -31,11 +34,8 @@ namespace COGNA{
         _transmitter_weights.push_back(1.0f);
     }
 
-    /***********************************************************
-     * NeuralNetwork::~NeuralNetwork()
-     *
-     * Description: Destructor. Clears every single vector
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     NeuralNetwork::~NeuralNetwork(){
         _curr_connections.clear();
         _next_connections.clear();
@@ -50,18 +50,11 @@ namespace COGNA{
         _transmitter_weights.clear();
 
         delete _parameter;
+        _parameter = NULL;
     }
 
-    /***********************************************************
-     * NeuralNetwork::add_neuron()
-     *
-     * Description: Adds a new neuron to the network
-     *
-     * Parameters:  float    threshold          threshold when neuron can fire
-     *              int      random_activation  determines if neuron sometimes fires randomly
-     *
-     * Return:      int      error code
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     int NeuralNetwork::add_neuron(float threshold){
         Neuron *temp_neuron = new Neuron(_parameter);
 
@@ -71,17 +64,8 @@ namespace COGNA{
         return SUCCESS_CODE;
     }
 
-    /***********************************************************
-     * NeuralNetwork::set_neural_transmitter_influence()
-     *
-     * Description: Assigns a neurotransmitter to a neuron for it to influence at every activation.
-     *
-     * Parameters:  int     neuron_id           id of the neuron to assign function to
-     *              int     transmitter_id      id of the neurotransmitter to influence
-     *              int     influence_direction indicates if neuron should increase or decrease the transmitter
-     *
-     * Return:      int     error code
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     int NeuralNetwork::set_neural_transmitter_influence(int neuron_id,
                                                         int transmitter_id,
                                                         int influence_direction){
@@ -105,13 +89,8 @@ namespace COGNA{
         return ERROR_CODE;
     }
 
-    /***********************************************************
-     * NeuralNetwork::define_transmitters(int number)
-     *
-     * Description: Defines how many transmitter types exist
-     *
-     * Parameters:  int     number      number of transmitter types in network
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
      int NeuralNetwork::define_transmitters(int number){
         _parameter->transmitter_amount = number;
 
@@ -127,14 +106,8 @@ namespace COGNA{
         return ERROR_CODE;
     }
 
-     /***********************************************************
-      * NeuralNetwork::set_random_neuron_activation()
-      *
-      * Description: Defines how many transmitter types exist
-      *
-      * Parameters:  int     neuron_id      neuron ID where random activation shall be enabled
-      *              int     chance         chance of activating each tick (0-100000)
-      */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
      int NeuralNetwork::set_random_neuron_activation(int neuron_id,
                                                      int chance,
                                                      float activation_value){
@@ -153,18 +126,8 @@ namespace COGNA{
          return ERROR_CODE;
      }
 
-    /***********************************************************
-     * NeuralNetwork::add_neuron_connection()
-     *
-     * Description: Adds a new connection between two neurons
-     *
-     * Parameters:  int         source_neuron        id of presynaptic neuron
-     *              int         target_neuron  id of postsynaptic neuron
-     *              float       weight              weight of the connection
-     *              int         connection_type     if connection is inhibitory or excitatory
-     *              int         learning_type       defines how the neuron learns
-     *              int         transmitter_type    defines what neurotransmitter the connection uses
-     */
+     //----------------------------------------------------------------------------------------------------------------------
+     //
     Connection* NeuralNetwork::add_neuron_connection(int source_neuron, int target_neuron, float weight,
                                                      int connection_type,
                                                      int function_type,
@@ -204,21 +167,8 @@ namespace COGNA{
         return NULL;
     }
 
-    /***********************************************************
-     * NeuralNetwork::add_synaptic_connection()
-     *
-     * Description: Adds a new connection between two neurons given two neurons
-     *
-     * Parameters:  int         source_neuron            id of presynaptic neuron
-     *              int         connected_neuron_1      id of source neuron of target connection
-     *              into        connected_neuron_2      id of target neuron of target connection
-     *              float       weight                  weight of the connection
-     *              int         connection_type         if connection is inhibitory or excitatory
-     *              int         learning_type           defines how the neuron learns
-     *              int         transmitter_type        defines what neurotransmitter the connection uses
-     *
-     * Return:      Connection* pointer to new connection
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
                                                        int connected_neuron_1,
                                                        int connected_neuron_2,
@@ -271,20 +221,8 @@ namespace COGNA{
         return NULL;
     }
 
-    /***********************************************************
-     * NeuralNetwork::add_synaptic_connection()
-     *
-     * Description: Adds a new connection between two neurons given a connection
-     *
-     * Parameters:  int             source_neuron            id of presynaptic neuron
-     *              Connection*     con                     connection to connect with
-     *              float           weight                  weight of the connection
-     *              int             connection_type         if connection is inhibitory or excitatory
-     *              int             learning_type           defines how the neuron learns
-     *              int             transmitter_type        defines what neurotransmitter the connection uses
-     *
-     * Return:      Connection*     pointer to new connection
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
                                                        Connection *con,
                                                        float weight,
@@ -321,13 +259,8 @@ namespace COGNA{
         return NULL;
     }
 
-    /***********************************************************
-     * NeuralNetwork::init_activation(int target_neuron)
-     *
-     * Description: Initializes the first neuron in the network which should fire, can be called multiple times
-     *
-     * Parameters: int  target_neuron   neuron which shall be activated
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     int NeuralNetwork::init_activation(int target_neuron, float activation){
         if(target_neuron >= MIN_NEURON_ID && target_neuron < Neuron::s_max_id){
             _neurons[target_neuron]->_activation = activation;
@@ -343,13 +276,8 @@ namespace COGNA{
         return SUCCESS_CODE;
     }
 
-    /***********************************************************
-     * NeuralNetwork::setup_network()
-     *
-     * Description: Looks for tangling neurons without connection and adds a connection to the NULL-neuron.
-     *              This is necessary, because the tangling neurons cannot be activated otherwise, but they
-     *              could be important for motorneurons or yet unknown functions.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     int NeuralNetwork::setup_network(){
         for(unsigned int n=MIN_NEURON_ID; n<_neurons.size(); n++){
             if(_neurons[n]->_connections.size() == 0){
@@ -365,13 +293,14 @@ namespace COGNA{
         return SUCCESS_CODE;
     }
 
-    /***********************************************************
-     * Getter and Setter
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     int64_t NeuralNetwork::get_step_count(){
         return _network_step_counter;
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     Neuron* NeuralNetwork::get_neuron(int neuron_id){
         if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
             return _neurons[neuron_id];
@@ -382,7 +311,9 @@ namespace COGNA{
         return NULL;
     }
 
-    int NeuralNetwork::neuron_is_active(int neuron_id){
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    bool NeuralNetwork::neuron_is_active(int neuron_id){
         if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
             return _neurons[neuron_id]->is_active();
         }
@@ -391,6 +322,9 @@ namespace COGNA{
         }
         return 0.0f;
     }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     float NeuralNetwork::get_neuron_activation(int neuron_id){
         if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
             return _neurons[neuron_id]->_activation;
@@ -401,6 +335,8 @@ namespace COGNA{
         return 0.0f;
     }
 
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     float NeuralNetwork::get_transmitter_weight(int transmitter_id){
         if(transmitter_id >= 0 && (unsigned)transmitter_id < _transmitter_weights.size()){
             return _transmitter_weights[transmitter_id];
@@ -411,17 +347,8 @@ namespace COGNA{
         return 0.0f;
     }
 
-    /**********************************************************************************************************************/
-    /* ACTIVATION LOOP BEGIN */
-
-    /***********************************************************
-     * NeuralNetwork::change_transmitter_weight()
-     *
-     * Description: Changes the weight of a single transmitter type
-     *
-     * Parameters:  int     transmitter_id      id of the current transmitter type
-     *              float   new_weight          new weight the transmitter is receiving
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::change_transmitter_weight(int transmitter_id, float new_weight){
         if(DEBUG_MODE == true && DEB_TRANSMITTER == true)
             printf("<%ld> T-%d -> Weight before change = %.3f\n",
@@ -434,62 +361,8 @@ namespace COGNA{
                    _network_step_counter, transmitter_id, _transmitter_weights[transmitter_id]);
     }
 
-    /***********************************************************
-     * NeuralNetwork::calculate_neuron_backfall(unsigned int con)
-     *
-     * Description: Calculates the backfall in activation of neurons that were activated but did not fire.
-     *
-     * Parameters:  NeuronNeuron*       n      the neuron which should be checked for backfall
-     */
-    void NeuralNetwork::calculate_neuron_backfall(Neuron *n){
-        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-            printf("<%ld> N-%d -> Activation before backfall = %.3f\n",
-                   _network_step_counter, n->_id, n->_activation);
-
-        if(n->_was_activated == false){
-            n->_activation =  MathUtils::calculate_static_gradient(n->_activation,
-                                                       n->_parameter->activation_backfall_steepness,
-                                                       this->_network_step_counter-n->get_step(),
-                                                       n->_parameter->activation_backfall_curvature,
-                                                       SUBTRACT,
-                                                       n->_parameter->max_activation,
-                                                       n->_parameter->min_activation);
-        }
-
-        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-            printf("<%ld> N-%d -> Activation after backfall = %.3f\n\n",
-                   _network_step_counter, n->_id, n->_activation);
-    }
-
-    /***********************************************************
-     * NeuralNetwork::clear_neuron_activation(Neuron *n)
-     *
-     * Description: empties neural activation in one neuron, if activation reached threshold
-     *
-     * Params:      Neuron *    n       the neuron which should be cleared
-     */
-    void NeuralNetwork::clear_neuron_activation(Neuron *n){
-        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-            printf("<%ld> N-%d -> Activation before clearing = %.3f\n",
-                   _network_step_counter, n->_id, n->_activation);
-
-        if(n->_activation >= n->_parameter->activation_threshold){
-            n->_activation = n->_parameter->min_activation;
-        }
-
-        if(DEBUG_MODE && DEB_NEURON_BACKFALL)
-            printf("<%ld> N-%d -> Activation after clearing = %.3f\n\n",
-                   _network_step_counter, n->_id, n->_activation);
-    }
-
-    /***********************************************************
-     * NeuralNetwork::activate_next_entities()
-     *
-     * Description: Allows predefined neurons to change the weight of a single Neurotransmitter
-     *              during runtime.
-     *
-     * Params:      Neuron*   n   The current neuron
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::influence_transmitter(Neuron *n){
         if(n->_last_fired_step < _network_step_counter){
             if(n->_parameter->influenced_transmitter > NO_TRANSMITTER){
@@ -518,11 +391,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::transmitter_backfall()
-     *
-     * Description: Calculates the backfall of neurotransmitters if changed.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::transmitter_backfall(){
         for(unsigned i=0; i<_transmitter_weights.size(); i++){
             if(_transmitter_weights[i] > 1.0f){
@@ -547,37 +417,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::presynaptic_potential_backfall()
-     *
-     * Description: Calculates the backfall of presynaptic activation towards 1.0.
-     *
-     * Param:       Connection*     con     Connection to calculate backfall for.
-     */
-    void NeuralNetwork::presynaptic_potential_backfall(Connection *con){
-        if(DEBUG_MODE && DEB_PRESYNAPTIC)
-            printf("<%ld> C-%d -> Presynaptic potential before backfall = %.3f\n",
-                   _network_step_counter, con->prev_neuron->_id, con->presynaptic_potential);
-
-        con->presynaptic_potential =  MathUtils::calculate_static_gradient(con->presynaptic_potential,
-                                                         con->_parameter->presynaptic_backfall_steepness,
-                                                         _network_step_counter - con->last_presynaptic_activated_step,
-                                                         con->_parameter->presynaptic_backfall_curvature,
-                                                         SUBTRACT,
-                                                         con->_parameter->max_weight,
-                                                         DEFAULT_PRESYNAPTIC_POTENTIAL);
-
-        if(DEBUG_MODE && DEB_PRESYNAPTIC)
-            printf("<%ld> C-%d -> Presynaptic potential after backfall = %.3f\n\n",
-                   _network_step_counter, con->prev_neuron->_id, con->presynaptic_potential);
-    }
-
-    /***********************************************************
-     * NeuralNetwork::activate_next_entities()
-     *
-     * Description: A wrapper containing the basic logic for activation of next neurons and
-     *              connections
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::activate_next_entities(){
         for(unsigned int con=0; con<_curr_connections.size(); con++){
             if(_curr_connections[con]->prev_neuron->_activation >= _curr_connections[con]->prev_neuron->_parameter->activation_threshold){
@@ -598,20 +439,16 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::activate_next_neuron()
-     *
-     * Description: Calculates the activation function for each saved current connection &
-     *              passes it to the next neurons.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::activate_next_neuron(Connection *con){
-        calculate_neuron_backfall(con->next_neuron);
+        con->next_neuron->calculate_neuron_backfall(_network_step_counter);
 
         con->prev_neuron->_temp_activation = con->short_weight *
                                              con->prev_neuron->_activation;
 
         con->next_neuron->_activation +=
-              choose_activation_function(con, con->prev_neuron->_temp_activation) *
+              con->choose_activation_function(con->prev_neuron->_temp_activation) *
               con->_parameter->activation_type *
               _transmitter_weights[con->_parameter->transmitter_type];
 
@@ -628,11 +465,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::activate_next_connection()
-     *
-     * Description: Calculates the learning effects due to presynaptic connections.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::activate_next_connection(Connection *con){
         if(DEBUG_MODE && DEB_PRESYNAPTIC){
             printf("<%ld> C-%d -> Presynaptic potential before influence : %.3f\n",
@@ -641,7 +475,7 @@ namespace COGNA{
                    con->next_connection->presynaptic_potential);
         }
 
-        presynaptic_potential_backfall(con->next_connection);
+        con->presynaptic_potential_backfall(_network_step_counter);
         if(con->next_connection->presynaptic_potential > DEFAULT_PRESYNAPTIC_POTENTIAL){
             con->next_connection->basic_learning(_network_step_counter, con);
             con->next_connection->presynaptic_potential = DEFAULT_PRESYNAPTIC_POTENTIAL;
@@ -657,12 +491,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::save_next_neurons()
-     *
-     * Description: Stores all next neurons in a list.
-     *              At the beginning, it also resets every neuron.
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::save_next_neurons(){
         // TODO Too chaotic
         if(DEBUG_MODE && _curr_connections.size() > 0)
@@ -670,7 +500,7 @@ namespace COGNA{
 
         for(unsigned int con=0; con<_curr_connections.size(); con++){
             /* Only do if neuron fired in this round */
-            clear_neuron_activation(_curr_connections[con]->prev_neuron);
+            _curr_connections[con]->prev_neuron->clear_neuron_activation(_network_step_counter);
 
             if(_curr_connections[con]->next_neuron){
                 _curr_connections[con]->next_neuron->_was_activated = false;
@@ -696,12 +526,8 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::activate_random_neurons()
-     *
-     * Description: Walks through random_neuron vector and checks if random
-     *              activations happen
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::activate_random_neurons(){
         for(unsigned int n = 0; n < _random_neurons.size(); n++){
             if(random()%MAX_CHANCE <= _random_neurons[n]->_random_chance){
@@ -711,22 +537,15 @@ namespace COGNA{
         }
     }
 
-    /***********************************************************
-     * NeuralNetwork::switch_vectors()
-     *
-     * Description: Loads next connections into current connections for the next run
-     *              Must be called after feed_forward()
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::switch_vectors(){
         _curr_connections = _next_connections;
         _next_connections.clear();
     }
 
-    /***********************************************************
-     * NeuralNetwork::feed_forward()
-     *
-     * Description: Feeds one step through the network
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::feed_forward(){
         _network_step_counter += 1;
 
@@ -737,14 +556,8 @@ namespace COGNA{
         switch_vectors();
     }
 
-    /* ACTIVATION LOOP END */
-    /**********************************************************************************************************************/
-
-    /***********************************************************
-     * NeuralNetwork::print_activation()
-     *
-     * Description: Prints all currently firing neurons
-     */
+    //----------------------------------------------------------------------------------------------------------------------
+    //
     void NeuralNetwork::print_activation(){
         // TODO Too many nested constructs
         if(_curr_connections.size() > 0){
