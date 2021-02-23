@@ -11,8 +11,8 @@
 #ifndef INCLUDE_NEURONPARAMETERHANDLER_HPP
 #define INCLUDE_NEURONPARAMETERHANDLER_HPP
 
-#include "ConnectionParameterHandler.hpp"
 #include "Constants.hpp"
+#include "ConnectionParameterHandler.hpp"
 
 namespace COGNA{
     /**
@@ -37,6 +37,10 @@ namespace COGNA{
 
             int influenced_transmitter;            /**< Transmitter this neuron should influence if activated */
             int transmitter_influence_direction;   /**< Defines if transmitter is influenced positively or negatively */
+
+            bool random_activation;               /**< Determines if neuron sometimes fires randomly */
+	        int random_chance;                    /**< Chance of random activation per tick */
+	        float random_activation_value;        /**< How strong is the neuron activated when randomly activated */
 
             /**
              * @brief Initializes neuron parameters by copying the relevant

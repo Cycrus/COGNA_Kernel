@@ -79,9 +79,7 @@ namespace COGNA{
 
         _id = s_max_id;
         s_max_id++;
-        this->_random_activation = false;
-        _random_chance = 0;
-        _random_activation_value = 0.0f;
+        
         _activation = 0.0f;
         _was_activated = true;
         _last_activated_step = 0;
@@ -245,9 +243,9 @@ namespace COGNA{
     //----------------------------------------------------------------------------------------------------------------------
     //
     void Neuron::set_random_activation(int chance, float activation_value){
-        _random_activation = true;
-        _random_chance = chance;
-        _random_activation_value = activation_value;
+        _parameter->random_activation = true;
+        _parameter->random_chance = chance;
+        _parameter->random_activation_value = activation_value;
     }
 
     void Neuron::calculate_neuron_backfall(int64_t network_step){

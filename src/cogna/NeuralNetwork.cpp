@@ -289,7 +289,7 @@ namespace COGNA{
                 _neurons[n]->add_neuron_connection(_neurons[0], 0.0);
             }
 
-            if(_neurons[n]->_random_activation == true){
+            if(_neurons[n]->_parameter->random_activation == true){
                 _random_neurons.push_back(_neurons[n]);
             }
         }
@@ -373,7 +373,7 @@ namespace COGNA{
             if(n->_parameter->influenced_transmitter > NO_TRANSMITTER){
                 if(n->_parameter->transmitter_influence_direction == POSITIVE_INFLUENCE){
                     change_transmitter_weight(n->_parameter->influenced_transmitter,
-                                               MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
+                                              MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
                                               n->_parameter->transmitter_change_steepness,
                                               n->_activation,
                                               n->_parameter->transmitter_change_curvature,
@@ -384,7 +384,7 @@ namespace COGNA{
 
                 else if(n->_parameter->transmitter_influence_direction == NEGATIVE_INFLUENCE){
                     change_transmitter_weight(n->_parameter->influenced_transmitter,
-                                               MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
+                                              MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
                                               n->_parameter->transmitter_change_steepness,
                                               n->_activation,
                                               n->_parameter->transmitter_change_curvature,
@@ -483,8 +483,8 @@ namespace COGNA{
     //
     void NeuralNetwork::activate_random_neurons(){
         for(unsigned int n = 0; n < _random_neurons.size(); n++){
-            if(random()%MAX_CHANCE <= _random_neurons[n]->_random_chance){
-                init_activation(_random_neurons[n]->_id, _random_neurons[n]->_random_activation_value);
+            if(random()%MAX_CHANCE <= _random_neurons[n]->_parameter->random_chance){
+                init_activation(_random_neurons[n]->_id, _random_neurons[n]->_parameter->random_activation_value);
                 srandom(time(0));
             }
         }

@@ -385,11 +385,10 @@ namespace COGNA{
     void Connection::activate_next_neuron(int64_t network_step, std::vector<float> transmitter_weights){
         next_neuron->calculate_neuron_backfall(network_step);
 
-        prev_neuron->_temp_activation = short_weight *
-                                             prev_neuron->_activation;
+        float temp_activation = short_weight * prev_neuron->_activation;
 
         next_neuron->_activation +=
-              choose_activation_function(prev_neuron->_temp_activation) *
+              choose_activation_function(temp_activation) *
               _parameter->activation_type *
               transmitter_weights[_parameter->transmitter_type];
 
