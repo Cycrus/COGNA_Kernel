@@ -20,6 +20,7 @@
 #ifndef INCLUDE_CONNECTION_HPP
 #define INCLUDE_CONNECTION_HPP
 
+#include <vector>
 #include <cstdint>
 #include <cstdlib>
 
@@ -159,7 +160,7 @@ namespace COGNA{
              * The more steps/ticks pass since last activation, the more the
              * presynaptic potential falls back to a neutral state.
              *
-             * @param network_step        The current step/tick count of the network.
+             * @param network_step    The current step/tick count of the network.
              *
              */
             void presynaptic_potential_backfall(int64_t network_step);
@@ -173,6 +174,23 @@ namespace COGNA{
              *
              */
             float choose_activation_function(float input);
+
+            /**
+             * @brief Calculates the activation of a neuron fired at in this step.
+             *
+             * @param network_step           The current step/tick count of the network.
+             * @param transmitter_weights    A vector containing the weights all neurotransmitters in the network
+             *
+             */
+            void activate_next_neuron(int64_t network_step, std::vector<float> transmitter_weights);
+
+            /**
+             * @brief Calculates the presynaptic activation of a certain connection fired at.
+             *
+             * @param network_step    The current step/tick count of the network.
+             *
+             */
+            void activate_next_connection(int64_t network_step);
     };
 }
 

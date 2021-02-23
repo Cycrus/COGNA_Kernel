@@ -69,22 +69,6 @@ namespace COGNA{
             void activate_next_entities();
 
             /**
-             * @brief Calculates the activation of a neuron fired at in this step.
-             *
-             * @param con    The connection which fires at the next neuron.
-             *
-             */
-            void activate_next_neuron(COGNA::Connection *con);
-
-            /**
-             * @brief Calculates the presynaptic activation of a certain connection fired at.
-             *
-             * @param con    The connection which fires at the next connection.
-             *
-             */
-            void activate_next_connection(COGNA::Connection *con);
-
-            /**
              * @brief Stores the connections of all activated neurons, if their activation is higher than their threshold in a vector.
              *
              */

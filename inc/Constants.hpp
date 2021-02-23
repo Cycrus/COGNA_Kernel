@@ -12,9 +12,9 @@
 #define INCLUDE_CONSTANTS_HPP
 
 namespace COGNA{
-    const bool DATA_ANALYTIC_OUTPUT = true;
+    const bool DATA_ANALYTIC_OUTPUT = false;
 
-    const bool DEBUG_MODE = true;
+    const bool DEBUG_MODE = false;
     const bool DEB_BASE = true;
     const bool DEB_HABITUATION = true;
     const bool DEB_SENSITIZATION = true;
