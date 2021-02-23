@@ -16,6 +16,7 @@
 #include <sys/time.h>
 #include "Constants.hpp"
 #include "MathUtils.hpp"
+#include "LoggerStd.hpp"
 
 using namespace COGNA;
 
@@ -28,6 +29,8 @@ namespace COGNA{
     //----------------------------------------------------------------------------------------------------------------------
     //
     NeuralNetwork::NeuralNetwork(){
+        Logger::init_Global(new LoggerStd());
+
         _parameter = new NeuralNetworkParameterHandler();
         add_neuron(99999.0);
         _network_step_counter = 0;
@@ -51,6 +54,8 @@ namespace COGNA{
 
         delete _parameter;
         _parameter = NULL;
+
+        Logger::destroy_Global();
     }
 
     //----------------------------------------------------------------------------------------------------------------------
@@ -79,12 +84,12 @@ namespace COGNA{
                 }
             }
             else{
-                printf("[ERROR] Invalid transmitter ID <%d> when assigning transmitter influence to N-%d\n",
+                LOG_ERROR("Invalid transmitter ID <%d> when assigning transmitter influence to N-%d\n",
                        transmitter_id, neuron_id);
             }
         }
         else{
-            printf("[ERROR] Invalid neuron ID when assigning transmitter influence to N-%d.\n", neuron_id);
+            LOG_ERROR("Invalid neuron ID when assigning transmitter influence to N-%d.\n", neuron_id);
         }
         return ERROR_CODE;
     }
@@ -101,7 +106,7 @@ namespace COGNA{
             }
         }
         else{
-            printf("[ERROR] Invalid transmitter number of transmitters <%d> entered.\n", number);
+            LOG_ERROR("Invalid transmitter number of transmitters <%d> entered.\n", number);
         }
         return ERROR_CODE;
     }
@@ -117,11 +122,11 @@ namespace COGNA{
                 return SUCCESS_CODE;
             }
             else{
-                printf("[ERROR] Invalid chance when setting random activation for N-%d.\n", neuron_id);
+                LOG_ERROR("Invalid chance when setting random activation for N-%d.\n", neuron_id);
             }
          }
          else{
-             printf("[ERROR] Invalid neuron ID when setting random activation for N-%d.\n", neuron_id);
+             LOG_ERROR("Invalid neuron ID when setting random activation for N-%d.\n", neuron_id);
          }
          return ERROR_CODE;
      }
@@ -134,16 +139,16 @@ namespace COGNA{
                                                      int learning_type,
                                                      int transmitter_type){
         if(connection_type != EXCITATORY && connection_type != INHIBITORY){
-            printf("[WARNING] Invalid connection type for C-%d~%d.\n", source_neuron, target_neuron);
-            printf("[INFO] Connection type changed to <EXCITATORY>.\n");
+            LOG_WARN("Invalid connection type for C-%d~%d.\n", source_neuron, target_neuron);
+            LOG_INFO("Connection type changed to <EXCITATORY>.\n");
             connection_type = EXCITATORY;
         }
         if(transmitter_type == NO_TRANSMITTER){
             transmitter_type = STD_TRANSMITTER;
         }
         else if(transmitter_type < NO_TRANSMITTER || (unsigned)transmitter_type >= _transmitter_weights.size()){
-            printf("[WARNING] Invalid transmitter type for C-%d~%d.\n", source_neuron, target_neuron);
-            printf("[INFO] Transmitter changed to std transmitter <0>.\n");
+            LOG_WARN("Invalid transmitter type for C-%d~%d.\n", source_neuron, target_neuron);
+            LOG_INFO("Transmitter changed to std transmitter <0>.\n");
             transmitter_type = STD_TRANSMITTER;
         }
 
@@ -157,13 +162,13 @@ namespace COGNA{
                 return temp_con;
             }
             else{
-                printf("[ERROR] Addressed neuron IDs are not existing for C-%d~%d.\n", source_neuron, target_neuron);
+                LOG_ERROR("Addressed neuron IDs are not existing for C-%d~%d.\n", source_neuron, target_neuron);
             }
         }
         else{
-            printf("[ERROR] Neuron IDs start at 1. Please check your given neurons for C-%d~%d.\n", source_neuron, target_neuron);
+            LOG_ERROR("Neuron IDs start at 1. Please check your given neurons for C-%d~%d.\n", source_neuron, target_neuron);
         }
-        printf("[ERROR] Connecting N-%d to N-%d was unsuccessful.\n", source_neuron, target_neuron);
+        LOG_ERROR("Connecting N-%d to N-%d was unsuccessful.\n", source_neuron, target_neuron);
         return NULL;
     }
 
@@ -179,15 +184,15 @@ namespace COGNA{
                                                        int transmitter_type){
         // TODO Too many nested constructs
         if(connection_type != EXCITATORY && connection_type != INHIBITORY && connection_type != NONDIRECTIONAL){
-            printf("[WARNING] Invalid connection type for C-%d~C-%d.\n", source_neuron, connected_neuron_1);
-            printf("[INFO] Connection type changed to <EXCITATORY>.\n");
+            LOG_WARN("Invalid connection type for C-%d~C-%d.\n", source_neuron, connected_neuron_1);
+            LOG_INFO("Connection type changed to <EXCITATORY>.\n");
             connection_type = EXCITATORY;
         }
         if(transmitter_type == NO_TRANSMITTER){
             transmitter_type = STD_TRANSMITTER;
         }
         else if(transmitter_type < NO_TRANSMITTER || (unsigned)transmitter_type >= _transmitter_weights.size()){
-            printf("[WARNING] Invalid transmitter type for C-%d~C-%d\n", source_neuron, connected_neuron_1);
+            LOG_WARN("Invalid transmitter type for C-%d~C-%d\n", source_neuron, connected_neuron_1);
             transmitter_type = STD_TRANSMITTER;
         }
 
@@ -207,17 +212,17 @@ namespace COGNA{
                     return temp_connection;
                 }
                 else{
-                    printf("[ERROR] Neuron N-%d and N-%d are not connected.\n", connected_neuron_1, connected_neuron_2);
+                    LOG_ERROR("Neuron N-%d and N-%d are not connected.\n", connected_neuron_1, connected_neuron_2);
                 }
             }
             else{
-                printf("[ERROR] Addressed neuron IDs are not existing for C-%d~C-%d.\n", source_neuron, connected_neuron_1);
+                LOG_ERROR("Addressed neuron IDs are not existing for C-%d~C-%d.\n", source_neuron, connected_neuron_1);
             }
         }
         else{
-            printf("[ERROR] Neuron IDs start at 1. Please check your given neurons for C-%d.\n", source_neuron);
+            LOG_ERROR("Neuron IDs start at 1. Please check your given neurons for C-%d.\n", source_neuron);
         }
-        printf("[ERROR] Connecting N-%d to C-%d was unsuccessful.\n", source_neuron, connected_neuron_1);
+        LOG_ERROR("Connecting N-%d to C-%d was unsuccessful.\n", source_neuron, connected_neuron_1);
         return NULL;
     }
 
@@ -231,15 +236,15 @@ namespace COGNA{
                                                        int learning_type,
                                                        int transmitter_type){
         if(connection_type != EXCITATORY && connection_type != INHIBITORY && connection_type != NONDIRECTIONAL){
-            printf("[WARNING] Invalid connection type for C-%d~C-%d.\n", source_neuron, con->prev_neuron->_id);
-            printf("[INFO] Connection type changed to <EXCITATORY>.\n");
+            LOG_WARN("Invalid connection type for C-%d~C-%d.\n", source_neuron, con->prev_neuron->_id);
+            LOG_INFO("Connection type changed to <EXCITATORY>.\n");
             connection_type = EXCITATORY;
         }
         if(transmitter_type == NO_TRANSMITTER){
             transmitter_type = STD_TRANSMITTER;
         }
         else if(transmitter_type < NO_TRANSMITTER || (unsigned)transmitter_type >= _transmitter_weights.size()){
-            printf("[WARNING] Invalid transmitter type for C-%d~C-%d\n", source_neuron, con->prev_neuron->_id);
+            LOG_WARN("Invalid transmitter type for C-%d~C-%d\n", source_neuron, con->prev_neuron->_id);
             transmitter_type = STD_TRANSMITTER;
         }
         if(source_neuron >= MIN_NEURON_ID){
@@ -249,13 +254,13 @@ namespace COGNA{
                 return temp_con;
             }
             else{
-                printf("[ERROR] Addressed neuron IDs are not existing for C-%d~C-%d.\n", source_neuron, con->prev_neuron->_id);
+                LOG_ERROR("Addressed neuron IDs are not existing for C-%d~C-%d.\n", source_neuron, con->prev_neuron->_id);
             }
         }
         else{
-            printf("[ERROR] Neuron IDs start at 1. Please check your given neurons for C-%d~C%d.\n", source_neuron, con->prev_neuron->_id);
+            LOG_ERROR("Neuron IDs start at 1. Please check your given neurons for C-%d~C%d.\n", source_neuron, con->prev_neuron->_id);
         }
-        printf("[ERROR] Connecting N-%d to C-%d was unsuccessful.\n", source_neuron, con->prev_neuron->_id);
+        LOG_ERROR("Connecting N-%d to C-%d was unsuccessful.\n", source_neuron, con->prev_neuron->_id);
         return NULL;
     }
 
@@ -270,7 +275,7 @@ namespace COGNA{
                                      std::end(_neurons[target_neuron]->_connections));
         }
         else{
-            printf("[ERROR] Initializing activation in N-%d was unsuccessful. Invalid ID.\n", target_neuron);
+            LOG_ERROR("Initializing activation in N-%d was unsuccessful. Invalid ID.\n", target_neuron);
             return ERROR_CODE;
         }
         return SUCCESS_CODE;
@@ -306,7 +311,7 @@ namespace COGNA{
             return _neurons[neuron_id];
         }
         else{
-            printf("[WARNING] Neuron ID %d for getting neuron is invalid.\n", neuron_id);
+            LOG_WARN("Neuron ID %d for getting neuron is invalid.\n", neuron_id);
         }
         return NULL;
     }
@@ -318,7 +323,7 @@ namespace COGNA{
             return _neurons[neuron_id]->is_active();
         }
         else{
-            printf("[WARNING] Neuron ID %d for getting neuron state is invalid.\n", neuron_id);
+            LOG_WARN("Neuron ID %d for getting neuron state is invalid.\n", neuron_id);
         }
         return 0.0f;
     }
@@ -330,7 +335,7 @@ namespace COGNA{
             return _neurons[neuron_id]->_activation;
         }
         else{
-            printf("[WARNING] Neuron ID %d for getting neuron activation is invalid.\n", neuron_id);
+            LOG_WARN("Neuron ID %d for getting neuron activation is invalid.\n", neuron_id);
         }
         return 0.0f;
     }
@@ -342,7 +347,7 @@ namespace COGNA{
             return _transmitter_weights[transmitter_id];
         }
         else{
-            printf("[WARNING] Transmitter ID %d for getting transmitter weight is invalid.\n", transmitter_id);
+            LOG_WARN("Transmitter ID %d for getting transmitter weight is invalid.\n", transmitter_id);
         }
         return 0.0f;
     }

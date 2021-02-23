@@ -14,14 +14,14 @@
 namespace COGNA{
     const bool DATA_ANALYTIC_OUTPUT = true;
 
-    const bool DEBUG_MODE = false;
+    const bool DEBUG_MODE = true;
     const bool DEB_BASE = true;
-    const bool DEB_HABITUATION = false;
-    const bool DEB_SENSITIZATION = false;
-    const bool DEB_TRANSMITTER = false;
-    const bool DEB_NEURON_BACKFALL = false;
-    const bool DEB_LONG_LEARNING_WEIGHT = false;
-    const bool DEB_PRESYNAPTIC = false;
+    const bool DEB_HABITUATION = true;
+    const bool DEB_SENSITIZATION = true;
+    const bool DEB_TRANSMITTER = true;
+    const bool DEB_NEURON_BACKFALL = true;
+    const bool DEB_LONG_LEARNING_WEIGHT = true;
+    const bool DEB_PRESYNAPTIC = true;
 
     const int SUCCESS_CODE = 0;
     const int ERROR_CODE = -1;

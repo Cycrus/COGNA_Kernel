@@ -65,6 +65,10 @@ namespace COGNA{
              */
             Connection(COGNA::NeuronParameterHandler *default_parameter);
 
+            /**
+			 * @brief Frees all memory allocated by the connection.
+			 *
+			 */
             ~Connection();
 
             /**

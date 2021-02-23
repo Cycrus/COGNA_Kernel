@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "MathUtils.hpp"
+#include "LoggerStd.hpp"
 
 using namespace COGNA;
 
@@ -144,7 +145,7 @@ namespace COGNA{
                                               int learn_type,
                                               int transmitter_type){
         if(check_neuron_connection(n) == true){
-            printf("[WARNING] N-%d is already connected with N-%d.\n",
+            LOG_WARN("N-%d is already connected with N-%d.\n",
                    this->_id, n->_id);
         }
         else{
@@ -180,11 +181,11 @@ namespace COGNA{
                                                 int transmitter_type){
         if(check_synaptic_connection(con) == true){
             if(con->next_neuron){
-                printf("[WARNING] N-%d is already connected with C-%d~%d.\n",
+                LOG_WARN("N-%d is already connected with C-%d~%d.\n",
                        this->_id, con->prev_neuron->_id, con->next_neuron->_id);
             }
             else if(con->next_connection){
-                printf("[WARNING] N-%d is already connected with the connection between N-%d and another connection coming from N-%d\n",
+                LOG_WARN("N-%d is already connected with the connection between N-%d and another connection coming from N-%d\n",
                        this->_id, con->prev_neuron->_id, con->next_connection->prev_neuron->_id);
             }
         }
@@ -210,7 +211,7 @@ namespace COGNA{
     //
     void Neuron::del_connection(Neuron *n){
         if(check_neuron_connection(n) == false){
-            printf("[WARNING] N-%d is not connected with N-%d.\n", this->_id, n->_id);
+            LOG_WARN("N-%d is not connected with N-%d.\n", this->_id, n->_id);
         }
         else{
             for(unsigned int i=0; i<n->_previous.size(); i++){
