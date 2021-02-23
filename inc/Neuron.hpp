@@ -56,29 +56,6 @@ namespace COGNA{
 	        void set_step(long new_step);
 
 			/**
-			 * @brief Checks if this neuron is connected with another neuron.
-			 *
-			 * @param n    The neuron with which the connection should be checked.
-			 *
-			 * @return     true if neurons are connected, false if not.
-			 *
-			 */
-	        bool check_neuron_connection(COGNA::Neuron *n);
-
-			/**
-			 * @brief Checks if this neuron is connected with another connection.
-			 *
-			 * @param con    The connection with which the connection should be checked.
-			 *
-			 * Can currently only check for synaptic connection, if the connection con
-			 * is a connection between two neurons.
-			 *
-			 * @return     true if neuron is connected to the connection, false if not.
-			 *
-			 */
-	        bool check_synaptic_connection(COGNA::Connection *con);
-
-			/**
 			 * @brief Adds a connection to another neuron in the network to this neuron.
 			 *
 			 * A neuron connection transmits activation potential to activate other neurons.
@@ -165,6 +142,31 @@ namespace COGNA{
 			 *
 			 */
             void clear_neuron_activation(int64_t network_step);
+
+		private:
+			/**
+			 * @brief Checks if this neuron is connected with another neuron.
+			 *
+			 * @param n    The neuron with which the connection should be checked.
+			 *
+			 * @return     true if neurons are connected, false if not.
+			 *
+			 */
+	        bool check_neuron_connection(COGNA::Neuron *n);
+
+			/**
+			 * @brief Checks if this neuron is connected with another connection.
+			 *
+			 * @param con    The connection with which the connection should be checked.
+			 *
+			 * Can currently only check for synaptic connection, if the connection con
+			 * is a connection between two neurons.
+			 *
+			 * @return     true if neuron is connected to the connection, false if not.
+			 *
+			 */
+	        bool check_synaptic_connection(COGNA::Connection *con);
+
 	};
 }
 

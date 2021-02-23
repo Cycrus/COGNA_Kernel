@@ -21,6 +21,8 @@
 using namespace COGNA;
 
 namespace COGNA{
+    int Connection::s_max_id = 0;
+
     Connection::Connection(NeuronParameterHandler *default_parameter){
         _parameter = new ConnectionParameterHandler();
 
@@ -65,6 +67,9 @@ namespace COGNA{
         _parameter->long_learning_weight_reduction_steepness = default_parameter->long_learning_weight_reduction_steepness;
         _parameter->long_learning_weight_backfall_curvature = default_parameter->long_learning_weight_backfall_curvature;
         _parameter->long_learning_weight_backfall_steepness = default_parameter->long_learning_weight_backfall_steepness;
+
+        _id = s_max_id;
+        s_max_id++;
 
         next_neuron = NULL;
         next_connection = NULL;

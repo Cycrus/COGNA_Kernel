@@ -34,44 +34,76 @@ namespace COGNA{
      *
      */
     class Connection{
-        public:
-            COGNA::Neuron* next_neuron;
-            COGNA::Connection* next_connection;
-            COGNA::Neuron* prev_neuron;
+    public:
+        int _id;
+        static int s_max_id;
+        COGNA::Neuron* next_neuron;
+        COGNA::Connection* next_connection;
+        COGNA::Neuron* prev_neuron;
 
-            /**
-             * @brief Contains the parameters specifiying connection behavior.
-             *
-             */
-            COGNA::ConnectionParameterHandler *_parameter;
+        /**
+         * @brief Contains the parameters specifiying connection behavior.
+         *
+         */
+        COGNA::ConnectionParameterHandler *_parameter;
 
-            float base_weight;        /**< Base weight where learning processes always slowly return to */
-            float short_weight;       /**< Weight of this connection changing for short term learning. This one is directly used */
-            float long_weight;        /**< Weight of this connection changing for long term learning */
-            float long_learning_weight; /**< Factor that controls the learning processes of long_weight */
+        float base_weight;        /**< Base weight where learning processes always slowly return to */
+        float short_weight;       /**< Weight of this connection changing for short term learning. This one is directly used */
+        float long_weight;        /**< Weight of this connection changing for long term learning */
+        float long_learning_weight; /**< Factor that controls the learning processes of long_weight */
 
-            float presynaptic_potential;   /**< Defines the additional activation by presynaptic connection */
-            int64_t last_presynaptic_activated_step;  /**< Stores the global network step when this connection was last presynaptic activated */
+        float presynaptic_potential;   /**< Defines the additional activation by presynaptic connection */
+        int64_t last_presynaptic_activated_step;  /**< Stores the global network step when this connection was last presynaptic activated */
 
-            int64_t last_activated_step;  /**< Stores the global network step when this connection was last activated */
+        int64_t last_activated_step;  /**< Stores the global network step when this connection was last activated */
 
-            /**
-             * @brief Initializes all behavior relevant parameter of Connection.
-             *
-             * Inherits the connection-specific parameters of the neuron, where
-             * the connection is stored in.
-             *
-             * @param default_parameter    Parameters from source neuron.
-             *
-             */
-            Connection(COGNA::NeuronParameterHandler *default_parameter);
+        /**
+         * @brief Initializes all behavior relevant parameter of Connection.
+         *
+         * Inherits the connection-specific parameters of the neuron, where
+         * the connection is stored in.
+         *
+         * @param default_parameter    Parameters from source neuron.
+         *
+         */
+        Connection(COGNA::NeuronParameterHandler *default_parameter);
 
-            /**
-			 * @brief Frees all memory allocated by the connection.
-			 *
-			 */
-            ~Connection();
+        /**
+         * @brief Frees all memory allocated by the connection.
+         *
+         */
+        ~Connection();
 
+        /**
+         * @brief A wrapper including all learning functions of a connection
+         *
+         * Also contains logic controlling if specific learning behaviors
+         * should activate at every given moment.
+         *
+         * @param network_step        The current step/tick count of the network.
+         * @param conditioning_con    Another connection which is connected to this one.
+         *
+         */
+        void basic_learning(int64_t network_step, Connection *conditioning_con=NULL);
+
+        /**
+         * @brief Calculates the activation of a neuron fired at in this step.
+         *
+         * @param network_step           The current step/tick count of the network.
+         * @param transmitter_weights    A vector containing the weights all neurotransmitters in the network
+         *
+         */
+        void activate_next_neuron(int64_t network_step, std::vector<float> transmitter_weights);
+
+        /**
+         * @brief Calculates the presynaptic activation of a certain connection fired at.
+         *
+         * @param network_step    The current step/tick count of the network.
+         *
+         */
+        void activate_next_connection(int64_t network_step);
+
+        private:
             /**
              * @brief Calculates the backfall of the factor which reduces longterm learning after some time of nonactivation.
              *
@@ -143,18 +175,6 @@ namespace COGNA{
             void desensitize(int64_t network_step);
 
             /**
-             * @brief A wrapper including all learning functions of a connection
-             *
-             * Also contains logic controlling if specific learning behaviors
-             * should activate at every given moment.
-             *
-             * @param network_step        The current step/tick count of the network.
-             * @param conditioning_con    Another connection which is connected to this one.
-             *
-             */
-            void basic_learning(int64_t network_step, Connection *conditioning_con=NULL);
-
-            /**
              * @brief Calculates backfall of presynaptic potential, if the connection is not presynaptically activated.
              *
              * The more steps/ticks pass since last activation, the more the
@@ -174,23 +194,6 @@ namespace COGNA{
              *
              */
             float choose_activation_function(float input);
-
-            /**
-             * @brief Calculates the activation of a neuron fired at in this step.
-             *
-             * @param network_step           The current step/tick count of the network.
-             * @param transmitter_weights    A vector containing the weights all neurotransmitters in the network
-             *
-             */
-            void activate_next_neuron(int64_t network_step, std::vector<float> transmitter_weights);
-
-            /**
-             * @brief Calculates the presynaptic activation of a certain connection fired at.
-             *
-             * @param network_step    The current step/tick count of the network.
-             *
-             */
-            void activate_next_connection(int64_t network_step);
     };
 }
 
