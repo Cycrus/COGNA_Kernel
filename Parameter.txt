@@ -36,10 +36,4 @@ Connection Parameter:
     Activation function
     Learning type
     Transmitter type
-
-Dynamic Connection Parameter:
     Base weight
-    Short weight
-    Long weight
-    Long learning weight
-    Presynaptic potential
