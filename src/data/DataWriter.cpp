@@ -125,7 +125,7 @@ namespace COGNA{
                 _output << "neuron" << ",";
                 _output << nn->_neurons[n]->_id << ",";
                 _output << nn->_neurons[n]->_activation << ",";
-                _output << nn->_neurons[n]->_random_chance << ",";
+                _output << nn->_neurons[n]->_parameter->random_chance << ",";
                 _output << nn->_neurons[n]->_parameter->activation_threshold << ",";
                 _output << nn->_neurons[n]->_parameter->activation_backfall_curvature << ",";
                 _output << nn->_neurons[n]->_parameter->activation_backfall_steepness << ",";

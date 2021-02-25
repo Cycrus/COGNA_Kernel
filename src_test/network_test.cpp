@@ -149,6 +149,8 @@ int main(){
 
     if(nn->setup_network() == ERROR_CODE) goto exit;
 
+    printf("%d\n", nn->_neurons[20]->_connections[0]->_id);
+
     /* Start of network loop */
     printf("Neural network started successfully!\n\n*********************START*********************\n\n");
 

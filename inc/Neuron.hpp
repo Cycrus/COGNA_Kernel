@@ -27,11 +27,7 @@ namespace COGNA{
 		public:
 	        int _id;
 	        static int s_max_id;
-	        bool _random_activation;               /**< Determines if neuron sometimes fires randomly */
-	        int _random_chance;                    /**< Chance of random activation per tick */
-	        float _random_activation_value;        /**< How strong is the neuron activated when randomly activated */
 	        float _activation;                     /**< Current activation potential level */
-	        float _temp_activation;                /**< A temporary variable to calculate activation of next neurons */
 	        int64_t _last_activated_step;          /**< Network step count, when neuron was last activated */
 	        bool _was_activated;                   /**< Indicates if neuron was activated last time or this time */
 	        int _last_fired_step;                  /**< Step when neuron last fired */
@@ -58,29 +54,6 @@ namespace COGNA{
 			 *
 			 */
 	        void set_step(long new_step);
-
-			/**
-			 * @brief Checks if this neuron is connected with another neuron.
-			 *
-			 * @param n    The neuron with which the connection should be checked.
-			 *
-			 * @return     true if neurons are connected, false if not.
-			 *
-			 */
-	        bool check_neuron_connection(COGNA::Neuron *n);
-
-			/**
-			 * @brief Checks if this neuron is connected with another connection.
-			 *
-			 * @param con    The connection with which the connection should be checked.
-			 *
-			 * Can currently only check for synaptic connection, if the connection con
-			 * is a connection between two neurons.
-			 *
-			 * @return     true if neuron is connected to the connection, false if not.
-			 *
-			 */
-	        bool check_synaptic_connection(COGNA::Connection *con);
 
 			/**
 			 * @brief Adds a connection to another neuron in the network to this neuron.
@@ -169,6 +142,31 @@ namespace COGNA{
 			 *
 			 */
             void clear_neuron_activation(int64_t network_step);
+
+		private:
+			/**
+			 * @brief Checks if this neuron is connected with another neuron.
+			 *
+			 * @param n    The neuron with which the connection should be checked.
+			 *
+			 * @return     true if neurons are connected, false if not.
+			 *
+			 */
+	        bool check_neuron_connection(COGNA::Neuron *n);
+
+			/**
+			 * @brief Checks if this neuron is connected with another connection.
+			 *
+			 * @param con    The connection with which the connection should be checked.
+			 *
+			 * Can currently only check for synaptic connection, if the connection con
+			 * is a connection between two neurons.
+			 *
+			 * @return     true if neuron is connected to the connection, false if not.
+			 *
+			 */
+	        bool check_synaptic_connection(COGNA::Connection *con);
+
 	};
 }
 

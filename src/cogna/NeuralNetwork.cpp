@@ -289,7 +289,7 @@ namespace COGNA{
                 _neurons[n]->add_neuron_connection(_neurons[0], 0.0);
             }
 
-            if(_neurons[n]->_random_activation == true){
+            if(_neurons[n]->_parameter->random_activation == true){
                 _random_neurons.push_back(_neurons[n]);
             }
         }
@@ -373,7 +373,7 @@ namespace COGNA{
             if(n->_parameter->influenced_transmitter > NO_TRANSMITTER){
                 if(n->_parameter->transmitter_influence_direction == POSITIVE_INFLUENCE){
                     change_transmitter_weight(n->_parameter->influenced_transmitter,
-                                               MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
+                                              MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
                                               n->_parameter->transmitter_change_steepness,
                                               n->_activation,
                                               n->_parameter->transmitter_change_curvature,
@@ -384,7 +384,7 @@ namespace COGNA{
 
                 else if(n->_parameter->transmitter_influence_direction == NEGATIVE_INFLUENCE){
                     change_transmitter_weight(n->_parameter->influenced_transmitter,
-                                               MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
+                                              MathUtils::calculate_dynamic_gradient(_transmitter_weights[n->_parameter->influenced_transmitter],
                                               n->_parameter->transmitter_change_steepness,
                                               n->_activation,
                                               n->_parameter->transmitter_change_curvature,
@@ -432,67 +432,15 @@ namespace COGNA{
                 influence_transmitter(_curr_connections[con]->prev_neuron);
 
                 if(_curr_connections[con]->next_neuron){
-                    activate_next_neuron(_curr_connections[con]);
+                    _curr_connections[con]->activate_next_neuron(_network_step_counter, _transmitter_weights);
                 }
 
                 else if(_curr_connections[con]->next_connection){
-                    activate_next_connection(_curr_connections[con]);
+                    _curr_connections[con]->activate_next_connection(_network_step_counter);
                 }
 
                 _curr_connections[con]->prev_neuron->_last_fired_step = _network_step_counter;
             }
-        }
-    }
-
-    //----------------------------------------------------------------------------------------------------------------------
-    //
-    void NeuralNetwork::activate_next_neuron(Connection *con){
-        con->next_neuron->calculate_neuron_backfall(_network_step_counter);
-
-        con->prev_neuron->_temp_activation = con->short_weight *
-                                             con->prev_neuron->_activation;
-
-        con->next_neuron->_activation +=
-              con->choose_activation_function(con->prev_neuron->_temp_activation) *
-              con->_parameter->activation_type *
-              _transmitter_weights[con->_parameter->transmitter_type];
-
-        con->next_neuron->_was_activated = true;
-
-        if(con->next_neuron->_id != 0){
-            if(DEBUG_MODE && DEB_BASE){
-                printf("<%ld> N-%d~N-%d -> force = %.2f\n",
-                       _network_step_counter,
-                       con->prev_neuron->_id,
-                       con->next_neuron->_id,
-                       con->prev_neuron->_activation);
-            }
-        }
-    }
-
-    //----------------------------------------------------------------------------------------------------------------------
-    //
-    void NeuralNetwork::activate_next_connection(Connection *con){
-        if(DEBUG_MODE && DEB_PRESYNAPTIC){
-            printf("<%ld> C-%d -> Presynaptic potential before influence : %.3f\n",
-                   _network_step_counter,
-                   con->prev_neuron->_id,
-                   con->next_connection->presynaptic_potential);
-        }
-
-        con->presynaptic_potential_backfall(_network_step_counter);
-        if(con->next_connection->presynaptic_potential > DEFAULT_PRESYNAPTIC_POTENTIAL){
-            con->next_connection->basic_learning(_network_step_counter, con);
-            con->next_connection->presynaptic_potential = DEFAULT_PRESYNAPTIC_POTENTIAL;
-        }
-
-        con->next_connection->last_presynaptic_activated_step = _network_step_counter;
-
-        if(DEBUG_MODE && DEB_PRESYNAPTIC){
-            printf("<%ld> C-%d -> Presynaptic potential after influence : %.3f\n",
-                   _network_step_counter,
-                   con->prev_neuron->_id,
-                   con->next_connection->presynaptic_potential);
         }
     }
 
@@ -535,8 +483,8 @@ namespace COGNA{
     //
     void NeuralNetwork::activate_random_neurons(){
         for(unsigned int n = 0; n < _random_neurons.size(); n++){
-            if(random()%MAX_CHANCE <= _random_neurons[n]->_random_chance){
-                init_activation(_random_neurons[n]->_id, _random_neurons[n]->_random_activation_value);
+            if(random()%MAX_CHANCE <= _random_neurons[n]->_parameter->random_chance){
+                init_activation(_random_neurons[n]->_id, _random_neurons[n]->_parameter->random_activation_value);
                 srandom(time(0));
             }
         }

@@ -27,5 +27,9 @@ namespace COGNA{
 
         influenced_transmitter = NO_TRANSMITTER;
         transmitter_influence_direction = POSITIVE_INFLUENCE;
+
+        random_activation = false;
+        random_chance = 0;
+        random_activation_value = 0.0f;
     }
 }

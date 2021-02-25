@@ -21,6 +21,8 @@
 using namespace COGNA;
 
 namespace COGNA{
+    int Connection::s_max_id = 0;
+
     Connection::Connection(NeuronParameterHandler *default_parameter){
         _parameter = new ConnectionParameterHandler();
 
@@ -65,6 +67,9 @@ namespace COGNA{
         _parameter->long_learning_weight_reduction_steepness = default_parameter->long_learning_weight_reduction_steepness;
         _parameter->long_learning_weight_backfall_curvature = default_parameter->long_learning_weight_backfall_curvature;
         _parameter->long_learning_weight_backfall_steepness = default_parameter->long_learning_weight_backfall_steepness;
+
+        _id = s_max_id;
+        s_max_id++;
 
         next_neuron = NULL;
         next_connection = NULL;
@@ -377,6 +382,57 @@ namespace COGNA{
                      prev_neuron->_id);
               return 0.0f;
               break;
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    void Connection::activate_next_neuron(int64_t network_step, std::vector<float> transmitter_weights){
+        next_neuron->calculate_neuron_backfall(network_step);
+
+        float temp_activation = short_weight * prev_neuron->_activation;
+
+        next_neuron->_activation +=
+              choose_activation_function(temp_activation) *
+              _parameter->activation_type *
+              transmitter_weights[_parameter->transmitter_type];
+
+        next_neuron->_was_activated = true;
+
+        if(next_neuron->_id != 0){
+            if(DEBUG_MODE && DEB_BASE){
+                printf("<%ld> N-%d~N-%d -> force = %.2f\n",
+                       network_step,
+                       prev_neuron->_id,
+                       next_neuron->_id,
+                       prev_neuron->_activation);
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------------------------------
+    //
+    void Connection::activate_next_connection(int64_t network_step){
+        if(DEBUG_MODE && DEB_PRESYNAPTIC){
+            printf("<%ld> C-%d -> Presynaptic potential before influence : %.3f\n",
+                   network_step,
+                   prev_neuron->_id,
+                   next_connection->presynaptic_potential);
+        }
+
+        presynaptic_potential_backfall(network_step);
+        if(next_connection->presynaptic_potential > DEFAULT_PRESYNAPTIC_POTENTIAL){
+            next_connection->basic_learning(network_step, this);
+            next_connection->presynaptic_potential = DEFAULT_PRESYNAPTIC_POTENTIAL;
+        }
+
+        next_connection->last_presynaptic_activated_step = network_step;
+
+        if(DEBUG_MODE && DEB_PRESYNAPTIC){
+            printf("<%ld> C-%d -> Presynaptic potential after influence : %.3f\n",
+                   network_step,
+                   prev_neuron->_id,
+                   next_connection->presynaptic_potential);
         }
     }
 }
