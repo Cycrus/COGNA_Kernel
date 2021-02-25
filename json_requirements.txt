@@ -1,0 +1,125 @@
++++++ Requirements +++++
+
+    Json must be loaded with one function receiving the filename of the json.
+    It then returns the fully loaded neural network if everything went right.
+
+    Json must load a fully functioning network. If a mandatory parameter is not
+    set, or if a wrong input is given, the function loading the json shall return
+    Null.
+
+    Please use the predefined public functions inside of NeuralNetwork. Don't
+    try to access functions inside of Neuron or Connection. If a function is
+    required, which does not yet exist, tell me via a Whatsapp message.
+    With using the predefined functions, I want to ensure a standardized loading
+    procedure and as little redundant functions and complexity inside of the
+    network code. The parser will be a little bit more complex and a little bit
+    less efficient, but that is a price I'm willing to pay for a cleaner network
+    kernel.
+
+    First(!) the network parameters must be all set.
+    Second(!) the neurons must be defined via add_neuron().
+    Third(!) the connections must be defined add_neuron_connection() or add_synaptic_connection().
+    If a connection wants to connect to another connection, which does not yet exist, the
+    program shall not yet return an error, but store the json segment of this connection in another
+    variable. After every connection in the main json is created (or not due to missing next_connection),
+    the created variable with the missed connections should be worked through again. Repeat this
+    process, until no connection is left, or until the amount of invalid connections does not change
+    anymore.
+
+    The order of neurons inside the neuron list and connections inside the connection list shall not have
+    an influence on the final network return output.
+    The order of parameters inside of each entity shall not have an effect as well.
+
+    If a neuron's optional parameter is not defined, it will inherit it from the network.
+    If a connection's optional parameter is not defined, it will inherit it from it's source neuron.
+
+    For some parameters, there are fixed options (e.g. connection_type can be either 1, or -1). You
+    find those normally inside of Constants.hpp.
+
+    test_json.json is a test file to test the parser.
+
+    Below you find a (hopefully) comprehensive list with all parameters in a json and how to handle them.
+    Comments next to the parameter tell you how to implement it. If there is none, just change the value
+    inside the entity's _parameter variable after you initially created it.
+
++++++ List of all parameters with description +++++
+
+    Network Parameter (Mandatory):
+        Transmitter backfall curvature/steepness
+        Max transmitter weight
+        Min transmitter weight
+        Activation threshold
+        Transmitter change curvature/steepness
+        Max activation
+        Min activation
+        Activation backfall curvature/steepness
+        Max weight
+        Min weight
+        Long learning weight reduction curvature/steepness
+        Long learning weight backfall curvature/steepness
+        Habituation threshold
+        Short habituation curvature/steepness
+        Short dehabituation curvature/steepness
+        Long habituation curvature/steepness
+        Long dehabituation curvature/steepness
+        Sensitization threshold
+        Short sensitization curvature/steepness
+        Short desensitization curvature/steepness
+        Long sensitization curvature/steepness
+        Long desensitization curvature/steepness
+        Presynaptic potential curvature/steepness
+        Presynaptic backfall curvature/steepness
+        Connection type
+        Activation function
+        Learning type
+        Transmitter type
+        Base weight
+
+    Network Parameter (Optional):
+        Transmitter count                    // via function define_transmitters(); If not present, or 0.0 do not call define_transmitters()
+
+    Neuron Parameter (Mandatory):
+        X
+        Y
+
+    Neuron Parameter (Optional):
+        Activation threshold                // via add_neuron()
+        Transmitter change curvature/steepness
+        Max activation
+        Min activation
+        Activation backfall curvature/steepness
+        Random chance                       // via set_random_neuron_activation(); if not present, or 0, do not call set_random_neuron_activation()
+        Random activation value             // via set_random_neuron_activation();
+        Influenced transmitter              // via set_neural_transmitter_influence()
+        Transmitter influence direction     // via set_neural_transmitter_influence()
+
+    Connection Parameter (Mandatory):
+        Source Neuron ID        // via add_neuron_connection() or add_synaptic_connection()
+        Target Neuron ID        // via add_neuron_connection(); only target neuron ID or target connection ID can be present
+        Target Connection ID    // via add_synaptic_connection(); only target neuron ID or target connection ID can be present
+
+    Connection Parameter (Optional):
+        Corner list
+            X
+            Y
+        Max weight
+        Min weight
+        Long learning weight reduction curvature/steepness
+        Long learning weight backfall curvature/steepness
+        Habituation threshold
+        Short habituation curvature/steepness
+        Short dehabituation curvature/steepness
+        Long habituation curvature/steepness
+        Long dehabituation curvature/steepness
+        Sensitization threshold
+        Short sensitization curvature/steepness
+        Short desensitization curvature/steepness
+        Long sensitization curvature/steepness
+        Long desensitization curvature/steepness
+        Presynaptic potential curvature/steepness
+        Presynaptic backfall curvature/steepness
+        Connection type         // via add_neuron_connection() or add_synaptic_connection()
+        Activation function     // via add_neuron_connection() or add_synaptic_connection()
+        Learning type           // via add_neuron_connection() or add_synaptic_connection()
+        Transmitter type        // via add_neuron_connection() or add_synaptic_connection()
+        Base weight             // via add_neuron_connection() or add_synaptic_connection()
