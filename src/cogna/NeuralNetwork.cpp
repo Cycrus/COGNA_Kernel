@@ -17,6 +17,7 @@
 #include "Constants.hpp"
 #include "MathUtils.hpp"
 #include "LoggerStd.hpp"
+#include "json.hpp"
 
 using namespace COGNA;
 
