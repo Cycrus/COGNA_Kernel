@@ -11,6 +11,7 @@
 #include "CognaBuilder.hpp"
 #include "json.hpp"
 #include "Constants.hpp"
+#include "NeuralNetwork.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -19,22 +20,33 @@ namespace COGNA{
 
 CognaBuilder::CognaBuilder(std::string project_name){
     _project_name = project_name;
-    _project_path = "Networks/" + project_name + "/";
+    _project_path = "Projects/" + project_name + "/";
     _frequency = 0;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 void CognaBuilder::tester(){
-    std::cout << _neuron_types["Default"].max_weight << std::endl;
+    std::cout << _neuron_types["Default"].initial_base_weight << std::endl;
+    std::cout << _neuron_types["TestNeuronType_1"].initial_base_weight << std::endl;
     for(unsigned int i=0; i<_transmitter_types.size(); i++){
         std::cout << _transmitter_types[i] << std::endl;
     }
     std::cout << _neuron_types["Default"].transmitter_type << std::endl;
+
+    for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
+        std::cout << "N_" << _network_list[0]->_neurons[i]->_id << " -> "
+                  << _network_list[0]->_neurons[i]->_parameter->activation_threshold << std::endl;
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 //
 CognaBuilder::~CognaBuilder(){
-
+    for(unsigned int i=0; i < _network_list.size(); i++){
+        delete _network_list[i];
+        _network_list[i] = nullptr;
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -71,6 +83,7 @@ int CognaBuilder::load_globals_file(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+// TODO Return error_code, if not all required parameters are set.y
 int CognaBuilder::load_neuron_types(){
     std::ifstream neuron_file;
     neuron_file.open(_project_path + "neuron_type.config");
@@ -86,7 +99,8 @@ int CognaBuilder::load_neuron_types(){
 
     for(auto it = neuron_json.begin(); it != neuron_json.end(); ++it){
         NeuronParameterHandler temp_neuron;
-        //TODO temp_neuron.base_weight
+
+        temp_neuron.initial_base_weight = std::stof((std::string)it.value()["base_weight"]);
 
         if(it.value()["activation_type"] == "Excitatory")
             temp_neuron.activation_type = EXCITATORY;
@@ -200,16 +214,8 @@ int CognaBuilder::load_transmitters(){
     transmitter_file >> transmitter_json;
     transmitter_file.close();
 
-    int i = 0;
-    while(true){
-        try{
-            _transmitter_types.push_back(transmitter_json["transmitters"][i]);
-        }
-        catch(...){
-            break;
-        }
-
-        i++;
+    for(unsigned int i=0; i < transmitter_json["transmitters"].size(); i++){
+        _transmitter_types.push_back(transmitter_json["transmitters"][i]);
     }
 
     return SUCCESS_CODE;
@@ -218,7 +224,56 @@ int CognaBuilder::load_transmitters(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaBuilder::load_network(std::string network_name){
-    return SUCCESS_CODE;
+    std::ifstream network_file;
+    network_file.open(_project_path + "networks/" + network_name);
+    if(!network_file){
+        std::cout << "[ERROR] Could not open " << network_name << " file of project "
+                  << _project_name << std::endl;
+        return ERROR_CODE;
+    }
+
+    nlohmann::json network_json;
+    network_file >> network_json;
+    network_file.close();
+
+    // neurons = network_json["neurons"]
+    // connections = network_json["connections"]
+    // nodes = network_json["nodes"]
+    // network = network_json["network"]
+
+    int error_code = SUCCESS_CODE;
+
+    NeuralNetwork *nn = new NeuralNetwork();
+
+    for(unsigned int i=0; i < network_json["neurons"].size(); i++){
+        std::string neuron_type = "";
+        try{
+            neuron_type = network_json["neurons"][i]["neuron_type"];
+        }
+        catch(...){
+            neuron_type = "Default";
+        }
+
+        float temp_threshold = 0.0;
+        auto threshold_checker = network_json["neurons"][i].find("activation_threshold");
+        if(threshold_checker != network_json["neurons"][i].end()){
+            temp_threshold = std::stof((std::string)network_json["neurons"][i]["activation_threshold"]);
+        }
+        else{
+            temp_threshold = _neuron_types[neuron_type].activation_threshold;
+        }
+
+        nn->add_neuron(temp_threshold);
+    }
+
+    if(error_code == SUCCESS_CODE){
+        _network_list.push_back(nn);
+        return SUCCESS_CODE;
+    }
+    else{
+        delete nn;
+        return ERROR_CODE;
+    }
 }
 
 } //namespace COGNA

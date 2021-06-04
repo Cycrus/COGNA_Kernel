@@ -31,7 +31,7 @@ public:
     void tester();
 
 private:
-    std::vector<NeuralNetwork> _network_list;
+    std::vector<NeuralNetwork*> _network_list;
     std::unordered_map<std::string, NeuronParameterHandler> _neuron_types;
     std::vector<std::string> _transmitter_types;
     std::string _project_name;

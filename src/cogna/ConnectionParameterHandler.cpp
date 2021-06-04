@@ -19,6 +19,7 @@ namespace COGNA{
         learning_type = 0;
         transmitter_type = 0;
 
+        initial_base_weight = 1.0f;
         max_weight = 5.0f;
         min_weight = 0.0f;
 
