@@ -42,6 +42,20 @@ public:
 	~networking_client();
 
 	/**
+	 * @brief Returns the given ip address of the socket.
+	 *
+	 * @return The ip address as string.
+	 */
+	std::string get_ip();
+
+	/**
+	 * @brief Returns the given port of the socket.
+	 *
+	 * @return The port as integer.
+	 */
+	int get_port();
+
+	/**
 	 * @brief Receives a message via UDP and stores it as a string.
 	 *
 	 * Should be called in its own worker thread, so that it can continuously receive messages.

@@ -30,6 +30,18 @@ networking_client::~networking_client(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+std::string networking_client::get_ip(){
+	return _receiver->get_addr();
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int networking_client::get_port(){
+	return _receiver->get_port();
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 void networking_client::receive_message(){
 	while(true){
 		char *temp_msg = (char*)malloc(BUFFER_SIZE);

@@ -103,13 +103,13 @@ namespace COGNA{
         if(number > 0){
             for(int i=1; i<number; i++){
                 _transmitter_weights.push_back(1.0f);
-                return SUCCESS_CODE;
             }
+            return SUCCESS_CODE;
         }
         else{
             LOG_ERROR("Invalid transmitter number of transmitters <%d> entered.\n", number);
+            return ERROR_CODE;
         }
-        return ERROR_CODE;
     }
 
     //----------------------------------------------------------------------------------------------------------------------

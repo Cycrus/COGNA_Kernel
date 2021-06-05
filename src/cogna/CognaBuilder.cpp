@@ -11,6 +11,7 @@
 #include "CognaBuilder.hpp"
 #include "Constants.hpp"
 #include "NeuralNetwork.hpp"
+#include "Connection.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -33,9 +34,23 @@ void CognaBuilder::tester(){
     }
     std::cout << _neuron_types["Default"]["transmitter_type"] << std::endl;
 
+    std::cout << std::endl;
+
     for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
         std::cout << "N_" << _network_list[0]->_neurons[i]->_id << " -> "
                   << _network_list[0]->_neurons[i]->_parameter->activation_threshold << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    for(unsigned int i=0; i<_sender_list.size(); i++){
+        std::cout << "Sender -> " << _sender_list[i]->get_ip() << ":" << _sender_list[i]->get_port() << std::endl;
+    }
+
+    std::cout << std::endl;
+
+    for(unsigned int i=0; i < _network_list[0]->_neurons[1]->_connections.size(); i++){
+        std::cout << "Activation Type = " << _network_list[0]->_neurons[1]->_connections[i]->_parameter->activation_type << std::endl;
     }
 }
 
@@ -45,6 +60,14 @@ CognaBuilder::~CognaBuilder(){
     for(unsigned int i=0; i < _network_list.size(); i++){
         delete _network_list[i];
         _network_list[i] = nullptr;
+    }
+    for(unsigned int i=0; i < _sender_list.size(); i++){
+        delete _sender_list[i];
+        _sender_list[i] = nullptr;
+    }
+    for(unsigned int i=0; i < _client_list.size(); i++){
+        delete _client_list[i];
+        _client_list[i] = nullptr;
     }
 }
 
@@ -204,6 +227,146 @@ int CognaBuilder::load_neurons(NeuralNetwork *nn, nlohmann::json network_json){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+// TODO Does not yet create nodes, only networking daemon classes.
+int CognaBuilder::load_nodes(NeuralNetwork *nn, nlohmann::json network_json){
+    int error_code = SUCCESS_CODE;
+
+    for(unsigned int i=0; i<network_json["nodes"].size(); i++){
+        std::string ip = network_json["nodes"][i]["ip_address"];
+        int port = std::stoi((std::string)network_json["nodes"][i]["port"]);
+
+        if(network_json["nodes"][i]["function"] == "interface_input"){
+            bool client_does_exist = false;
+            for(unsigned int i=0; i < _client_list.size(); i++){
+                if(_client_list[i]->get_ip() == ip && _client_list[i]->get_port() == port){
+                    client_does_exist = true;
+                }
+            }
+            if(!client_does_exist){
+                try{
+                    utils::networking_client *temp_client = new utils::networking_client(ip, port, true);
+                    _client_list.push_back(temp_client);
+                }
+                catch(...){
+                    std::cout << "[ERROR] Could not bind client to " << ip << ":" << port
+                              << "... The ip address is probably not bound to the current machine." << std::endl;
+                    //error_code = ERROR_CODE;
+                }
+            }
+        }
+
+        else if(network_json["nodes"][i]["function"] == "interface_output"){
+            bool sender_does_exist = false;
+            for(unsigned int i=0; i < _sender_list.size(); i++){
+                if(_sender_list[i]->get_ip() == ip && _sender_list[i]->get_port() == port){
+                    sender_does_exist = true;
+                }
+            }
+            if(!sender_does_exist){
+                utils::networking_sender *temp_sender = new utils::networking_sender(ip, port);
+                _sender_list.push_back(temp_sender);
+            }
+        }
+    }
+
+    return error_code;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_json){
+    for(unsigned int i=0; i < network_json["connections"].size(); i++){
+        if(network_json["connections"][i].find("next_neuron") != network_json["connections"][i].end()){
+            if(network_json["connections"][i]["prev_neuron_function"] == "neuron" &&
+               network_json["connections"][i]["next_neuron_function"] == "neuron"){
+                   int source_neuron = network_json["connections"][i]["prev_neuron"];
+                   int target_neuron = network_json["connections"][i]["next_neuron"];
+                   float base_weight = load_connection_init_parameter(nn, network_json["connections"][i], "base_weight", source_neuron);
+                   int connection_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_type", source_neuron);
+                   int function_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_function", source_neuron);
+                   int learning_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "learning_type", source_neuron);
+                   int transmitter_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "transmitter_type", source_neuron);
+
+                   Connection *temp_con = nn->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
+                                                                    function_type, learning_type, transmitter_type);
+
+                   temp_con->_parameter->max_weight = load_connection_parameter(temp_con->_parameter->short_habituation_curvature,
+                                                                                                                 network_json["connections"][i], "max_weight");
+                   temp_con->_parameter->min_weight = load_connection_parameter(temp_con->_parameter->short_habituation_curvature,
+                                                                                                                 network_json["connections"][i], "min_weight");
+
+                   temp_con->_parameter->short_habituation_curvature = load_connection_parameter(temp_con->_parameter->short_habituation_curvature,
+                                                                                                                 network_json["connections"][i], "short_habituation_curvature");
+                   temp_con->_parameter->short_habituation_steepness = load_connection_parameter(temp_con->_parameter->short_habituation_steepness,
+                                                                                                                 network_json["connections"][i], "short_habituation_steepness");
+                   temp_con->_parameter-> short_sensitization_curvature = load_connection_parameter(temp_con->_parameter->short_sensitization_curvature,
+                                                                                                                 network_json["connections"][i], "short_sensitization_curvature");
+                   temp_con->_parameter->short_sensitization_steepness = load_connection_parameter(temp_con->_parameter->short_sensitization_steepness,
+                                                                                                                 network_json["connections"][i], "short_sensitization_steepness");
+                   temp_con->_parameter->short_dehabituation_curvature = load_connection_parameter(temp_con->_parameter->short_dehabituation_curvature,
+                                                                                                                 network_json["connections"][i], "short_dehabituation_curvature");
+                   temp_con->_parameter->short_dehabituation_steepness = load_connection_parameter(temp_con->_parameter->short_dehabituation_steepness,
+                                                                                                                 network_json["connections"][i], "short_dehabituation_steepness");
+                   temp_con->_parameter->short_desensitization_curvature = load_connection_parameter(temp_con->_parameter->short_desensitization_curvature,
+                                                                                                                 network_json["connections"][i], "short_desensitization_curvature");
+                   temp_con->_parameter->short_desensitization_steepness = load_connection_parameter(temp_con->_parameter->short_desensitization_steepness,
+                                                                                                                 network_json["connections"][i], "short_desensitization_steepness");
+
+                   temp_con->_parameter->long_habituation_curvature = load_connection_parameter(temp_con->_parameter->long_habituation_curvature,
+                                                                                                                 network_json["connections"][i], "long_habituation_curvature");
+                   temp_con->_parameter->long_habituation_steepness = load_connection_parameter(temp_con->_parameter->long_habituation_steepness,
+                                                                                                                 network_json["connections"][i], "long_habituation_steepness");
+                   temp_con->_parameter->long_sensitization_curvature = load_connection_parameter(temp_con->_parameter->long_sensitization_curvature,
+                                                                                                                 network_json["connections"][i], "long_sensitization_curvature");
+                   temp_con->_parameter->long_sensitization_steepness = load_connection_parameter(temp_con->_parameter->long_sensitization_steepness,
+                                                                                                                 network_json["connections"][i], "long_sensitization_steepness");
+                   temp_con->_parameter->long_dehabituation_curvature = load_connection_parameter(temp_con->_parameter->long_dehabituation_curvature,
+                                                                                                                 network_json["connections"][i], "long_dehabituation_curvature");
+                   temp_con->_parameter->long_dehabituation_steepness = load_connection_parameter(temp_con->_parameter->long_dehabituation_steepness,
+                                                                                                                 network_json["connections"][i], "long_dehabituation_steepness");
+                   temp_con->_parameter->long_desensitization_curvature = load_connection_parameter(temp_con->_parameter->long_desensitization_curvature,
+                                                                                                                 network_json["connections"][i], "long_desensitization_curvature");
+                   temp_con->_parameter->long_desensitization_steepness = load_connection_parameter(temp_con->_parameter->long_desensitization_steepness,
+                                                                                                                 network_json["connections"][i], "long_desensitization_steepness");
+
+                   temp_con->_parameter->presynaptic_potential_curvature = load_connection_parameter(temp_con->_parameter->presynaptic_potential_curvature,
+                                                                                                                 network_json["connections"][i], "presynaptic_potential_curvature");
+                   temp_con->_parameter->presynaptic_potential_steepness = load_connection_parameter(temp_con->_parameter->presynaptic_potential_steepness,
+                                                                                                                 network_json["connections"][i], "presynaptic_potential_steepness");
+                   temp_con->_parameter->presynaptic_backfall_curvature = load_connection_parameter(temp_con->_parameter->presynaptic_backfall_curvature,
+                                                                                                                 network_json["connections"][i], "presynaptic_backfall_curvature");
+                   temp_con->_parameter->presynaptic_backfall_steepness = load_connection_parameter(temp_con->_parameter->presynaptic_backfall_steepness,
+                                                                                                                 network_json["connections"][i], "presynaptic_backfall_steepness");
+
+                   temp_con->_parameter->long_learning_weight_reduction_curvature = load_connection_parameter(temp_con->_parameter->long_learning_weight_reduction_curvature,
+                                                                                                                 network_json["connections"][i], "long_learning_weight_reduction_curvature");
+                   temp_con->_parameter->long_learning_weight_reduction_steepness = load_connection_parameter(temp_con->_parameter->long_learning_weight_reduction_steepness,
+                                                                                                                 network_json["connections"][i], "long_learning_weight_reduction_steepness");
+                   temp_con->_parameter->long_learning_weight_backfall_curvature = load_connection_parameter(temp_con->_parameter->long_learning_weight_backfall_curvature,
+                                                                                                                 network_json["connections"][i], "long_learning_weight_backfall_curvature");
+                   temp_con->_parameter->long_learning_weight_backfall_steepness = load_connection_parameter(temp_con->_parameter->long_learning_weight_backfall_steepness,
+                                                                                                                 network_json["connections"][i], "long_learning_weight_backfall_steepness");
+
+                   temp_con->_parameter->habituation_threshold = load_connection_parameter(temp_con->_parameter->habituation_threshold,
+                                                                                                                 network_json["connections"][i], "habituation_threshold");
+                   temp_con->_parameter->sensitization_threshold = load_connection_parameter(temp_con->_parameter->sensitization_threshold,
+                                                                                                                 network_json["connections"][i], "sensitization_threshold");
+            }
+        }
+        else if(network_json["connections"][i].find("next_connection") != network_json["connections"][i].end()){
+            std::cout << "Presynaptic Connection Found" << std::endl;
+        }
+        else{
+            std::cout << "[ERROR] Missing target type for connection." << std::endl;
+            return ERROR_CODE;
+        }
+    }
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 int CognaBuilder::load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json){
     nn->_parameter->transmitter_backfall_curvature = std::stof((std::string)network_json["network"]["transmitter_backfall_curvature"]);
     nn->_parameter->transmitter_backfall_steepness = std::stof((std::string)network_json["network"]["transmitter_backfall_steepness"]);
@@ -216,6 +379,7 @@ int CognaBuilder::load_network_parameter(NeuralNetwork *nn, nlohmann::json netwo
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaBuilder::load_network(std::string network_name){
+    std::cout << "[INFO] Loading network <" << network_name << ">." << std::endl;
     std::ifstream network_file;
     network_file.open(_project_path + "networks/" + network_name);
     if(!network_file){
@@ -236,10 +400,13 @@ int CognaBuilder::load_network(std::string network_name){
     int error_code = SUCCESS_CODE;
 
     NeuralNetwork *nn = new NeuralNetwork();
-    load_network_parameter(nn, network_json);
-    nn->define_transmitters(_transmitter_types.size());
-    load_neurons(nn, network_json);
+    if(load_network_parameter(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    if(nn->define_transmitters(_transmitter_types.size()) == ERROR_CODE) error_code = ERROR_CODE;
+    if(load_neurons(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    if(load_nodes(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    if(load_connections(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
 
+    if(nn->setup_network() == ERROR_CODE) error_code = ERROR_CODE;
 
     if(error_code == SUCCESS_CODE){
         _network_list.push_back(nn);
@@ -254,7 +421,7 @@ int CognaBuilder::load_network(std::string network_name){
 //----------------------------------------------------------------------------------------------------------------------
 //
 float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string parameter, std::string neuron_type){
-    float return_value = 0.0;
+    float return_value = 0.0f;
     std::string parameter_value = "";
     try{
         parameter_value = neuron[parameter];
@@ -345,6 +512,85 @@ float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string par
                 return ERROR_CODE;
             }
         }
+    }
+
+    return return_value;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+float CognaBuilder::load_connection_parameter(float init_value, nlohmann::json connection, std::string parameter){
+    float return_value = init_value;
+    if(connection.find(parameter) != connection.end()){
+        return_value = std::stof((std::string)connection[parameter]);
+    }
+    return return_value;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+float CognaBuilder::load_connection_init_parameter(NeuralNetwork * nn, nlohmann::json connection, std::string parameter, int source_neuron_id){
+    float return_value = 0.0f;
+
+    if(parameter == "base_weight" || parameter == "activation_type" || parameter == "activation_function" ||
+       parameter == "learning_type" || parameter == "transmitter_type"){
+           std::string parameter_value = "";
+
+           if(parameter == "transmitter_type"){
+               try{
+                   parameter_value = connection[parameter];
+                   for(unsigned int i=0; i<_transmitter_types.size(); i++){
+                       if(_transmitter_types[i] == parameter_value){
+                           return_value = i;
+                       }
+                       if(_transmitter_types[i] == parameter_value){
+                           return_value = i;
+                       }
+                   }
+               }
+               catch(...){
+                   return_value = nn->_neurons[source_neuron_id]->_parameter->transmitter_type;
+               }
+           }
+
+           else{
+                try{
+                    parameter_value = connection[parameter];
+
+                    if(parameter == "activation_type"){
+                        if(parameter_value == "Excitatory")
+                            return_value = EXCITATORY;
+                        else if(parameter_value == "Inhibitory")
+                            return_value = INHIBITORY;
+                        else if(parameter_value == "Nondirectional")
+                            return_value = NONDIRECTIONAL;
+                    }
+                    else if(parameter == "activation_function"){
+                        if(parameter_value == "Linear")
+                            return_value = FUNCTION_LINEAR;
+                        else if(parameter_value == "Relu")
+                            return_value = FUNCTION_RELU;
+                        else if(parameter_value == "Sigmoid")
+                            return_value = FUNCTION_SIGMOID;
+                    }
+                    else{
+                        return_value = std::stof((std::string)connection[parameter]);
+                    }
+                }
+                catch(...){
+                    if(parameter == "base_weight")
+                        return_value = nn->_neurons[source_neuron_id]->_parameter->initial_base_weight;
+                    else if(parameter == "activation_type")
+                        return_value = nn->_neurons[source_neuron_id]->_parameter->activation_type;
+                    else if(parameter == "activation_function")
+                        return_value = nn->_neurons[source_neuron_id]->_parameter->activation_function;
+                    else if(parameter == "learning_type")
+                        return_value = nn->_neurons[source_neuron_id]->_parameter->learning_type;
+                }
+            }
+    }
+    else{
+        std::cout << "[ERROR] Invalid initialization parameter <" << parameter << ">." << std::endl;
     }
 
     return return_value;
