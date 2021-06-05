@@ -23,6 +23,7 @@ namespace COGNA{
             int learning_type;        /**< Defines the kind of learning the connection is capable of */
             int transmitter_type;     /**< Type of neurotransmitter used for transmitting action potential */
 
+            float initial_base_weight;
             float max_weight;
             float min_weight;
 

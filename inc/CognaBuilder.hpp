@@ -15,9 +15,9 @@
 
 #include <string>
 #include <vector>
-#include <unordered_map>
 #include "NeuralNetwork.hpp"
 #include "NeuronParameterHandler.hpp"
+#include "json.hpp"
 
 namespace COGNA{
 
@@ -31,8 +31,8 @@ public:
     void tester();
 
 private:
-    std::vector<NeuralNetwork> _network_list;
-    std::unordered_map<std::string, NeuronParameterHandler> _neuron_types;
+    std::vector<NeuralNetwork*> _network_list;
+    nlohmann::json _neuron_types;
     std::vector<std::string> _transmitter_types;
     std::string _project_name;
     std::string _project_path;
@@ -42,7 +42,12 @@ private:
     int load_globals_file();
     int load_neuron_types();
     int load_transmitters();
+
+    int load_neurons(NeuralNetwork *nn, nlohmann::json network_json);
+    int load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network(std::string network_name);
+
+    float load_neuron_parameter(nlohmann::json neuron, std::string parameter, std::string neuron_type);
 };
 
 } //namespace COGNA
