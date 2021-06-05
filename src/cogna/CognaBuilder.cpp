@@ -9,7 +9,6 @@
  */
 
 #include "CognaBuilder.hpp"
-#include "json.hpp"
 #include "Constants.hpp"
 #include "NeuralNetwork.hpp"
 
@@ -27,12 +26,12 @@ CognaBuilder::CognaBuilder(std::string project_name){
 //----------------------------------------------------------------------------------------------------------------------
 //
 void CognaBuilder::tester(){
-    std::cout << _neuron_types["Default"].initial_base_weight << std::endl;
-    std::cout << _neuron_types["TestNeuronType_1"].initial_base_weight << std::endl;
+    std::cout << _neuron_types["Default"]["base_weight"] << std::endl;
+    std::cout << _neuron_types["TestNeuronType_1"]["base_weight"] << std::endl;
     for(unsigned int i=0; i<_transmitter_types.size(); i++){
         std::cout << _transmitter_types[i] << std::endl;
     }
-    std::cout << _neuron_types["Default"].transmitter_type << std::endl;
+    std::cout << _neuron_types["Default"]["transmitter_type"] << std::endl;
 
     for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
         std::cout << "N_" << _network_list[0]->_neurons[i]->_id << " -> "
@@ -98,102 +97,7 @@ int CognaBuilder::load_neuron_types(){
     neuron_file.close();
 
     for(auto it = neuron_json.begin(); it != neuron_json.end(); ++it){
-        NeuronParameterHandler temp_neuron;
-
-        temp_neuron.initial_base_weight = std::stof((std::string)it.value()["base_weight"]);
-
-        if(it.value()["activation_type"] == "Excitatory")
-            temp_neuron.activation_type = EXCITATORY;
-        else if(it.value()["activation_type"] == "Inhibitory")
-            temp_neuron.activation_type = INHIBITORY;
-        else if(it.value()["activation_type"] == "Nondirectional")
-            temp_neuron.activation_type = NONDIRECTIONAL;
-
-        if(it.value()["activation_function"] == "Linear")
-            temp_neuron.activation_function = FUNCTION_LINEAR;
-        else if(it.value()["activation_function"] == "Relu")
-            temp_neuron.activation_function = FUNCTION_RELU;
-        else if(it.value()["activation_function"] == "Sigmoid")
-            temp_neuron.activation_function = FUNCTION_SIGMOID;
-
-        if(it.value()["learning_type"] == "None")
-            temp_neuron.learning_type = LEARNING_NONE;
-        else if(it.value()["learning_type"] == "Habituation")
-            temp_neuron.learning_type = LEARNING_HABITUATION;
-        else if(it.value()["learning_type"] == "Sensitization")
-            temp_neuron.learning_type = LEARNING_SENSITIZATION;
-        else if(it.value()["learning_type"] == "HabiSens")
-            temp_neuron.learning_type = LEARNING_HABISENS;
-
-        for(unsigned int i=0; i<_transmitter_types.size(); i++){
-            if(_transmitter_types[i] == it.value()["transmitter_type"]){
-                temp_neuron.transmitter_type = i;
-            }
-            if(_transmitter_types[i] == it.value()["influenced_transmitter"]){
-                temp_neuron.influenced_transmitter = i;
-            }
-        }
-
-        temp_neuron.activation_threshold = std::stof((std::string)it.value()["activation_threshold"]);
-
-        temp_neuron.max_activation = std::stof((std::string)it.value()["max_activation"]);
-        temp_neuron.min_activation = std::stof((std::string)it.value()["min_activation"]);
-
-        temp_neuron.activation_backfall_curvature = std::stof((std::string)it.value()["activation_backfall_curvature"]);
-        temp_neuron.activation_backfall_steepness = std::stof((std::string)it.value()["activation_backfall_steepness"]);
-
-        temp_neuron.transmitter_change_curvature = std::stof((std::string)it.value()["transmitter_change_curvature"]);
-        temp_neuron.transmitter_change_steepness = std::stof((std::string)it.value()["transmitter_change_steepness"]);
-
-        if(it.value()["transmitter_influence_direction"] == "Positive Influence")
-            temp_neuron.transmitter_influence_direction = POSITIVE_INFLUENCE;
-        else if(it.value()["transmitter_influence_direction"] == "Negative Influence")
-            temp_neuron.transmitter_influence_direction = NEGATIVE_INFLUENCE;
-
-        temp_neuron.random_chance = std::stoi((std::string)it.value()["random_chance"]);
-        if(temp_neuron.random_chance > 0){
-            temp_neuron.random_activation = true;
-        }
-        else{
-            temp_neuron.random_activation = false;
-        }
-        temp_neuron.random_activation_value = std::stof((std::string)it.value()["random_activation_value"]);
-
-        temp_neuron.max_weight = std::stof((std::string)it.value()["max_weight"]);
-        temp_neuron.min_weight = std::stof((std::string)it.value()["min_weight"]);
-
-        temp_neuron.short_habituation_curvature = std::stof((std::string)it.value()["short_habituation_curvature"]);
-        temp_neuron.short_habituation_steepness = std::stof((std::string)it.value()["short_habituation_steepness"]);
-        temp_neuron.short_sensitization_curvature = std::stof((std::string)it.value()["short_sensitization_curvature"]);
-        temp_neuron.short_sensitization_steepness = std::stof((std::string)it.value()["short_sensitization_steepness"]);
-        temp_neuron.short_dehabituation_curvature = std::stof((std::string)it.value()["short_dehabituation_curvature"]);
-        temp_neuron.short_dehabituation_steepness = std::stof((std::string)it.value()["short_dehabituation_steepness"]);
-        temp_neuron.short_desensitization_curvature = std::stof((std::string)it.value()["short_desensitization_curvature"]);
-        temp_neuron.short_desensitization_steepness = std::stof((std::string)it.value()["short_desensitization_steepness"]);
-
-        temp_neuron.long_habituation_curvature = std::stof((std::string)it.value()["long_habituation_curvature"]);
-        temp_neuron.long_habituation_steepness = std::stof((std::string)it.value()["long_habituation_steepness"]);
-        temp_neuron.long_sensitization_curvature = std::stof((std::string)it.value()["long_sensitization_curvature"]);
-        temp_neuron.long_sensitization_steepness = std::stof((std::string)it.value()["long_sensitization_steepness"]);
-        temp_neuron.long_dehabituation_curvature = std::stof((std::string)it.value()["long_dehabituation_curvature"]);
-        temp_neuron.long_dehabituation_steepness = std::stof((std::string)it.value()["long_dehabituation_steepness"]);
-        temp_neuron.long_desensitization_curvature = std::stof((std::string)it.value()["long_desensitization_curvature"]);
-        temp_neuron.long_desensitization_steepness = std::stof((std::string)it.value()["long_desensitization_steepness"]);
-
-        temp_neuron.presynaptic_potential_curvature = std::stof((std::string)it.value()["presynaptic_potential_curvature"]);
-        temp_neuron.presynaptic_potential_steepness = std::stof((std::string)it.value()["presynaptic_potential_steepness"]);
-        temp_neuron.presynaptic_backfall_curvature = std::stof((std::string)it.value()["presynaptic_backfall_curvature"]);
-        temp_neuron.presynaptic_backfall_steepness = std::stof((std::string)it.value()["presynaptic_backfall_steepness"]);
-
-        temp_neuron.long_learning_weight_reduction_curvature = std::stof((std::string)it.value()["long_learning_weight_reduction_curvature"]);
-        temp_neuron.long_learning_weight_reduction_steepness = std::stof((std::string)it.value()["long_learning_weight_reduction_steepness"]);
-        temp_neuron.long_learning_weight_backfall_curvature = std::stof((std::string)it.value()["long_learning_weight_backfall_curvature"]);
-        temp_neuron.long_learning_weight_backfall_steepness = std::stof((std::string)it.value()["long_learning_weight_backfall_steepness"]);
-
-        temp_neuron.habituation_threshold = std::stof((std::string)it.value()["habituation_threshold"]);
-        temp_neuron.sensitization_threshold = std::stof((std::string)it.value()["sensitization_threshold"]);
-
-        _neuron_types[it.key()] = temp_neuron;
+        _neuron_types[it.key()] = it.value();
     }
 
     return SUCCESS_CODE;
@@ -223,6 +127,94 @@ int CognaBuilder::load_transmitters(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+int CognaBuilder::load_neurons(NeuralNetwork *nn, nlohmann::json network_json){
+    for(unsigned int i=0; i < network_json["neurons"].size(); i++){
+        std::string neuron_type = "";
+        try{
+            neuron_type = network_json["neurons"][i]["neuron_type"];
+        }
+        catch(...){
+            neuron_type = "Default";
+        }
+
+        float temp_threshold = load_neuron_parameter(network_json["neurons"][i], "activation_threshold", neuron_type);
+        int random_chance = (int)load_neuron_parameter(network_json["neurons"][i], "random_chance", neuron_type);
+        int does_influence_transmitter = (int)load_neuron_parameter(network_json["neurons"][i], "influences_transmitter", neuron_type);
+        nn->add_neuron(temp_threshold);
+        int n_id = nn->_neurons.size()-1;
+        if(does_influence_transmitter){
+            int influenced_transmitter = (int)load_neuron_parameter(network_json["neurons"][i], "influenced_transmitter", neuron_type);
+            int direction = (int)load_neuron_parameter(network_json["neurons"][i], "transmitter_influence_direction", neuron_type);
+            nn->set_neural_transmitter_influence(n_id, influenced_transmitter, direction);
+        }
+        if(random_chance > 0){
+            int random_value = load_neuron_parameter(network_json["neurons"][i], "random_activation_value", neuron_type);
+            nn->set_random_neuron_activation(n_id, random_chance, random_value);
+        }
+
+        nn->_neurons[n_id]->_parameter->initial_base_weight = load_neuron_parameter(network_json["neurons"][i], "base_weight", neuron_type);
+        nn->_neurons[n_id]->_parameter->max_weight = load_neuron_parameter(network_json["neurons"][i], "max_weight", neuron_type);
+        nn->_neurons[n_id]->_parameter->min_weight = load_neuron_parameter(network_json["neurons"][i], "min_weight", neuron_type);
+        nn->_neurons[n_id]->_parameter->activation_type = load_neuron_parameter(network_json["neurons"][i], "activation_type", neuron_type);
+        nn->_neurons[n_id]->_parameter->activation_function = load_neuron_parameter(network_json["neurons"][i], "activation_function", neuron_type);
+        nn->_neurons[n_id]->_parameter->learning_type = load_neuron_parameter(network_json["neurons"][i], "learning_type", neuron_type);
+        nn->_neurons[n_id]->_parameter->transmitter_type = load_neuron_parameter(network_json["neurons"][i], "transmitter_type", neuron_type);
+
+        nn->_neurons[n_id]->_parameter->short_habituation_curvature = load_neuron_parameter(network_json["neurons"][i], "short_habituation_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_habituation_steepness = load_neuron_parameter(network_json["neurons"][i], "short_habituation_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_sensitization_curvature = load_neuron_parameter(network_json["neurons"][i], "short_sensitization_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_sensitization_steepness = load_neuron_parameter(network_json["neurons"][i], "short_sensitization_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_dehabituation_curvature = load_neuron_parameter(network_json["neurons"][i], "short_dehabituation_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_dehabituation_steepness = load_neuron_parameter(network_json["neurons"][i], "short_dehabituation_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_desensitization_curvature = load_neuron_parameter(network_json["neurons"][i], "short_desensitization_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->short_desensitization_steepness = load_neuron_parameter(network_json["neurons"][i], "short_desensitization_steepness", neuron_type);
+
+        nn->_neurons[n_id]->_parameter->long_habituation_curvature = load_neuron_parameter(network_json["neurons"][i], "long_habituation_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_habituation_steepness = load_neuron_parameter(network_json["neurons"][i], "long_habituation_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_sensitization_curvature = load_neuron_parameter(network_json["neurons"][i], "long_sensitization_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_sensitization_steepness = load_neuron_parameter(network_json["neurons"][i], "long_sensitization_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_dehabituation_curvature = load_neuron_parameter(network_json["neurons"][i], "long_dehabituation_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_dehabituation_steepness = load_neuron_parameter(network_json["neurons"][i], "long_dehabituation_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_desensitization_curvature = load_neuron_parameter(network_json["neurons"][i], "long_desensitization_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_desensitization_steepness = load_neuron_parameter(network_json["neurons"][i], "long_desensitization_steepness", neuron_type);
+
+        nn->_neurons[n_id]->_parameter->presynaptic_potential_curvature = load_neuron_parameter(network_json["neurons"][i], "presynaptic_potential_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->presynaptic_potential_steepness = load_neuron_parameter(network_json["neurons"][i], "presynaptic_potential_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->presynaptic_backfall_curvature = load_neuron_parameter(network_json["neurons"][i], "presynaptic_backfall_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->presynaptic_backfall_steepness = load_neuron_parameter(network_json["neurons"][i], "presynaptic_backfall_steepness", neuron_type);
+
+        nn->_neurons[n_id]->_parameter->long_learning_weight_reduction_curvature = load_neuron_parameter(network_json["neurons"][i], "long_learning_weight_reduction_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_learning_weight_reduction_steepness = load_neuron_parameter(network_json["neurons"][i], "long_learning_weight_reduction_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_learning_weight_backfall_curvature = load_neuron_parameter(network_json["neurons"][i], "long_learning_weight_backfall_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->long_learning_weight_backfall_steepness = load_neuron_parameter(network_json["neurons"][i], "long_learning_weight_backfall_steepness", neuron_type);
+
+        nn->_neurons[n_id]->_parameter->habituation_threshold = load_neuron_parameter(network_json["neurons"][i], "habituation_threshold", neuron_type);
+        nn->_neurons[n_id]->_parameter->sensitization_threshold = load_neuron_parameter(network_json["neurons"][i], "sensitization_threshold", neuron_type);
+
+        nn->_neurons[n_id]->_parameter->max_activation = load_neuron_parameter(network_json["neurons"][i], "max_activation", neuron_type);
+        nn->_neurons[n_id]->_parameter->min_activation = load_neuron_parameter(network_json["neurons"][i], "min_activation", neuron_type);
+        nn->_neurons[n_id]->_parameter->activation_backfall_curvature = load_neuron_parameter(network_json["neurons"][i], "activation_backfall_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->activation_backfall_steepness = load_neuron_parameter(network_json["neurons"][i], "activation_backfall_steepness", neuron_type);
+        nn->_neurons[n_id]->_parameter->transmitter_change_curvature = load_neuron_parameter(network_json["neurons"][i], "transmitter_change_curvature", neuron_type);
+        nn->_neurons[n_id]->_parameter->transmitter_change_steepness = load_neuron_parameter(network_json["neurons"][i], "transmitter_change_steepness", neuron_type);
+    }
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaBuilder::load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json){
+    nn->_parameter->transmitter_backfall_curvature = std::stof((std::string)network_json["network"]["transmitter_backfall_curvature"]);
+    nn->_parameter->transmitter_backfall_steepness = std::stof((std::string)network_json["network"]["transmitter_backfall_steepness"]);
+    nn->_parameter->max_transmitter_weight = std::stof((std::string)network_json["network"]["max_transmitter_weight"]);
+    nn->_parameter->min_transmitter_weight = std::stof((std::string)network_json["network"]["min_transmitter_weight"]);
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 int CognaBuilder::load_network(std::string network_name){
     std::ifstream network_file;
     network_file.open(_project_path + "networks/" + network_name);
@@ -236,7 +228,7 @@ int CognaBuilder::load_network(std::string network_name){
     network_file >> network_json;
     network_file.close();
 
-    // neurons = network_json["neurons"]
+    // DONE neurons = network_json["neurons"]
     // connections = network_json["connections"]
     // nodes = network_json["nodes"]
     // network = network_json["network"]
@@ -244,27 +236,10 @@ int CognaBuilder::load_network(std::string network_name){
     int error_code = SUCCESS_CODE;
 
     NeuralNetwork *nn = new NeuralNetwork();
+    load_network_parameter(nn, network_json);
+    nn->define_transmitters(_transmitter_types.size());
+    load_neurons(nn, network_json);
 
-    for(unsigned int i=0; i < network_json["neurons"].size(); i++){
-        std::string neuron_type = "";
-        try{
-            neuron_type = network_json["neurons"][i]["neuron_type"];
-        }
-        catch(...){
-            neuron_type = "Default";
-        }
-
-        float temp_threshold = 0.0;
-        auto threshold_checker = network_json["neurons"][i].find("activation_threshold");
-        if(threshold_checker != network_json["neurons"][i].end()){
-            temp_threshold = std::stof((std::string)network_json["neurons"][i]["activation_threshold"]);
-        }
-        else{
-            temp_threshold = _neuron_types[neuron_type].activation_threshold;
-        }
-
-        nn->add_neuron(temp_threshold);
-    }
 
     if(error_code == SUCCESS_CODE){
         _network_list.push_back(nn);
@@ -274,6 +249,105 @@ int CognaBuilder::load_network(std::string network_name){
         delete nn;
         return ERROR_CODE;
     }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string parameter, std::string neuron_type){
+    float return_value = 0.0;
+    std::string parameter_value = "";
+    try{
+        parameter_value = neuron[parameter];
+    }
+    catch(...){
+        try{
+            parameter_value = _neuron_types[neuron_type][parameter];
+        }
+        catch(...){
+            std::cout << "[ERROR] Unable to load parameter <" << parameter << "> from neuron." << std::endl;
+            return ERROR_CODE;
+        }
+    }
+
+    if(parameter == "activation_type"){
+        if(parameter_value == "Excitatory")
+            return_value = EXCITATORY;
+        else if(parameter_value == "Inhibitory")
+            return_value = INHIBITORY;
+        else if(parameter_value == "Nondirectional")
+            return_value = NONDIRECTIONAL;
+    }
+    else if(parameter == "activation_function"){
+        if(parameter_value == "Linear")
+            return_value = FUNCTION_LINEAR;
+        else if(parameter_value == "Relu")
+            return_value = FUNCTION_RELU;
+        else if(parameter_value == "Sigmoid")
+            return_value = FUNCTION_SIGMOID;
+    }
+    else if(parameter == "learning_type"){
+        if(parameter_value == "None")
+            return_value = LEARNING_NONE;
+        else if(parameter_value == "Habituation")
+            return_value = LEARNING_HABITUATION;
+        else if(parameter_value == "Sensitization")
+            return_value = LEARNING_SENSITIZATION;
+        else if(parameter_value == "HabiSens")
+            return_value = LEARNING_HABISENS;
+    }
+    else if(parameter == "transmitter_type"){
+        for(unsigned int i=0; i<_transmitter_types.size(); i++){
+            if(_transmitter_types[i] == parameter_value){
+                return_value = i;
+            }
+            if(_transmitter_types[i] == parameter_value){
+                return_value = i;
+            }
+        }
+    }
+    else if(parameter == "influenced_parameter"){
+        for(unsigned int i=0; i<_transmitter_types.size(); i++){
+            if(_transmitter_types[i] == parameter_value){
+                return_value = i;
+            }
+            if(_transmitter_types[i] == parameter_value){
+                return_value = i;
+            }
+        }
+    }
+    else if(parameter == "influences_transmitter"){
+        if(parameter_value == "No"){
+            return_value = 0;
+        }
+        else if(parameter_value == "Yes"){
+            return_value = 1;
+        }
+    }
+    else if(parameter == "transmitter_influence_direction"){
+        if(parameter_value == "Positive Influence"){
+            return_value = POSITIVE_INFLUENCE;
+        }
+        else if(parameter_value == "Negative Influence"){
+            return_value = NEGATIVE_INFLUENCE;
+        }
+    }
+
+    else{
+        try{
+            return_value = neuron[parameter];
+        }
+        catch(...){
+            try{
+                return_value = std::stof((std::string)_neuron_types[neuron_type][parameter]);
+            }
+            catch(...){
+                std::cout << "[ERROR] Unable to load parameter <" << parameter << "> from neuron." << std::endl;
+                return ERROR_CODE;
+            }
+        }
+    }
+
+    return return_value;
 }
 
 } //namespace COGNA
