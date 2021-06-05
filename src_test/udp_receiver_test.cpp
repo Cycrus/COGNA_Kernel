@@ -7,7 +7,7 @@
 #include <thread>
 
 int main(){
-	std::string ip = "192.168.0.234";
+	std::string ip = "0.0.0.0";
 	int port = 5005;
 	std::cout << "Starting Network test..." << std::endl;
 
