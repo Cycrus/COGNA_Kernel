@@ -11,6 +11,9 @@ namespace COGNA{
 
 class NetworkingNode{
 public:
+    utils::networking_client *_client;
+    utils::networking_sender *_sender;
+
     NetworkingNode(int id, std::string channel);
     ~NetworkingNode();
 
@@ -20,14 +23,13 @@ public:
 
     int id();
     int role();
+    std::string channel();
     std::vector<Neuron*> targets();
 
 private:
     int _id;
     int _role;
     std::string _channel;
-    utils::networking_client *_client;
-    utils::networking_sender *_sender;
     std::vector<Neuron*> _target_list;
 };
 

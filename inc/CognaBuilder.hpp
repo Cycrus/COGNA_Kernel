@@ -32,16 +32,22 @@ public:
 
     void tester();
 
+    std::vector<NeuralNetwork*> get_network_list();
+    std::vector<utils::networking_client*> get_client_list();
+    std::vector<utils::networking_sender*> get_sender_list();
+    int get_frequency();
+
 private:
     std::vector<NeuralNetwork*> _network_list;
-    nlohmann::json _neuron_types;
-    std::vector<std::string> _transmitter_types;
     std::vector<utils::networking_client*> _client_list;
     std::vector<utils::networking_sender*> _sender_list;
+    int _frequency;
+
+    nlohmann::json _neuron_types;
+    std::vector<std::string> _transmitter_types;
     std::string _project_name;
     std::string _project_path;
     std::string _main_network;
-    int _frequency;
     int _curr_network_neuron_number;
 
     int load_globals_file();

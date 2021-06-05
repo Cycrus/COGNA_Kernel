@@ -57,6 +57,7 @@ public:
 	 * @brief Adds data to the json payload.
 	 *
 	 * Does not yet send the data. It gets only stored until deleted or send_payload() is called.
+	 * Overloaded to support float, int and string as sent data.
 	 *
 	 * @param key	The key which should indicate the value in the json data.
 	 * @param value	The value of the new data inserted in the json. Adapts automatically to the type of the value.
