@@ -61,6 +61,12 @@ namespace COGNA{
 
     const int NO_TRANSMITTER = -1;
     const int STD_TRANSMITTER = 0;
+
+    const int ROLE_EXTERN_INPUT = 1;
+    const int ROLE_EXTERN_OUTPUT = 2;
+
+    const int NODE_TARGET_NEURON = 1;
+    const int NODE_TARGET_NODE = 2;
 }
 
 #endif /* INCLUDE_CONSTANTS_HPP */

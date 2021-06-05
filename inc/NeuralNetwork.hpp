@@ -16,6 +16,10 @@
 
 #include "Neuron.hpp"
 #include "NeuralNetworkParameterHandler.hpp"
+#include "NetworkingNode.hpp"
+#include "networking_client.hpp"
+#include "networking_sender.hpp"
+#include <string>
 
 namespace COGNA{
     /**
@@ -29,6 +33,8 @@ namespace COGNA{
         std::vector<COGNA::Neuron*> _neurons;                   // All neurons contained in the network
         std::vector<COGNA::Connection*> _curr_connections;      // All connections which will be activated in this step
         COGNA::NeuralNetworkParameterHandler *_parameter;
+        std::vector<COGNA::NetworkingNode*> _extern_input_nodes;
+        std::vector<COGNA::NetworkingNode*> _extern_output_nodes;
 
         /**
          * @brief Initializes the neural network by setting some parameters and adding the Null-Neuron.
@@ -53,6 +59,9 @@ namespace COGNA{
          *
          */
         int add_neuron(float threshold);
+
+        int add_extern_input_node(utils::networking_client *client, std::string channel);
+        int add_extern_output_node(utils::networking_sender *sender, std::string channel);
 
         /**
          * @brief Sets a neuron to have an influence on a certain neurotransmitter if it fires.
