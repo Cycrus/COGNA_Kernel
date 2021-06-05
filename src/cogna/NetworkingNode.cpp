@@ -11,10 +11,15 @@ NetworkingNode::NetworkingNode(int id, std::string channel){
     _client = nullptr;
     _sender = nullptr;
 }
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 NetworkingNode::~NetworkingNode(){
 
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 int NetworkingNode::add_target(Neuron *target){
     bool can_add = true;
     for(unsigned int i=0; i < _target_list.size(); i++){
@@ -34,6 +39,8 @@ int NetworkingNode::add_target(Neuron *target){
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 int NetworkingNode::setup_client(utils::networking_client *client){
     if(_client == nullptr && _sender == nullptr){
         _client = client;
@@ -46,6 +53,8 @@ int NetworkingNode::setup_client(utils::networking_client *client){
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 int NetworkingNode::setup_sender(utils::networking_sender *sender){
     if(_client == nullptr && _sender == nullptr){
         _sender = sender;
@@ -58,14 +67,26 @@ int NetworkingNode::setup_sender(utils::networking_sender *sender){
     }
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 int NetworkingNode::id(){
     return _id;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 int NetworkingNode::role(){
     return _role;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
+std::string NetworkingNode::channel(){
+    return _channel;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 std::vector<Neuron*> NetworkingNode::targets(){
     return _target_list;
 }

@@ -27,6 +27,12 @@ CognaBuilder::CognaBuilder(std::string project_name){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+CognaBuilder::~CognaBuilder(){
+    
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 void CognaBuilder::tester(){
     for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
         for(unsigned int j=0; j < _network_list[0]->_neurons[i]->_connections.size(); j++){
@@ -53,19 +59,26 @@ void CognaBuilder::tester(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-CognaBuilder::~CognaBuilder(){
-    for(unsigned int i=0; i < _network_list.size(); i++){
-        delete _network_list[i];
-        _network_list[i] = nullptr;
-    }
-    for(unsigned int i=0; i < _sender_list.size(); i++){
-        delete _sender_list[i];
-        _sender_list[i] = nullptr;
-    }
-    for(unsigned int i=0; i < _client_list.size(); i++){
-        delete _client_list[i];
-        _client_list[i] = nullptr;
-    }
+std::vector<NeuralNetwork*> CognaBuilder::get_network_list(){
+    return _network_list;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+std::vector<utils::networking_client*> CognaBuilder::get_client_list(){
+    return _client_list;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+std::vector<utils::networking_sender*> CognaBuilder::get_sender_list(){
+    return _sender_list;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaBuilder::get_frequency(){
+    return _frequency;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

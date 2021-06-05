@@ -318,6 +318,9 @@ namespace COGNA{
              *
              */
             void switch_vectors();
+
+            void receive_data();
+            void send_data();
     };
 
     /**
