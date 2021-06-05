@@ -40,6 +40,20 @@ public:
 	~networking_sender();
 
 	/**
+	 * @brief Returns the given ip address of the socket.
+	 *
+	 * @return The ip address as string.
+	 */
+	std::string get_ip();
+
+	/**
+	 * @brief Returns the given port of the socket.
+	 *
+	 * @return The port as integer.
+	 */
+	int get_port();
+
+	/**
 	 * @brief Adds data to the json payload.
 	 *
 	 * Does not yet send the data. It gets only stored until deleted or send_payload() is called.

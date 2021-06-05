@@ -18,6 +18,8 @@
 #include "NeuralNetwork.hpp"
 #include "NeuronParameterHandler.hpp"
 #include "json.hpp"
+#include "networking_client.hpp"
+#include "networking_sender.hpp"
 
 namespace COGNA{
 
@@ -34,6 +36,8 @@ private:
     std::vector<NeuralNetwork*> _network_list;
     nlohmann::json _neuron_types;
     std::vector<std::string> _transmitter_types;
+    std::vector<utils::networking_client*> _client_list;
+    std::vector<utils::networking_sender*> _sender_list;
     std::string _project_name;
     std::string _project_path;
     std::string _main_network;
@@ -44,10 +48,14 @@ private:
     int load_transmitters();
 
     int load_neurons(NeuralNetwork *nn, nlohmann::json network_json);
+    int load_nodes(NeuralNetwork *nn, nlohmann::json network_json);
+    int load_connections(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network(std::string network_name);
 
     float load_neuron_parameter(nlohmann::json neuron, std::string parameter, std::string neuron_type);
+    float load_connection_parameter(float init_value, nlohmann::json connection, std::string parameter);
+    float load_connection_init_parameter(NeuralNetwork * nn, nlohmann::json connection, std::string parameter, int source_neuron_id);
 };
 
 } //namespace COGNA
