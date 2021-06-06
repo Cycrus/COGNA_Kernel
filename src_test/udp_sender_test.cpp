@@ -8,7 +8,7 @@
 
 int main(){
 	std::string ip = "192.168.0.87";
-	int port = 5005;
+	int port = 40002;
 	std::cout << "Starting sender test..." << std::endl;
 
 	utils::networking_sender *json_sender = new utils::networking_sender(ip, port);
