@@ -36,8 +36,14 @@ CognaBuilder::~CognaBuilder(){
 void CognaBuilder::tester(){
     for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
         for(unsigned int j=0; j < _network_list[0]->_neurons[i]->_connections.size(); j++){
-            std::cout << "N_" << i << " is connected to N_"
-                      << _network_list[0]->_neurons[i]->_connections[j]->next_neuron->_id << std::endl;
+            if(_network_list[0]->_neurons[i]->_connections[j]->next_neuron){
+                std::cout << "N_" << i << " is connected to N_"
+                          << _network_list[0]->_neurons[i]->_connections[j]->next_neuron->_id << std::endl;
+            }
+            else{
+                std::cout << "N_" << i << " is connected to C_"
+                          << _network_list[0]->_neurons[i]->_connections[j]->next_connection->_id << std::endl;
+            }
         }
     }
 
@@ -52,8 +58,10 @@ void CognaBuilder::tester(){
 
     std::cout << std::endl;
 
-    for(unsigned int i=0; i < _network_list[0]->_neurons[1]->_connections.size(); i++){
-        std::cout << "Activation Type = " << _network_list[0]->_neurons[1]->_connections[i]->_parameter->activation_type << std::endl;
+    for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
+        for(unsigned int j=0; j < _network_list[0]->_neurons[i]->_connections.size(); j++){
+            std::cout << "Learning Type = " << _network_list[0]->_neurons[i]->_connections[j]->_parameter->learning_type << std::endl;
+        }
     }
 }
 
@@ -287,18 +295,7 @@ int CognaBuilder::load_nodes(NeuralNetwork *nn, nlohmann::json network_json){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-int CognaBuilder::load_neuron_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
-    int source_neuron = network_json["connections"][i]["prev_neuron"];
-    int target_neuron = network_json["connections"][i]["next_neuron"];
-    float base_weight = load_connection_init_parameter(nn, network_json["connections"][i], "base_weight", source_neuron);
-    int connection_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_type", source_neuron);
-    int function_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_function", source_neuron);
-    int learning_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "learning_type", source_neuron);
-    int transmitter_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "transmitter_type", source_neuron);
-
-    Connection *temp_con = nn->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
-                                                     function_type, learning_type, transmitter_type);
-
+int CognaBuilder::load_all_connection_parameter(Connection *temp_con, nlohmann::json network_json, int i){
     temp_con->_parameter->max_weight = load_connection_parameter(temp_con->_parameter->short_habituation_curvature,
                                                                                                   network_json["connections"][i], "max_weight");
     temp_con->_parameter->min_weight = load_connection_parameter(temp_con->_parameter->short_habituation_curvature,
@@ -361,6 +358,27 @@ int CognaBuilder::load_neuron_connection(NeuralNetwork *nn, nlohmann::json netwo
     temp_con->_parameter->sensitization_threshold = load_connection_parameter(temp_con->_parameter->sensitization_threshold,
                                                                                                   network_json["connections"][i], "sensitization_threshold");
 
+    std::cout << "CHECKER = " << temp_con->_parameter->learning_type << std::endl;
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaBuilder::load_neuron_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
+    int source_neuron = network_json["connections"][i]["prev_neuron"];
+    int target_neuron = network_json["connections"][i]["next_neuron"];
+    float base_weight = load_connection_init_parameter(nn, network_json["connections"][i], "base_weight", source_neuron);
+    int connection_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_type", source_neuron);
+    int function_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_function", source_neuron);
+    int learning_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "learning_type", source_neuron);
+    int transmitter_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "transmitter_type", source_neuron);
+
+    Connection *temp_con = nn->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
+                                                     function_type, learning_type, transmitter_type);
+
+    load_all_connection_parameter(temp_con, network_json, i);
+
     return SUCCESS_CODE;
 }
 
@@ -394,6 +412,38 @@ int CognaBuilder::load_node_connection(NeuralNetwork *nn, nlohmann::json network
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+int CognaBuilder::load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
+    int source_neuron = network_json["connections"][i]["prev_neuron"];
+    int target_connection = network_json["connections"][i]["next_connection"];
+
+    float base_weight = load_connection_init_parameter(nn, network_json["connections"][i], "base_weight", source_neuron);
+    int connection_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_type", source_neuron);
+    int function_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_function", source_neuron);
+    int learning_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "learning_type", source_neuron);
+    int transmitter_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "transmitter_type", source_neuron);
+
+    Connection *target_connection_pointer;
+
+    for(unsigned int n=0; n < nn->_neurons.size(); n++){
+        for(unsigned int c=0; c < nn->_neurons[n]->_connections.size(); c++){
+            if(target_connection == nn->_neurons[n]->_connections[c]->_id){
+                target_connection_pointer = nn->_neurons[n]->_connections[c];
+                goto break_loops;
+            }
+        }
+    }
+    break_loops:
+
+    Connection *temp_con = nn->add_synaptic_connection(source_neuron, target_connection_pointer, base_weight, connection_type,
+                                                       function_type, learning_type, transmitter_type);
+
+    load_all_connection_parameter(temp_con, network_json, i);
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_json){
     for(unsigned int i=0; i < network_json["connections"].size(); i++){
         if(network_json["connections"][i].find("next_neuron") != network_json["connections"][i].end()){
@@ -402,12 +452,12 @@ int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_jso
                    load_neuron_connection(nn, network_json, i);
             }
             else if(network_json["connections"][i]["prev_neuron_function"] == "interface_input" ||
-                    network_json["connections"][i]["next_neuron_function"] == "interface_output"){
-                        load_node_connection(nn, network_json, i);
+                network_json["connections"][i]["next_neuron_function"] == "interface_output"){
+                    load_node_connection(nn, network_json, i);
             }
         }
         else if(network_json["connections"][i].find("next_connection") != network_json["connections"][i].end()){
-            std::cout << "Presynaptic Connection Found" << std::endl;
+            load_presynaptic_connection(nn, network_json, i);
         }
         else{
             std::cout << "[ERROR] Missing target type for connection." << std::endl;
@@ -627,6 +677,16 @@ float CognaBuilder::load_connection_init_parameter(NeuralNetwork * nn, nlohmann:
                             return_value = FUNCTION_RELU;
                         else if(parameter_value == "Sigmoid")
                             return_value = FUNCTION_SIGMOID;
+                    }
+                    else if(parameter == "learning_type"){
+                        if(parameter_value == "None")
+                            return_value = LEARNING_NONE;
+                        else if(parameter_value == "Habituation")
+                            return_value = LEARNING_HABITUATION;
+                        else if(parameter_value == "Sensitization")
+                            return_value = LEARNING_SENSITIZATION;
+                        else if(parameter_value == "HabiSens")
+                            return_value = LEARNING_HABISENS;
                     }
                     else{
                         return_value = std::stof((std::string)connection[parameter]);
