@@ -106,4 +106,12 @@ nlohmann::json networking_client::get_hashtable(){
 	return NULL;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
+void networking_client::clear_message(){
+	_hashtable.clear();
+	_stored_message = "";
+	_msg = "";
+}
+
 } //namespace utils

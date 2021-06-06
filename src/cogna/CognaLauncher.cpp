@@ -46,13 +46,22 @@ void CognaLauncher::tester(){
 //
 int CognaLauncher::run_cogna(){
     create_networking_workers();
-    usleep(1000);
+
+    usleep(100000);
 
     while(true){
+        for(unsigned int i=0; i < _client_list.size(); i++){
+            _client_list[i]->store_message();
+        }
+
         _network_list[0]->feed_forward();
-        std::cout << _client_list[0]->get_message(2) << std::endl;
+
         for(unsigned int i=0; i < _sender_list.size(); i++){
             _sender_list[i]->send_payload();
+        }
+
+        for(unsigned int i=0; i < _client_list.size(); i++){
+            _client_list[i]->clear_message();
         }
 
         usleep(1000000);
@@ -67,14 +76,6 @@ int CognaLauncher::create_networking_workers(){
     for(unsigned int i=0; i < _client_list.size(); i++){
         std::thread *client_worker = new std::thread(&utils::networking_client::receive_message, _client_list[i]);
         _client_worker_list.push_back(client_worker);
-    }
-
-    while(true){
-        for(unsigned int i=0; i < _client_list.size(); i++){
-            std::cout << _client_list[i]->get_message(2) << std::endl;
-        }
-
-        usleep(1000000);
     }
 
     return SUCCESS_CODE;

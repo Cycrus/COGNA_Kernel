@@ -540,6 +540,7 @@ void NeuralNetwork::send_data(){
         float injected_activation = 0.0f;
         for(unsigned int j=0; j < _extern_output_nodes[i]->targets().size(); j++){
             injected_activation += _extern_output_nodes[i]->targets()[j]->_activation;
+            _extern_output_nodes[i]->targets()[j]->clear_neuron_activation(_network_step_counter);
         }
         _extern_output_nodes[i]->_sender->add_data(_extern_output_nodes[i]->channel(), injected_activation);
     }
@@ -554,9 +555,9 @@ void NeuralNetwork::feed_forward(){
     transmitter_backfall();
     activate_random_neurons();
     activate_next_entities();
+    send_data();
     save_next_neurons();
     switch_vectors();
-    send_data();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
