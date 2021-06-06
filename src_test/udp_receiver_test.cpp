@@ -8,7 +8,7 @@
 
 int main(){
 	std::string ip = "0.0.0.0";
-	int port = 5005;
+	int port = 40001;
 	std::cout << "Starting Network test..." << std::endl;
 
 	utils::networking_client *json_worker = new utils::networking_client(ip, port, true);

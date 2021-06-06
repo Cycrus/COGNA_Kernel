@@ -14,6 +14,7 @@
 #include <ctime>
 #include <cmath>
 #include <sys/time.h>
+#include <iostream>
 #include "Constants.hpp"
 #include "MathUtils.hpp"
 #include "LoggerStd.hpp"

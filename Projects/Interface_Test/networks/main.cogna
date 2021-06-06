@@ -35,7 +35,7 @@
             "posx": -450.0,
             "posy": -150.0,
             "function": "interface_input",
-            "ip_address": "192.168.0.1",
+            "ip_address": "192.168.0.87",
             "port": "40001",
             "channel": "1"
         },
@@ -44,7 +44,7 @@
             "posx": -450.0,
             "posy": 150.0,
             "function": "interface_input",
-            "ip_address": "192.168.0.1",
+            "ip_address": "192.168.0.87",
             "port": "40001",
             "channel": "2"
         },
@@ -53,7 +53,7 @@
             "posx": 450.0,
             "posy": -150.0,
             "function": "interface_output",
-            "ip_address": "192.168.0.1",
+            "ip_address": "192.168.0.87",
             "port": "40002",
             "channel": "1"
         },
@@ -62,7 +62,7 @@
             "posx": 450.0,
             "posy": 150.0,
             "function": "interface_output",
-            "ip_address": "192.168.0.1",
+            "ip_address": "192.168.0.87",
             "port": "40002",
             "channel": "2"
         }

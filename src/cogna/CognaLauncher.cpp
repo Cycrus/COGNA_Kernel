@@ -1,5 +1,7 @@
 #include "CognaLauncher.hpp"
+#include "Constants.hpp"
 #include <iostream>
+#include <unistd.h>
 
 namespace COGNA{
 
@@ -28,12 +30,54 @@ CognaLauncher::~CognaLauncher(){
         delete _client_list[i];
         _client_list[i] = nullptr;
     }
+    for(unsigned int i=0; i < _client_worker_list.size(); i++){
+        delete _client_worker_list[i];
+        _client_worker_list[i] = nullptr;
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 //
 void CognaLauncher::tester(){
     std::cout << "Hello World..." << _network_list[0]->_neurons[0]->_id << std::endl;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaLauncher::run_cogna(){
+    create_networking_workers();
+    usleep(1000);
+
+    while(true){
+        _network_list[0]->feed_forward();
+        std::cout << _client_list[0]->get_message(2) << std::endl;
+        for(unsigned int i=0; i < _sender_list.size(); i++){
+            _sender_list[i]->send_payload();
+        }
+
+        usleep(1000000);
+    }
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaLauncher::create_networking_workers(){
+    for(unsigned int i=0; i < _client_list.size(); i++){
+        std::thread *client_worker = new std::thread(&utils::networking_client::receive_message, _client_list[i]);
+        _client_worker_list.push_back(client_worker);
+    }
+
+    while(true){
+        for(unsigned int i=0; i < _client_list.size(); i++){
+            std::cout << _client_list[i]->get_message(2) << std::endl;
+        }
+
+        usleep(1000000);
+    }
+
+    return SUCCESS_CODE;
 }
 
 } //namespace COGNA

@@ -25,6 +25,7 @@ int main(){
     cluster_builder = nullptr;
 
     cluster_launcher->tester();
+    cluster_launcher->run_cogna();
 
     delete cluster_launcher;
     cluster_launcher = nullptr;

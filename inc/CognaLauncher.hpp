@@ -18,12 +18,16 @@ public:
     ~CognaLauncher();
 
     void tester();
+    int run_cogna();
 
 private:
     std::vector<NeuralNetwork*> _network_list;
     std::vector<utils::networking_client*> _client_list;
     std::vector<utils::networking_sender*> _sender_list;
+    std::vector<std::thread*> _client_worker_list;
     int _frequency;
+
+    int create_networking_workers();
 };
 
 } //namespace COGNA
