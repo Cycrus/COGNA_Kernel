@@ -4,7 +4,7 @@
 #include <iostream>
 
 int main(){
-    COGNA::CognaBuilder *cluster_builder = new COGNA::CognaBuilder("Interface_Test");
+    COGNA::CognaBuilder *cluster_builder = new COGNA::CognaBuilder("Presynaptic_Test");
 
     int error_code = cluster_builder->build_cogna_cluster();
 
@@ -13,6 +13,8 @@ int main(){
         delete cluster_builder;
         return 1;
     }
+
+    cluster_builder->tester();
 
     COGNA::CognaLauncher *cluster_launcher = new COGNA::CognaLauncher(cluster_builder->get_network_list(),
                                                                       cluster_builder->get_client_list(),

@@ -21,7 +21,7 @@ namespace COGNA{
     const bool DEB_TRANSMITTER = false;
     const bool DEB_NEURON_BACKFALL = false;
     const bool DEB_LONG_LEARNING_WEIGHT = false;
-    const bool DEB_PRESYNAPTIC = false;
+    const bool DEB_PRESYNAPTIC = true;
 
     const int SUCCESS_CODE = 0;
     const int ERROR_CODE = -1;
