@@ -96,6 +96,8 @@ public:
 	 */
 	nlohmann::json get_hashtable();
 
+	void clear_message();
+
 private:
 	std::string _msg;
 	std::string _stored_message;

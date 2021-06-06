@@ -14,8 +14,6 @@ int main(){
         return 1;
     }
 
-    cluster_builder->tester();
-
     COGNA::CognaLauncher *cluster_launcher = new COGNA::CognaLauncher(cluster_builder->get_network_list(),
                                                                       cluster_builder->get_client_list(),
                                                                       cluster_builder->get_sender_list(),
@@ -24,7 +22,6 @@ int main(){
     delete cluster_builder;
     cluster_builder = nullptr;
 
-    cluster_launcher->tester();
     cluster_launcher->run_cogna();
 
     delete cluster_launcher;
