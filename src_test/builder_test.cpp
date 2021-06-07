@@ -3,8 +3,9 @@
 #include "CognaLauncher.hpp"
 #include <iostream>
 
-int main(){
-    COGNA::CognaBuilder *cluster_builder = new COGNA::CognaBuilder("Presynaptic_Test");
+int main(int argc, char** argv){
+    std::string network_name = argv[1];
+    COGNA::CognaBuilder *cluster_builder = new COGNA::CognaBuilder(network_name);
 
     int error_code = cluster_builder->build_cogna_cluster();
 

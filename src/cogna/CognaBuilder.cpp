@@ -34,6 +34,9 @@ CognaBuilder::~CognaBuilder(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 void CognaBuilder::tester(){
+    std::cout << std::endl;
+    std::cout << "Number of Neurons = " << _network_list[0]->_neurons.size() - 1 << std::endl << std::endl;
+
     for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
         for(unsigned int j=0; j < _network_list[0]->_neurons[i]->_connections.size(); j++){
             if(_network_list[0]->_neurons[i]->_connections[j]->next_neuron){
@@ -46,7 +49,6 @@ void CognaBuilder::tester(){
             }
         }
     }
-
     std::cout << std::endl;
 
     for(unsigned int i=0; i<_sender_list.size(); i++){
@@ -357,8 +359,6 @@ int CognaBuilder::load_all_connection_parameter(Connection *temp_con, nlohmann::
                                                                                                   network_json["connections"][i], "habituation_threshold");
     temp_con->_parameter->sensitization_threshold = load_connection_parameter(temp_con->_parameter->sensitization_threshold,
                                                                                                   network_json["connections"][i], "sensitization_threshold");
-
-    std::cout << "CHECKER = " << temp_con->_parameter->learning_type << std::endl;
 
     return SUCCESS_CODE;
 }
