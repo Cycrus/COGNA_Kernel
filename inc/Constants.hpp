@@ -35,7 +35,7 @@ namespace COGNA{
     const float MIN_LONG_LEARNING_WEIGHT = 0.0f;
     const float MAX_LONG_LEARNING_WEIGHT = 1.0f;
 
-    const long MAX_CHANCE = 100000000;
+    const long MAX_CHANCE = 1000;
 
     const float DEFAULT_TRANSMITTER_WEIGHT = 1.0f;
     const float DEFAULT_PRESYNAPTIC_POTENTIAL = 1.0f;

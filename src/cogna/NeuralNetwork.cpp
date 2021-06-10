@@ -11,9 +11,7 @@
 #include "NeuralNetwork.hpp"
 
 #include <cstdio>
-#include <ctime>
 #include <cmath>
-#include <sys/time.h>
 #include <iostream>
 #include "Constants.hpp"
 #include "MathUtils.hpp"
@@ -24,13 +22,6 @@ using namespace COGNA;
 
 namespace COGNA{
 
-long get_time_microsec(struct timeval time){
-    gettimeofday(&time, NULL);
-    return ((time.tv_sec * MICROSECOND_FACTOR + time.tv_usec));
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-//
 NeuralNetwork::NeuralNetwork(){
     Logger::init_Global(new LoggerStd());
 

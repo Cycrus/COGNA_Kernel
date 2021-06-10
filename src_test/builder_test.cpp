@@ -31,6 +31,8 @@ int main(int argc, char** argv){
     delete cluster_builder;
     cluster_builder = nullptr;
 
+    cluster_launcher->tester();
+
     cluster_launcher->run_cogna();
 
     delete cluster_launcher;

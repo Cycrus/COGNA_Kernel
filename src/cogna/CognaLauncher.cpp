@@ -1,7 +1,9 @@
 #include "CognaLauncher.hpp"
 #include "Constants.hpp"
+#include "HelperFunctions.hpp"
 #include <iostream>
 #include <unistd.h>
+#include <ctime>
 
 namespace COGNA{
 
@@ -39,17 +41,24 @@ CognaLauncher::~CognaLauncher(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 void CognaLauncher::tester(){
-    std::cout << "Hello World..." << _network_list[0]->_neurons[0]->_id << std::endl;
+    std::cout << "Frequency = " << _frequency << std::endl;
+    std::cout << std::endl;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaLauncher::run_cogna(){
+    struct timeval _cluster_time;
+    long curr_time, prev_time, time_delta, sleep_time = 0;
+
     create_networking_workers();
 
-    usleep(100000);
+    usleep(200000); //sleep 2 second to ensure networking sockets to connect
 
+    curr_time = utils::get_time_microsec(_cluster_time);
+    prev_time = curr_time;
     while(true){
+        prev_time = utils::get_time_microsec(_cluster_time);
         for(unsigned int i=0; i < _client_list.size(); i++){
             _client_list[i]->store_message();
         }
@@ -64,7 +73,13 @@ int CognaLauncher::run_cogna(){
             _client_list[i]->clear_message();
         }
 
-        usleep(1000000);
+        curr_time = utils::get_time_microsec(_cluster_time);
+
+        time_delta = curr_time - prev_time;
+        sleep_time = (MICROSECOND_FACTOR / _frequency) - time_delta;
+        if(sleep_time > 0){
+            usleep(sleep_time);
+        }
     }
 
     return SUCCESS_CODE;

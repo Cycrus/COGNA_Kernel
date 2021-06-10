@@ -1,4 +1,5 @@
 #include "NeuralNetwork.hpp"
+#include "HelperFunctions.hpp"
 
 #include <cstdio>
 #include <ctime>
@@ -17,7 +18,7 @@ int main(){
     long start_time, end_time, d_time;
     long p_end_time;
     const long TIME_BETWEEN_STEPS = 1;//500 * 1000;
-    start_time = COGNA::get_time_microsec(time);
+    start_time = utils::get_time_microsec(time);
 
     // const int MOTONEURON = 7;
     const int PROBE = 7;
@@ -119,7 +120,7 @@ int main(){
         }
 
         if(d_time >= TIME_BETWEEN_STEPS){
-            start_time = COGNA::get_time_microsec(time);
+            start_time = utils::get_time_microsec(time);
             if(COGNA::DEBUG_MODE && COGNA::DEB_BASE)
                 nn->print_activation();
 
@@ -149,7 +150,7 @@ int main(){
             }
             */
 
-            p_end_time = COGNA::get_time_microsec(time);
+            p_end_time = utils::get_time_microsec(time);
             if(nn->get_neuron_activation(PROBE) > 0.05f)
                 printf("Neuron %d activation: %.3f\n", PROBE, nn->get_neuron_activation(PROBE));
             if((p_end_time-start_time) > 100){
@@ -157,7 +158,7 @@ int main(){
             }
         }
         // Time Calculation TODO Put into function
-        end_time = COGNA::get_time_microsec(time);
+        end_time = utils::get_time_microsec(time);
         d_time = end_time - start_time;
     }while(key_ret != '\b');
 
