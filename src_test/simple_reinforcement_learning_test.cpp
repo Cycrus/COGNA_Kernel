@@ -1,5 +1,6 @@
 #include "DataWriter.hpp"
 #include "NeuralNetwork.hpp"
+#include "HelperFunctions.hpp"
 
 #include <cstdio>
 
@@ -43,9 +44,9 @@ int main(){
     long start_time, end_time, d_time = 0;
     long p_end_time = 0;
     const long TIME_BETWEEN_STEPS = 1;
-    start_time = get_time_microsec(time);
+    start_time = utils::get_time_microsec(time);
 
-    long start_action_time = get_time_microsec(time);
+    long start_action_time = utils::get_time_microsec(time);
     int learning_counter = 0;
 
     Environment env;
@@ -157,12 +158,12 @@ int main(){
     do{
         if(p_end_time - start_action_time > 1000000){
             nn->init_activation(1, 1.0f);
-            start_action_time = get_time_microsec(time);
+            start_action_time = utils::get_time_microsec(time);
             learning_counter++;
         }
 
         if(d_time >= TIME_BETWEEN_STEPS){
-            start_time = get_time_microsec(time);
+            start_time = utils::get_time_microsec(time);
             if(DEBUG_MODE && DEB_BASE)
                 nn->print_activation();
 
@@ -198,14 +199,14 @@ int main(){
                     break;
             }
 
-            p_end_time = get_time_microsec(time);
+            p_end_time = utils::get_time_microsec(time);
 
             if((p_end_time-start_time) > 100){
                 //printf("Time required for step: %ld\n\n", p_end_time-start_time);
             }
         }
         // Time Calculation TODO Put into function
-        end_time = get_time_microsec(time);
+        end_time = utils::get_time_microsec(time);
         d_time = end_time - start_time;
     }while(learning_counter <= 20);
 
