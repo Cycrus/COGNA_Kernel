@@ -4,6 +4,12 @@
 #include <iostream>
 
 int main(int argc, char** argv){
+    if(argc != 2){
+        std::cout << "[ERROR] Invalid amount of program parameters." << std::endl
+                  << "Please run program as ./program <project_name>." << std::endl;
+        return 1;
+    }
+
     std::string network_name = argv[1];
     COGNA::CognaBuilder *cluster_builder = new COGNA::CognaBuilder(network_name);
 
