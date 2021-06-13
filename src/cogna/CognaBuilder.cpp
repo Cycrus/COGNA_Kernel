@@ -94,9 +94,15 @@ int CognaBuilder::get_frequency(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaBuilder::build_cogna_cluster(){
+    std::cout << "[INFO] Loading global parameters." << std::endl;
     if(load_globals_file() == ERROR_CODE) return ERROR_CODE;
+
+    std::cout << "[INFO] Loading transmitter file." << std::endl;
     if(load_transmitters() == ERROR_CODE) return ERROR_CODE;
+
+    std::cout << "[INFO] Loading neuron types." << std::endl;
     if(load_neuron_types() == ERROR_CODE) return ERROR_CODE;
+
     if(load_network(_main_network) == ERROR_CODE) return ERROR_CODE;
 
     return SUCCESS_CODE;
@@ -185,11 +191,13 @@ int CognaBuilder::load_neurons(NeuralNetwork *nn, nlohmann::json network_json){
         int does_influence_transmitter = (int)load_neuron_parameter(network_json["neurons"][i], "influences_transmitter", neuron_type);
         nn->add_neuron(temp_threshold);
         int n_id = nn->_neurons.size()-1;
+
         if(does_influence_transmitter){
             int influenced_transmitter = (int)load_neuron_parameter(network_json["neurons"][i], "influenced_transmitter", neuron_type);
             int direction = (int)load_neuron_parameter(network_json["neurons"][i], "transmitter_influence_direction", neuron_type);
             nn->set_neural_transmitter_influence(n_id, influenced_transmitter, direction);
         }
+
         if(random_chance > 0){
             int random_value = load_neuron_parameter(network_json["neurons"][i], "random_activation_value", neuron_type);
             nn->set_random_neuron_activation(n_id, random_chance, random_value);
@@ -252,8 +260,22 @@ int CognaBuilder::load_nodes(NeuralNetwork *nn, nlohmann::json network_json){
 
     for(unsigned int i=0; i<network_json["nodes"].size(); i++){
         std::string ip = "0.0.0.0";
-        int port = std::stoi((std::string)network_json["nodes"][i]["port"]);
-        std::string channel = network_json["nodes"][i]["channel"];
+        int port = 0;
+        std::string channel;
+        try{
+            port = std::stoi((std::string)network_json["nodes"][i]["port"]);
+        }
+        catch(...){
+            std::cout << "[ERROR] Cannot parse port number of node." << std::endl;
+            return ERROR_CODE;
+        }
+        try{
+            channel = network_json["nodes"][i]["channel"];
+        }
+        catch(...){
+            std::cout << "[ERROR] Cannot parse channel of node." << std::endl;
+            return ERROR_CODE;
+        }
         int networking_id = 0;
 
         if(network_json["nodes"][i]["function"] == "interface_input"){
@@ -274,7 +296,14 @@ int CognaBuilder::load_nodes(NeuralNetwork *nn, nlohmann::json network_json){
         }
 
         else if(network_json["nodes"][i]["function"] == "interface_output"){
-            ip = network_json["nodes"][i]["ip_address"];
+            try{
+                ip = network_json["nodes"][i]["ip_address"];
+            }
+            catch(...){
+                std::cout << "[ERROR] Cannot parse ip address of node." << std::endl;
+                return ERROR_CODE;
+            }
+
             bool sender_does_exist = false;
             for(unsigned int j=0; j < _sender_list.size(); j++){
                 if(_sender_list[j]->get_ip() == ip && _sender_list[j]->get_port() == port){
@@ -509,16 +538,26 @@ int CognaBuilder::load_network(std::string network_name){
     NeuralNetwork *nn = new NeuralNetwork();
     std::cout << "[INFO] Loading network parameters." << std::endl;
     if(load_network_parameter(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
-    std::cout << "[INFO] Defining neurotransmitters." << std::endl;
-    if(nn->define_transmitters(_transmitter_types.size()) == ERROR_CODE) error_code = ERROR_CODE;
-    std::cout << "[INFO] Loading neurons." << std::endl;
-    if(load_neurons(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
-    std::cout << "[INFO] Loading exchange nodes." << std::endl;
-    if(load_nodes(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
-    std::cout << "[INFO] Loading connections." << std::endl;
-    if(load_connections(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    if(error_code == SUCCESS_CODE){
+        std::cout << "[INFO] Defining neurotransmitters." << std::endl;
+        if(nn->define_transmitters(_transmitter_types.size()) == ERROR_CODE) error_code = ERROR_CODE;
+    }
+    if(error_code == SUCCESS_CODE){
+        std::cout << "[INFO] Loading neurons." << std::endl;
+        if(load_neurons(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    }
+    if(error_code == SUCCESS_CODE){
+        std::cout << "[INFO] Loading exchange nodes." << std::endl;
+        if(load_nodes(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    }
+    if(error_code == SUCCESS_CODE){
+        std::cout << "[INFO] Loading connections." << std::endl;
+        if(load_connections(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    }
 
-    if(nn->setup_network() == ERROR_CODE) error_code = ERROR_CODE;
+    if(error_code == SUCCESS_CODE){
+        if(nn->setup_network() == ERROR_CODE) error_code = ERROR_CODE;
+    }
     std::cout << std::endl;
 
     _curr_network_neuron_number = 0;
@@ -587,7 +626,7 @@ float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string par
             }
         }
     }
-    else if(parameter == "influenced_parameter"){
+    else if(parameter == "influenced_transmitter"){
         for(unsigned int i=0; i<_transmitter_types.size(); i++){
             if(_transmitter_types[i] == parameter_value){
                 return_value = i;
@@ -616,7 +655,7 @@ float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string par
 
     else{
         try{
-            return_value = neuron[parameter];
+            return_value = std::stof((std::string)neuron[parameter]);
         }
         catch(...){
             try{
@@ -628,6 +667,9 @@ float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string par
             }
         }
     }
+
+    if(parameter == "random_chance") std::cout << parameter << " = " << return_value << std::endl;
+    //std::cout << parameter << " = " << return_value << std::endl;
 
     return return_value;
 }
