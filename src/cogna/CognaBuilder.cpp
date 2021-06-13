@@ -416,7 +416,7 @@ int CognaBuilder::load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json 
     int source_neuron = network_json["connections"][i]["prev_neuron"];
     int target_connection = network_json["connections"][i]["next_connection"];
 
-    float base_weight = load_connection_init_parameter(nn, network_json["connections"][i], "base_weight", source_neuron);
+    float base_weight = (float)load_connection_init_parameter(nn, network_json["connections"][i], "base_weight", source_neuron);
     int connection_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_type", source_neuron);
     int function_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "activation_function", source_neuron);
     int learning_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "learning_type", source_neuron);
@@ -459,6 +459,10 @@ int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_jso
         else if(network_json["connections"][i].find("next_connection") != network_json["connections"][i].end()){
             load_presynaptic_connection(nn, network_json, i);
         }
+        else if(network_json["connections"][i]["prev_neuron_function"] == "subnet_input" ||
+            network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
+                std::cout << "Found subnetwork exchanging connections" << std::endl;
+            }
         else{
             std::cout << "[ERROR] Missing target type for connection." << std::endl;
             return ERROR_CODE;
@@ -503,13 +507,19 @@ int CognaBuilder::load_network(std::string network_name){
     int error_code = SUCCESS_CODE;
 
     NeuralNetwork *nn = new NeuralNetwork();
+    std::cout << "[INFO] Loading network parameters." << std::endl;
     if(load_network_parameter(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    std::cout << "[INFO] Defining neurotransmitters." << std::endl;
     if(nn->define_transmitters(_transmitter_types.size()) == ERROR_CODE) error_code = ERROR_CODE;
+    std::cout << "[INFO] Loading neurons." << std::endl;
     if(load_neurons(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    std::cout << "[INFO] Loading exchange nodes." << std::endl;
     if(load_nodes(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
+    std::cout << "[INFO] Loading connections." << std::endl;
     if(load_connections(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
 
     if(nn->setup_network() == ERROR_CODE) error_code = ERROR_CODE;
+    std::cout << std::endl;
 
     _curr_network_neuron_number = 0;
 
