@@ -12,6 +12,7 @@
 #include "Constants.hpp"
 #include "NeuralNetwork.hpp"
 #include "Connection.hpp"
+#include "Neuron.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -56,14 +57,6 @@ void CognaBuilder::tester(){
     }
     for(unsigned int i=0; i<_client_list.size(); i++){
         std::cout << "Client -> " << _client_list[i]->get_ip() << ":" << _client_list[i]->get_port() << std::endl;
-    }
-
-    std::cout << std::endl;
-
-    for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
-        for(unsigned int j=0; j < _network_list[0]->_neurons[i]->_connections.size(); j++){
-            std::cout << "Learning Type = " << _network_list[0]->_neurons[i]->_connections[j]->_parameter->learning_type << std::endl;
-        }
     }
 }
 

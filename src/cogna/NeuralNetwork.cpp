@@ -22,6 +22,11 @@ using namespace COGNA;
 
 namespace COGNA{
 
+int NeuralNetwork::m_cluster_state = STATE_RUNNING;
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+
 NeuralNetwork::NeuralNetwork(){
     Logger::init_Global(new LoggerStd());
 
@@ -29,6 +34,8 @@ NeuralNetwork::NeuralNetwork(){
     add_neuron(99999.0);
     _network_step_counter = 0;
     _transmitter_weights.push_back(1.0f);
+    _latest_cluster_step = 0;
+    _reference_cluster_step = nullptr;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -90,8 +97,8 @@ int NeuralNetwork::add_extern_output_node(utils::networking_sender *sender, std:
 int NeuralNetwork::set_neural_transmitter_influence(int neuron_id,
                                                     int transmitter_id,
                                                     int influence_direction){
-    if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
-        if(transmitter_id >= 0 && (unsigned)transmitter_id < _transmitter_weights.size()){
+    if(neuron_id >= MIN_NEURON_ID && (unsigned int)neuron_id < _neurons.size()){
+        if(transmitter_id >= 0 && (unsigned int)transmitter_id < _transmitter_weights.size()){
             if(influence_direction == POSITIVE_INFLUENCE ||
                influence_direction == NEGATIVE_INFLUENCE){
                    _neurons[neuron_id]->_parameter->influenced_transmitter = transmitter_id;
@@ -132,7 +139,7 @@ int NeuralNetwork::set_neural_transmitter_influence(int neuron_id,
  int NeuralNetwork::set_random_neuron_activation(int neuron_id,
                                                  int chance,
                                                  float activation_value){
-     if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
+     if(neuron_id >= MIN_NEURON_ID && (unsigned int)neuron_id < _neurons.size()){
         if(chance >= 0 && chance < MAX_CHANCE){
             _neurons[neuron_id]->set_random_activation(chance, activation_value);
             return SUCCESS_CODE;
@@ -169,7 +176,7 @@ Connection* NeuralNetwork::add_neuron_connection(int source_neuron, int target_n
     }
 
     if(source_neuron >= MIN_NEURON_ID || target_neuron >= MIN_NEURON_ID){
-        if(source_neuron < Neuron::s_max_id && target_neuron < Neuron::s_max_id){
+        if((unsigned int)source_neuron < _neurons.size() && (unsigned int)target_neuron < _neurons.size()){
             Connection *temp_con = _neurons[source_neuron]->add_neuron_connection(_neurons[target_neuron], weight,
                                                                                   connection_type,
                                                                                   function_type,
@@ -213,7 +220,9 @@ Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
     }
 
     if(source_neuron >= MIN_NEURON_ID && connected_neuron_1 >= MIN_NEURON_ID && connected_neuron_2 >= MIN_NEURON_ID){
-        if(source_neuron < Neuron::s_max_id && connected_neuron_1 < Neuron::s_max_id && connected_neuron_2 < Neuron::s_max_id){
+        if((unsigned int)source_neuron < _neurons.size() &&
+                (unsigned int)connected_neuron_1 < _neurons.size() &&
+                (unsigned int)connected_neuron_2 < _neurons.size()){
             Connection *temp_connection = NULL;
             for(unsigned i=0; i<_neurons[connected_neuron_1]->_connections.size(); i++){
                 if(_neurons[connected_neuron_1]->_connections[i]->next_neuron){
@@ -264,7 +273,7 @@ Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
         transmitter_type = STD_TRANSMITTER;
     }
     if(source_neuron >= MIN_NEURON_ID){
-        if(source_neuron < Neuron::s_max_id){
+        if((unsigned int)source_neuron < _neurons.size()){
             Connection *temp_con = _neurons[source_neuron]->add_synaptic_connection(con, weight, connection_type,
                                                                                     function_type, learning_type, transmitter_type);
             return temp_con;
@@ -283,7 +292,7 @@ Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
 //----------------------------------------------------------------------------------------------------------------------
 //
 int NeuralNetwork::init_activation(int target_neuron, float activation){
-    if(target_neuron >= MIN_NEURON_ID && target_neuron < Neuron::s_max_id){
+    if(target_neuron >= MIN_NEURON_ID && (unsigned int)target_neuron < _neurons.size()){
         _neurons[target_neuron]->_activation = activation;
 
         _curr_connections.insert(std::end(_curr_connections),
@@ -310,6 +319,9 @@ int NeuralNetwork::setup_network(){
         }
     }
 
+    Neuron::s_max_id = 0;
+    Connection::s_max_id = 0;
+
     srandom(time(0));
     return SUCCESS_CODE;
 }
@@ -323,7 +335,7 @@ int64_t NeuralNetwork::get_step_count(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 Neuron* NeuralNetwork::get_neuron(int neuron_id){
-    if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
+    if(neuron_id >= MIN_NEURON_ID && (unsigned int)neuron_id < _neurons.size()){
         return _neurons[neuron_id];
     }
     else{
@@ -335,7 +347,7 @@ Neuron* NeuralNetwork::get_neuron(int neuron_id){
 //----------------------------------------------------------------------------------------------------------------------
 //
 bool NeuralNetwork::neuron_is_active(int neuron_id){
-    if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
+    if(neuron_id >= MIN_NEURON_ID && (unsigned int)neuron_id < _neurons.size()){
         return _neurons[neuron_id]->is_active();
     }
     else{
@@ -347,7 +359,7 @@ bool NeuralNetwork::neuron_is_active(int neuron_id){
 //----------------------------------------------------------------------------------------------------------------------
 //
 float NeuralNetwork::get_neuron_activation(int neuron_id){
-    if(neuron_id >= MIN_NEURON_ID && (unsigned)neuron_id < _neurons.size()){
+    if(neuron_id >= MIN_NEURON_ID && (unsigned int)neuron_id < _neurons.size()){
         return _neurons[neuron_id]->_activation;
     }
     else{
@@ -359,7 +371,7 @@ float NeuralNetwork::get_neuron_activation(int neuron_id){
 //----------------------------------------------------------------------------------------------------------------------
 //
 float NeuralNetwork::get_transmitter_weight(int transmitter_id){
-    if(transmitter_id >= 0 && (unsigned)transmitter_id < _transmitter_weights.size()){
+    if(transmitter_id >= 0 && (unsigned int)transmitter_id < _transmitter_weights.size()){
         return _transmitter_weights[transmitter_id];
     }
     else{
@@ -549,6 +561,27 @@ void NeuralNetwork::feed_forward(){
     send_data();
     save_next_neurons();
     switch_vectors();
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+
+void NeuralNetwork::set_baseline_step(unsigned long long *baseline_step){
+    _reference_cluster_step = baseline_step;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+
+void NeuralNetwork::listen_to_cluster(){
+    while(m_cluster_state != STATE_STOPPED){
+        if(m_cluster_state != STATE_PAUSE){
+            if(_latest_cluster_step < *_reference_cluster_step){
+                feed_forward();
+                _latest_cluster_step ++;
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------

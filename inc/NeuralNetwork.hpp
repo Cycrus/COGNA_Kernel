@@ -36,6 +36,9 @@ public:
     COGNA::NeuralNetworkParameterHandler *_parameter;
     std::vector<COGNA::NetworkingNode*> _extern_input_nodes;
     std::vector<COGNA::NetworkingNode*> _extern_output_nodes;
+    unsigned long long _latest_cluster_step;
+    unsigned long long *_reference_cluster_step;
+    static int m_cluster_state;
 
     /**
      * @brief Initializes the neural network by setting some parameters and adding the Null-Neuron.
@@ -207,6 +210,19 @@ public:
      *
      */
     void feed_forward();
+
+    /**
+     * @brief Sets the address of the baseline cluster step for reference if network is allowed to fire.
+     *
+     * @param baseline_step If the internal cluster_step variable is smaller than this, the next feed_forward can happen.
+     */
+    void set_baseline_step(unsigned long long *baseline_step);
+
+    /**
+     * @brief This function listens to the cluster step counter and activates the network, if required.
+     *
+     */
+    void listen_to_cluster();
 
     /**
      * @brief A debug function to print the activation of each firing neuron to std output.
