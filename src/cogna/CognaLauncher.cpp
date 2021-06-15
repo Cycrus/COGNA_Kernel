@@ -48,6 +48,10 @@ void CognaLauncher::tester(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaLauncher::run_cogna(){
+    std::cout << std::endl;
+    std::cout << "####################### Starting COGNA #######################"
+              << std::endl << std::endl;
+
     struct timeval _cluster_time;
     long curr_time, prev_time, time_delta, sleep_time = 0;
 
