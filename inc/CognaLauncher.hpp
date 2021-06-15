@@ -25,9 +25,12 @@ private:
     std::vector<utils::networking_client*> _client_list;
     std::vector<utils::networking_sender*> _sender_list;
     std::vector<std::thread*> _client_worker_list;
+    std::vector<std::thread*> _cogna_worker_list;
     int _frequency;
+    unsigned long long *_curr_cluster_step;
 
     int create_networking_workers();
+    int create_cogna_workers();
 };
 
 } //namespace COGNA

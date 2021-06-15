@@ -22,6 +22,11 @@ using namespace COGNA;
 
 namespace COGNA{
 
+int NeuralNetwork::m_cluster_state = STATE_RUNNING;
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+
 NeuralNetwork::NeuralNetwork(){
     Logger::init_Global(new LoggerStd());
 
@@ -29,6 +34,8 @@ NeuralNetwork::NeuralNetwork(){
     add_neuron(99999.0);
     _network_step_counter = 0;
     _transmitter_weights.push_back(1.0f);
+    _latest_cluster_step = 0;
+    _reference_cluster_step = nullptr;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -554,6 +561,27 @@ void NeuralNetwork::feed_forward(){
     send_data();
     save_next_neurons();
     switch_vectors();
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+
+void NeuralNetwork::set_baseline_step(unsigned long long *baseline_step){
+    _reference_cluster_step = baseline_step;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+
+void NeuralNetwork::listen_to_cluster(){
+    while(m_cluster_state != STATE_STOPPED){
+        if(m_cluster_state != STATE_PAUSE){
+            if(_latest_cluster_step < *_reference_cluster_step){
+                feed_forward();
+                _latest_cluster_step ++;
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------

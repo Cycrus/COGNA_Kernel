@@ -23,6 +23,10 @@ namespace COGNA{
     const bool DEB_LONG_LEARNING_WEIGHT = false;
     const bool DEB_PRESYNAPTIC = true;
 
+    const int STATE_RUNNING = 0;
+    const int STATE_STOPPED = 1;
+    const int STATE_PAUSE = 2;
+
     const int SUCCESS_CODE = 0;
     const int ERROR_CODE = -1;
 
