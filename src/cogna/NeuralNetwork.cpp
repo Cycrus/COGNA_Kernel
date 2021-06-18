@@ -13,6 +13,8 @@
 #include <cstdio>
 #include <cmath>
 #include <iostream>
+#include <mutex>
+#include <unistd.h>
 #include "Constants.hpp"
 #include "MathUtils.hpp"
 #include "LoggerStd.hpp"
@@ -24,6 +26,8 @@ namespace COGNA{
 
 int NeuralNetwork::m_cluster_state = STATE_RUNNING;
 
+int NeuralNetwork::m_max_id = 0;
+
 //----------------------------------------------------------------------------------------------------------------------
 //
 
@@ -34,8 +38,9 @@ NeuralNetwork::NeuralNetwork(){
     add_neuron(99999.0);
     _network_step_counter = 0;
     _transmitter_weights.push_back(1.0f);
-    _latest_cluster_step = 0;
-    _reference_cluster_step = nullptr;
+    _network_step_counter = 0;
+    _id = m_max_id;
+    m_max_id++;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -554,7 +559,7 @@ void NeuralNetwork::send_data(){
 void NeuralNetwork::feed_forward(){
     _network_step_counter += 1;
 
-    receive_data();
+    //receive_data();
     transmitter_backfall();
     activate_random_neurons();
     activate_next_entities();
@@ -566,20 +571,15 @@ void NeuralNetwork::feed_forward(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 
-void NeuralNetwork::set_baseline_step(unsigned long long *baseline_step){
-    _reference_cluster_step = baseline_step;
-}
+void NeuralNetwork::listen_to_cluster(std::condition_variable *thread_halter, int *main_thread_lock){
+    std::mutex worker_mutex;
+    std::unique_lock<std::mutex> thread_lock(worker_mutex);
 
-//----------------------------------------------------------------------------------------------------------------------
-//
-
-void NeuralNetwork::listen_to_cluster(){
     while(m_cluster_state != STATE_STOPPED){
         if(m_cluster_state != STATE_PAUSE){
-            if(_latest_cluster_step < *_reference_cluster_step){
-                feed_forward();
-                _latest_cluster_step ++;
-            }
+            thread_halter->wait(thread_lock);
+            feed_forward();
+            (*main_thread_lock)++;
         }
     }
 }

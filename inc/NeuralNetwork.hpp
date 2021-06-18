@@ -20,6 +20,7 @@
 #include "networking_client.hpp"
 #include "networking_sender.hpp"
 #include <string>
+#include <condition_variable>
 
 namespace COGNA{
 
@@ -36,8 +37,6 @@ public:
     COGNA::NeuralNetworkParameterHandler *_parameter;
     std::vector<COGNA::NetworkingNode*> _extern_input_nodes;
     std::vector<COGNA::NetworkingNode*> _extern_output_nodes;
-    unsigned long long _latest_cluster_step;
-    unsigned long long *_reference_cluster_step;
     static int m_cluster_state;
 
     /**
@@ -212,17 +211,10 @@ public:
     void feed_forward();
 
     /**
-     * @brief Sets the address of the baseline cluster step for reference if network is allowed to fire.
-     *
-     * @param baseline_step If the internal cluster_step variable is smaller than this, the next feed_forward can happen.
-     */
-    void set_baseline_step(unsigned long long *baseline_step);
-
-    /**
      * @brief This function listens to the cluster step counter and activates the network, if required.
      *
      */
-    void listen_to_cluster();
+    void listen_to_cluster(std::condition_variable *thread_halter, int *main_thread_lock);
 
     /**
      * @brief A debug function to print the activation of each firing neuron to std output.
@@ -276,11 +268,15 @@ public:
      */
     float get_transmitter_weight(int transmitter_id);
 
+    void receive_data();
+
     private:
         std::vector<COGNA::Neuron*> _random_neurons;            // All neurons in the network which can activate randomly
         std::vector<float> _transmitter_weights;
         std::vector<COGNA::Connection*> _next_connections;      // All connections which will be activated in the next step
         int64_t _network_step_counter;
+        int _id;
+        static int m_max_id;
 
         /**
          * @brief Sets a new weight value to a certain neurotransmitter.
@@ -336,7 +332,6 @@ public:
          */
         void switch_vectors();
 
-        void receive_data();
         void send_data();
 };
 

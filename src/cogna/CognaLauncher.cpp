@@ -4,6 +4,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <ctime>
+#include <mutex>
 
 namespace COGNA{
 
@@ -51,51 +52,52 @@ void CognaLauncher::tester(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaLauncher::run_cogna(){
+    // TODO Split in multiple functions
     std::cout << std::endl;
     std::cout << "####################### Starting COGNA #######################"
               << std::endl << std::endl;
 
     struct timeval _cluster_time;
     long curr_time, prev_time, time_delta, sleep_time = 0;
-    int can_continue = true;
+
+    int *main_thread_lock = new int(0);
+    std::condition_variable *thread_condition_lock = new std::condition_variable;
 
     create_networking_workers();
-    create_cogna_workers();
+    create_cogna_workers(thread_condition_lock, main_thread_lock);
 
-    usleep(200000); //sleep 2 second to ensure networking sockets to connect
+    usleep(100000); //wait 0.1 seconds to ensure networking sockets and networks to connect
 
     curr_time = utils::get_time_microsec(_cluster_time);
     prev_time = curr_time;
     while(NeuralNetwork::m_cluster_state != STATE_STOPPED){
         if(NeuralNetwork::m_cluster_state != STATE_PAUSE){
-            can_continue = true;
+            prev_time = utils::get_time_microsec(_cluster_time);
+            for(unsigned int i=0; i < _client_list.size(); i++){
+                _client_list[i]->store_message();
+            }
+
             for(unsigned int i=0; i < _network_list.size(); i++){
-                if(_network_list[i]->_latest_cluster_step < *_curr_cluster_step){
-                    can_continue = false;
-                }
+                _network_list[i]->receive_data();
             }
 
-            if(can_continue){
-                prev_time = utils::get_time_microsec(_cluster_time);
-                for(unsigned int i=0; i < _client_list.size(); i++){
-                    _client_list[i]->store_message();
-                }
+            // Unlocking threads comes here.
+            thread_condition_lock->notify_all();
 
-                /* Increases the global cluster step by one. This tells all
-                 * networks in all threads to make one step.
-                 */
-                (*_curr_cluster_step)++;
+            while(*main_thread_lock < (int)_cogna_worker_list.size()){
 
-                for(unsigned int i=0; i < _sender_list.size(); i++){
-                    _sender_list[i]->send_payload();
-                }
-
-                for(unsigned int i=0; i < _client_list.size(); i++){
-                    _client_list[i]->clear_message();
-                }
-
-                curr_time = utils::get_time_microsec(_cluster_time);
             }
+            *main_thread_lock = 0;
+
+            for(unsigned int i=0; i < _sender_list.size(); i++){
+                _sender_list[i]->send_payload();
+            }
+
+            for(unsigned int i=0; i < _client_list.size(); i++){
+                _client_list[i]->clear_message();
+            }
+
+            curr_time = utils::get_time_microsec(_cluster_time);
 
             time_delta = curr_time - prev_time;
             sleep_time = (MICROSECOND_FACTOR / _frequency) - time_delta;
@@ -105,6 +107,18 @@ int CognaLauncher::run_cogna(){
             }
         }
     }
+
+    for(unsigned int i=0; i < _cogna_worker_list.size(); i++){
+        delete _cogna_worker_list[i];
+        _cogna_worker_list[i] = nullptr;
+    }
+    _cogna_worker_list.clear();
+
+    delete main_thread_lock;
+    main_thread_lock = nullptr;
+
+    delete thread_condition_lock;
+    thread_condition_lock = nullptr;
 
     return SUCCESS_CODE;
 }
@@ -122,11 +136,13 @@ int CognaLauncher::create_networking_workers(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-int CognaLauncher::create_cogna_workers(){
+int CognaLauncher::create_cogna_workers(std::condition_variable *thread_lock, int *main_lock){
     for(unsigned int i=0; i < _network_list.size(); i++){
-        _network_list[i]->set_baseline_step(_curr_cluster_step);
-        std::thread *cogna_worker = new std::thread(&NeuralNetwork::listen_to_cluster, _network_list[i]);
-        _cogna_worker_list.push_back(cogna_worker);
+        std::thread *cogna_worker1 = new std::thread(&NeuralNetwork::listen_to_cluster,
+                                                    _network_list[i],
+                                                    thread_lock,
+                                                    main_lock);
+        _cogna_worker_list.push_back(cogna_worker1);
     }
 
     return SUCCESS_CODE;
