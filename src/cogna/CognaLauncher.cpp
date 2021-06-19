@@ -81,7 +81,6 @@ int CognaLauncher::run_cogna(){
                 _network_list[i]->receive_data();
             }
 
-            // Unlocking threads comes here.
             thread_condition_lock->notify_all();
 
             while(*main_thread_lock < (int)_cogna_worker_list.size()){

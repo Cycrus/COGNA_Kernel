@@ -40,7 +40,7 @@ public:
 private:
     std::vector<NeuralNetwork*> _network_list;
     std::vector<utils::networking_client*> _client_list;
-    std::vector<utils::networking_sender*> _sender_list;
+    std::vector<utils::networking_sender*> _sender_list
     int _frequency;
 
     nlohmann::json _neuron_types;
@@ -59,6 +59,7 @@ private:
     int load_all_connection_parameter(Connection *temp_con, nlohmann::json network_json, int i);
     int load_neuron_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
     int load_node_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
+    int load_subnet_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
     int load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
     int load_connections(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json);
