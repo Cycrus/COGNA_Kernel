@@ -36,19 +36,22 @@ CognaBuilder::~CognaBuilder(){
 //
 void CognaBuilder::tester(){
     std::cout << std::endl;
-    std::cout << "Number of Neurons = " << _network_list[0]->_neurons.size() - 1 << std::endl << std::endl;
 
-    for(unsigned int i=0; i < _network_list[0]->_neurons.size(); i++){
-        for(unsigned int j=0; j < _network_list[0]->_neurons[i]->_connections.size(); j++){
-            if(_network_list[0]->_neurons[i]->_connections[j]->next_neuron){
-                std::cout << "N_" << i << " is connected to N_"
-                          << _network_list[0]->_neurons[i]->_connections[j]->next_neuron->_id << std::endl;
-            }
-            else{
-                std::cout << "N_" << i << " is connected to C_"
-                          << _network_list[0]->_neurons[i]->_connections[j]->next_connection->_id << std::endl;
+    for(unsigned int n=0; n < _network_list.size(); n++){
+        for(unsigned int i=0; i < _network_list[n]->_neurons.size(); i++){
+            for(unsigned int j=0; j < _network_list[n]->_neurons[i]->_connections.size(); j++){
+                if(_network_list[n]->_neurons[i]->_connections[j]->next_neuron){
+                    std::cout << "N_" << i << " is connected to N_"
+                              << _network_list[n]->_neurons[i]->_connections[j]->next_neuron->_id
+                              << " in network <" << n << ">." << std::endl;
+                }
+                else{
+                    std::cout << "N_" << i << " is connected to C_"
+                              << _network_list[n]->_neurons[i]->_connections[j]->next_connection->_id << std::endl;
+                }
             }
         }
+        std::cout << std::endl;
     }
     std::cout << std::endl;
 
@@ -87,6 +90,10 @@ int CognaBuilder::get_frequency(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaBuilder::build_cogna_cluster(){
+    std::cout << std::endl;
+    std::cout << "####################### Loading COGNA #######################"
+              << std::endl << std::endl;
+
     std::cout << "[INFO] Loading global parameters." << std::endl;
     if(load_globals_file() == ERROR_CODE) return ERROR_CODE;
 
@@ -97,6 +104,10 @@ int CognaBuilder::build_cogna_cluster(){
     if(load_neuron_types() == ERROR_CODE) return ERROR_CODE;
 
     if(load_network(_main_network) == ERROR_CODE) return ERROR_CODE;
+
+    for(unsigned int i=0; i < _network_list.size(); i++){
+        if(_network_list[i]->setup_network() == ERROR_CODE) return ERROR_CODE;
+    }
 
     return SUCCESS_CODE;
 }
@@ -252,65 +263,68 @@ int CognaBuilder::load_nodes(NeuralNetwork *nn, nlohmann::json network_json){
     int error_code = SUCCESS_CODE;
 
     for(unsigned int i=0; i<network_json["nodes"].size(); i++){
-        std::string ip = "0.0.0.0";
-        int port = 0;
-        std::string channel;
-        try{
-            port = std::stoi((std::string)network_json["nodes"][i]["port"]);
-        }
-        catch(...){
-            std::cout << "[ERROR] Cannot parse port number of node." << std::endl;
-            return ERROR_CODE;
-        }
-        try{
-            channel = network_json["nodes"][i]["channel"];
-        }
-        catch(...){
-            std::cout << "[ERROR] Cannot parse channel of node." << std::endl;
-            return ERROR_CODE;
-        }
-        int networking_id = 0;
-
-        if(network_json["nodes"][i]["function"] == "interface_input"){
-            bool client_does_exist = false;
-            for(unsigned int j=0; j < _client_list.size(); j++){
-                if(_client_list[j]->get_port() == port){
-                    client_does_exist = true;
-                    networking_id = j;
-                }
-            }
-            if(!client_does_exist){
-                networking_id = _client_list.size();
-                utils::networking_client *temp_client = new utils::networking_client(ip, port, true);
-                _client_list.push_back(temp_client);
-            }
-
-            nn->add_extern_input_node(_client_list[networking_id], channel);
-        }
-
-        else if(network_json["nodes"][i]["function"] == "interface_output"){
+        if(network_json["nodes"][i]["function"] == "interface_input" ||
+                network_json["nodes"][i]["function"] == "interface_output"){
+            std::string ip = "0.0.0.0";
+            int port = 0;
+            std::string channel;
             try{
-                ip = network_json["nodes"][i]["ip_address"];
+                port = std::stoi((std::string)network_json["nodes"][i]["port"]);
             }
             catch(...){
-                std::cout << "[ERROR] Cannot parse ip address of node." << std::endl;
+                std::cout << "[ERROR] Cannot parse port number of node." << std::endl;
                 return ERROR_CODE;
             }
+            try{
+                channel = network_json["nodes"][i]["channel"];
+            }
+            catch(...){
+                std::cout << "[ERROR] Cannot parse channel of node." << std::endl;
+                return ERROR_CODE;
+            }
+            int networking_id = 0;
 
-            bool sender_does_exist = false;
-            for(unsigned int j=0; j < _sender_list.size(); j++){
-                if(_sender_list[j]->get_ip() == ip && _sender_list[j]->get_port() == port){
-                    sender_does_exist = true;
-                    networking_id = j;
+            if(network_json["nodes"][i]["function"] == "interface_input"){
+                bool client_does_exist = false;
+                for(unsigned int j=0; j < _client_list.size(); j++){
+                    if(_client_list[j]->get_port() == port){
+                        client_does_exist = true;
+                        networking_id = j;
+                    }
                 }
-            }
-            if(!sender_does_exist){
-                networking_id = _sender_list.size();
-                utils::networking_sender *temp_sender = new utils::networking_sender(ip, port);
-                _sender_list.push_back(temp_sender);
+                if(!client_does_exist){
+                    networking_id = _client_list.size();
+                    utils::networking_client *temp_client = new utils::networking_client(ip, port, true);
+                    _client_list.push_back(temp_client);
+                }
+
+                nn->add_extern_input_node(_client_list[networking_id], channel);
             }
 
-            nn->add_extern_output_node(_sender_list[networking_id], channel);
+            else if(network_json["nodes"][i]["function"] == "interface_output"){
+                try{
+                    ip = network_json["nodes"][i]["ip_address"];
+                }
+                catch(...){
+                    std::cout << "[ERROR] Cannot parse ip address of node." << std::endl;
+                    return ERROR_CODE;
+                }
+
+                bool sender_does_exist = false;
+                for(unsigned int j=0; j < _sender_list.size(); j++){
+                    if(_sender_list[j]->get_ip() == ip && _sender_list[j]->get_port() == port){
+                        sender_does_exist = true;
+                        networking_id = j;
+                    }
+                }
+                if(!sender_does_exist){
+                    networking_id = _sender_list.size();
+                    utils::networking_sender *temp_sender = new utils::networking_sender(ip, port);
+                    _sender_list.push_back(temp_sender);
+                }
+
+                nn->add_extern_output_node(_sender_list[networking_id], channel);
+            }
         }
     }
 
@@ -434,6 +448,28 @@ int CognaBuilder::load_node_connection(NeuralNetwork *nn, nlohmann::json network
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+int CognaBuilder::load_subnet_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
+    if(network_json["connections"][i]["prev_neuron_function"] == "input"){
+        std::cout << network_json["connections"][i] << std::endl;
+    }
+
+    else if(network_json["connections"][i]["next_neuron_function"] == "output"){
+        std::cout << network_json["connections"][i] << std::endl;
+    }
+
+    else if(network_json["connections"][i]["prev_neuron_function"] == "subnet_input"){
+        std::cout << network_json["connections"][i] << std::endl;
+    }
+
+    else if(network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
+        std::cout << network_json["connections"][i] << std::endl;
+    }
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 int CognaBuilder::load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
     int source_neuron = network_json["connections"][i]["prev_neuron"];
     int target_connection = network_json["connections"][i]["next_connection"];
@@ -477,6 +513,12 @@ int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_jso
                 network_json["connections"][i]["next_neuron_function"] == "interface_output"){
                     load_node_connection(nn, network_json, i);
             }
+            else if(network_json["connections"][i]["prev_neuron_function"] == "input" ||
+                network_json["connections"][i]["next_neuron_function"] == "output" ||
+                network_json["connections"][i]["prev_neuron_function"] == "subnet_input" ||
+                network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
+                    load_subnet_connection(nn, network_json, i);
+            }
         }
         else if(network_json["connections"][i].find("next_connection") != network_json["connections"][i].end()){
             load_presynaptic_connection(nn, network_json, i);
@@ -508,7 +550,10 @@ int CognaBuilder::load_network_parameter(NeuralNetwork *nn, nlohmann::json netwo
 //----------------------------------------------------------------------------------------------------------------------
 //
 int CognaBuilder::load_network(std::string network_name){
+    std::cout << std::endl;
     std::cout << "[INFO] Loading network <" << network_name << ">." << std::endl;
+    std::cout << "+++++++++++++++++++++++++++++++++++++++" << std::endl;
+
     std::ifstream network_file;
     network_file.open(_project_path + "networks/" + network_name);
     if(!network_file){
@@ -547,22 +592,25 @@ int CognaBuilder::load_network(std::string network_name){
         std::cout << "[INFO] Loading connections." << std::endl;
         if(load_connections(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
     }
-
-    if(error_code == SUCCESS_CODE){
-        if(nn->setup_network() == ERROR_CODE) error_code = ERROR_CODE;
-    }
     std::cout << std::endl;
 
-    _curr_network_neuron_number = 0;
-
-    if(error_code == SUCCESS_CODE){
-        _network_list.push_back(nn);
-        return SUCCESS_CODE;
-    }
-    else{
+    if(error_code == ERROR_CODE){
         delete nn;
         return ERROR_CODE;
     }
+
+    _curr_network_neuron_number = 0;
+
+    _network_list.push_back(nn);
+
+    for(unsigned int i=0; i < network_json["subnetworks"].size(); i++){
+        Neuron::s_max_id = 0;
+        Connection::s_max_id = 0;
+
+        load_network(network_json["subnetworks"][i]["network_name"]);
+    }
+
+    return SUCCESS_CODE;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -660,9 +708,6 @@ float CognaBuilder::load_neuron_parameter(nlohmann::json neuron, std::string par
             }
         }
     }
-
-    if(parameter == "random_chance") std::cout << parameter << " = " << return_value << std::endl;
-    //std::cout << parameter << " = " << return_value << std::endl;
 
     return return_value;
 }
