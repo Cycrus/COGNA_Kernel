@@ -105,6 +105,8 @@ int CognaBuilder::build_cogna_cluster(){
 
     if(load_network(_main_network) == ERROR_CODE) return ERROR_CODE;
 
+    if(connect_subnetworks() == ERROR_CODE) return ERROR_CODE;
+
     for(unsigned int i=0; i < _network_list.size(); i++){
         if(_network_list[i]->setup_network() == ERROR_CODE) return ERROR_CODE;
     }
@@ -448,22 +450,16 @@ int CognaBuilder::load_node_connection(NeuralNetwork *nn, nlohmann::json network
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-int CognaBuilder::load_subnet_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
-    if(network_json["connections"][i]["prev_neuron_function"] == "input"){
-        std::cout << network_json["connections"][i] << std::endl;
-    }
+int CognaBuilder::load_subnet_input_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
+    nn->_subnet_input_connection_list.push_back(network_json["connections"][i]);
 
-    else if(network_json["connections"][i]["next_neuron_function"] == "output"){
-        std::cout << network_json["connections"][i] << std::endl;
-    }
+    return SUCCESS_CODE;
+}
 
-    else if(network_json["connections"][i]["prev_neuron_function"] == "subnet_input"){
-        std::cout << network_json["connections"][i] << std::endl;
-    }
-
-    else if(network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
-        std::cout << network_json["connections"][i] << std::endl;
-    }
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaBuilder::load_subnet_output_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i){
+    nn->_subnet_output_connection_list.push_back(network_json["connections"][i]);
 
     return SUCCESS_CODE;
 }
@@ -509,24 +505,27 @@ int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_jso
                network_json["connections"][i]["next_neuron_function"] == "neuron"){
                    load_neuron_connection(nn, network_json, i);
             }
+
             else if(network_json["connections"][i]["prev_neuron_function"] == "interface_input" ||
                 network_json["connections"][i]["next_neuron_function"] == "interface_output"){
                     load_node_connection(nn, network_json, i);
             }
-            else if(network_json["connections"][i]["prev_neuron_function"] == "input" ||
-                network_json["connections"][i]["next_neuron_function"] == "output" ||
-                network_json["connections"][i]["prev_neuron_function"] == "subnet_input" ||
-                network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
-                    load_subnet_connection(nn, network_json, i);
+
+            if(network_json["connections"][i]["prev_neuron_function"] == "input" ||
+               network_json["connections"][i]["prev_neuron_function"] == "subnet_input"){
+                    load_subnet_input_connection(nn, network_json, i);
+            }
+
+            if(network_json["connections"][i]["next_neuron_function"] == "output" ||
+               network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
+                    load_subnet_output_connection(nn, network_json, i);
             }
         }
+
         else if(network_json["connections"][i].find("next_connection") != network_json["connections"][i].end()){
             load_presynaptic_connection(nn, network_json, i);
         }
-        else if(network_json["connections"][i]["prev_neuron_function"] == "subnet_input" ||
-            network_json["connections"][i]["next_neuron_function"] == "subnet_output"){
-                std::cout << "Found subnetwork exchanging connections" << std::endl;
-            }
+
         else{
             std::cout << "[ERROR] Missing target type for connection." << std::endl;
             return ERROR_CODE;
@@ -566,11 +565,6 @@ int CognaBuilder::load_network(std::string network_name){
     network_file >> network_json;
     network_file.close();
 
-    // DONE neurons = network_json["neurons"]
-    // connections = network_json["connections"]
-    // nodes = network_json["nodes"]
-    // network = network_json["network"]
-
     int error_code = SUCCESS_CODE;
 
     NeuralNetwork *nn = new NeuralNetwork();
@@ -608,6 +602,18 @@ int CognaBuilder::load_network(std::string network_name){
         Connection::s_max_id = 0;
 
         load_network(network_json["subnetworks"][i]["network_name"]);
+    }
+
+    return SUCCESS_CODE;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+int CognaBuilder::connect_subnetworks(){
+    for(unsigned int nn=0; nn < _network_list.size(); nn++){
+        for(unsigned int c=0; c < _network_list[nn]->_subnet_output_connection_list.size(); c++){
+            std::cout << _network_list[nn]->_subnet_output_connection_list[c] << std::endl;
+        }
     }
 
     return SUCCESS_CODE;

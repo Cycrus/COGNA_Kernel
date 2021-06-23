@@ -19,6 +19,7 @@
 #include "NetworkingNode.hpp"
 #include "networking_client.hpp"
 #include "networking_sender.hpp"
+#include "json.hpp"
 #include <string>
 #include <condition_variable>
 
@@ -37,6 +38,8 @@ public:
     COGNA::NeuralNetworkParameterHandler *_parameter;
     std::vector<COGNA::NetworkingNode*> _extern_input_nodes;
     std::vector<COGNA::NetworkingNode*> _extern_output_nodes;
+    nlohmann::json _subnet_input_connection_list;
+    nlohmann::json _subnet_output_connection_list;
     static int m_cluster_state;
 
     /**
