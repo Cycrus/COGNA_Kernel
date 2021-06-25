@@ -506,7 +506,7 @@ int CognaBuilder::load_connections(NeuralNetwork *nn, nlohmann::json network_jso
                    load_neuron_connection(nn, network_json, i);
             }
 
-            else if(network_json["connections"][i]["prev_neuron_function"] == "interface_input" ||
+            if(network_json["connections"][i]["prev_neuron_function"] == "interface_input" ||
                 network_json["connections"][i]["next_neuron_function"] == "interface_output"){
                     load_node_connection(nn, network_json, i);
             }
@@ -616,6 +616,7 @@ int CognaBuilder::connect_subnetworks(){
         for(unsigned int oc=0; oc < source_network->_subnet_output_connection_list.size(); oc++){
             nlohmann::json *source_con = &source_network->_subnet_output_connection_list[oc];
             int next_network_id = nn + (int)source_con[oc]["next_subnetwork"]+1;
+
             if(source_con[oc]["next_neuron_function"] == "output"){
                 int next_subnet_node = (int)source_con[oc]["next_subnet_node_id"];
                 NeuralNetwork *target_network = _network_list[next_network_id];
@@ -649,9 +650,37 @@ int CognaBuilder::connect_subnetworks(){
 
         for(unsigned int ic=0; ic < source_network->_subnet_input_connection_list.size(); ic++){
             nlohmann::json *source_con = &source_network->_subnet_input_connection_list[ic];
-            int prev_subnet_node = (int)source_con[ic]["prev_subnet_node_id"];
+            int next_network_id = nn + (int)source_con[ic]["prev_subnetwork"]+1;
+
             if(source_con[ic]["prev_neuron_function"] == "input"){
-                std::cout << "Prev node = " << prev_subnet_node << std::endl;
+                int prev_subnet_node = (int)source_con[ic]["prev_subnet_node_id"];
+                NeuralNetwork *target_network = _network_list[next_network_id];
+
+                for(unsigned int oc=0; oc < target_network->_subnet_output_connection_list.size(); oc++){
+                    nlohmann::json *target_con = &target_network->_subnet_output_connection_list[oc];
+                    int next_subnet_node = (int)target_con[oc]["next_subnet_node_id"];
+                    std::cout << "NODES = " << target_con[oc] << " OOO " << nn << std::endl;
+                    std::cout << "NETW = " << next_network_id << std::endl;
+                    if(prev_subnet_node == next_subnet_node && target_con[oc]["next_neuron_function"] == "subnet_output"){
+                        int target_neuron_id = (int)source_con[ic]["next_neuron"];
+                        int source_neuron_id = (int)target_con[oc]["prev_neuron"];
+                        Neuron *target_neuron = target_network->_neurons[target_neuron_id];
+                        float base_weight = load_connection_init_parameter(target_network, target_con[oc], "base_weight", source_neuron_id);
+                        int connection_type = (int)load_connection_init_parameter(target_network, target_con[oc], "activation_type", source_neuron_id);
+                        int function_type = (int)load_connection_init_parameter(target_network, target_con[oc], "activation_function", source_neuron_id);
+                        int learning_type = (int)load_connection_init_parameter(target_network, target_con[oc], "learning_type", source_neuron_id);
+                        int transmitter_type = (int)load_connection_init_parameter(target_network, target_con[oc], "transmitter_type", source_neuron_id);
+                        Connection *temp_con = target_network->add_neuron_connection(source_neuron_id, target_neuron, base_weight, connection_type,
+                                                                                     function_type, learning_type, transmitter_type);
+                        load_all_connection_parameter(temp_con, target_con[oc]);
+                        target_neuron = nullptr;
+                    }
+
+                    target_con = nullptr;
+                }
+
+                source_con = nullptr;
+                target_network = nullptr;
             }
         }
         source_network = nullptr;
