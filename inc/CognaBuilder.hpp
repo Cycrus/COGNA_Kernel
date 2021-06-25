@@ -56,7 +56,7 @@ private:
 
     int load_neurons(NeuralNetwork *nn, nlohmann::json network_json);
     int load_nodes(NeuralNetwork *nn, nlohmann::json network_json);
-    int load_all_connection_parameter(Connection *temp_con, nlohmann::json network_json, int i);
+    int load_all_connection_parameter(Connection *connection_object, nlohmann::json connection_json);
     int load_neuron_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
     int load_node_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
     int load_subnet_input_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
