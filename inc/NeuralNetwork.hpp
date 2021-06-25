@@ -19,6 +19,7 @@
 #include "NetworkingNode.hpp"
 #include "networking_client.hpp"
 #include "networking_sender.hpp"
+#include "json.hpp"
 #include <string>
 #include <condition_variable>
 
@@ -37,6 +38,8 @@ public:
     COGNA::NeuralNetworkParameterHandler *_parameter;
     std::vector<COGNA::NetworkingNode*> _extern_input_nodes;
     std::vector<COGNA::NetworkingNode*> _extern_output_nodes;
+    nlohmann::json _subnet_input_connection_list;
+    nlohmann::json _subnet_output_connection_list;
     static int m_cluster_state;
 
     /**
@@ -120,6 +123,28 @@ public:
      */
     Connection* add_neuron_connection(int source_neuron,
                                       int target_neuron,
+                                      float weight,
+                                      int connection_type=EXCITATORY,
+                                      int function_type=FUNCTION_RELU,
+                                      int learning_type=LEARNING_NONE,
+                                      int transmitter_type=STD_TRANSMITTER);
+
+    /**
+    * @brief Adds a new connection between two neurons to the network.
+    *
+    * @param source_neuron       The neuron which should send a signal.
+    * @param target_neuron       The object of the neuron which should receive a signal.
+    * @param weight              The default base weight of the new connection.
+    * @param con_type            The type of connection. Can be EXCITATORY or INHIBITORY.
+    * @param fun_type            The activation function of the connection.
+    * @param learn_type          Decides if connection can learn via habituation, sensitization, or both.
+    * @param transmitter_type    The transmitter the new connection uses for signal transmission.
+    *
+    * @return                    The newly created connection. Used for synaptic connections.
+    *
+    */
+    Connection* add_neuron_connection(int source_neuron,
+                                      Neuron *target_neuron,
                                       float weight,
                                       int connection_type=EXCITATORY,
                                       int function_type=FUNCTION_RELU,

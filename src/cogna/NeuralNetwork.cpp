@@ -202,6 +202,48 @@ Connection* NeuralNetwork::add_neuron_connection(int source_neuron, int target_n
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+Connection* NeuralNetwork::add_neuron_connection(int source_neuron, Neuron *target_neuron, float weight,
+                                                 int connection_type,
+                                                 int function_type,
+                                                 int learning_type,
+                                                 int transmitter_type){
+   if(connection_type != EXCITATORY && connection_type != INHIBITORY){
+       LOG_WARN("Invalid connection type for C-%d~%d.\n", source_neuron, target_neuron->_id);
+       LOG_INFO("Connection type changed to <EXCITATORY>.\n");
+       connection_type = EXCITATORY;
+   }
+   if(transmitter_type == NO_TRANSMITTER){
+       transmitter_type = STD_TRANSMITTER;
+   }
+   else if(transmitter_type < NO_TRANSMITTER || (unsigned)transmitter_type >= _transmitter_weights.size()){
+       LOG_WARN("Invalid transmitter type for C-%d~%d.\n", source_neuron, target_neuron->_id);
+       LOG_INFO("Transmitter changed to std transmitter <0>.\n");
+       transmitter_type = STD_TRANSMITTER;
+   }
+
+   if(source_neuron == 0 || target_neuron->_id == 0){
+       LOG_ERROR("Cannot actively connect NULL Neurons to another neuron.");
+       return NULL;
+   }
+
+   if((unsigned int)source_neuron < _neurons.size()){
+       Connection *temp_con = _neurons[source_neuron]->add_neuron_connection(target_neuron, weight,
+                                                                             connection_type,
+                                                                             function_type,
+                                                                             learning_type,
+                                                                             transmitter_type);
+       return temp_con;
+   }
+   else{
+       LOG_ERROR("Addressed neuron IDs are not existing for C-%d~%d.\n", source_neuron, target_neuron);
+   }
+
+   LOG_ERROR("Connecting N-%d to N-%d was unsuccessful.\n", source_neuron, target_neuron);
+   return NULL;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
                                                    int connected_neuron_1,
                                                    int connected_neuron_2,
