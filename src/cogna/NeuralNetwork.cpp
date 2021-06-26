@@ -89,7 +89,7 @@ int NeuralNetwork::add_extern_input_node(int node_id, utils::networking_client *
 //----------------------------------------------------------------------------------------------------------------------
 //
 int NeuralNetwork::add_extern_output_node(int node_id, utils::networking_sender *sender, std::string channel){
-    int new_id = node_id;2
+    int new_id = node_id;
     NetworkingNode *temp_output_node = new NetworkingNode(new_id, channel);
     temp_output_node->setup_sender(sender);
     _extern_output_nodes.push_back(temp_output_node);
