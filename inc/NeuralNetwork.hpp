@@ -66,8 +66,8 @@ public:
      */
     int add_neuron(float threshold);
 
-    int add_extern_input_node(utils::networking_client *client, std::string channel);
-    int add_extern_output_node(utils::networking_sender *sender, std::string channel);
+    int add_extern_input_node(int node_id, utils::networking_client *client, std::string channel);
+    int add_extern_output_node(int node_id, utils::networking_sender *sender, std::string channel);
 
     /**
      * @brief Sets a neuron to have an influence on a certain neurotransmitter if it fires.

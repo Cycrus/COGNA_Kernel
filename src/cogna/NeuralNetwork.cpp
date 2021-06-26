@@ -77,8 +77,8 @@ int NeuralNetwork::add_neuron(float threshold){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-int NeuralNetwork::add_extern_input_node(utils::networking_client *client, std::string channel){
-    int new_id = _extern_input_nodes.size() + _extern_output_nodes.size() + 1;
+int NeuralNetwork::add_extern_input_node(int node_id, utils::networking_client *client, std::string channel){
+    int new_id = node_id;
     NetworkingNode *temp_input_node = new NetworkingNode(new_id, channel);
     temp_input_node->setup_client(client);
     _extern_input_nodes.push_back(temp_input_node);
@@ -88,8 +88,8 @@ int NeuralNetwork::add_extern_input_node(utils::networking_client *client, std::
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-int NeuralNetwork::add_extern_output_node(utils::networking_sender *sender, std::string channel){
-    int new_id = _extern_input_nodes.size() + _extern_output_nodes.size() + 1;
+int NeuralNetwork::add_extern_output_node(int node_id, utils::networking_sender *sender, std::string channel){
+    int new_id = node_id;2
     NetworkingNode *temp_output_node = new NetworkingNode(new_id, channel);
     temp_output_node->setup_sender(sender);
     _extern_output_nodes.push_back(temp_output_node);
