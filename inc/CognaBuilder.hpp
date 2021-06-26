@@ -65,6 +65,8 @@ private:
     int load_connections(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network(std::string network_name);
+    int connect_subnet_outputs(unsigned int curr_network_id, NeuralNetwork *source_network);
+    int connect_subnet_inputs(unsigned int curr_network_id, NeuralNetwork *source_network);
     int connect_subnetworks();
 
     float load_neuron_parameter(nlohmann::json neuron, std::string parameter, std::string neuron_type);
