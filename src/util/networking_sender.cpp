@@ -50,7 +50,7 @@ void networking_sender::add_data(std::string key, float value){
 		_payload[key] = value;
 	}
 	else{
-		_payload[key] += value;
+		_payload[key] = (float)_payload[key] + value;
 	}
 }
 void networking_sender::add_data(std::string key, int value){
@@ -59,7 +59,7 @@ void networking_sender::add_data(std::string key, int value){
 		_payload[key] = value;
 	}
 	else{
-		_payload[key] += value;
+		_payload[key] = (int)_payload[key] + value;
 	}
 }
 void networking_sender::add_data(std::string key, std::string value){
