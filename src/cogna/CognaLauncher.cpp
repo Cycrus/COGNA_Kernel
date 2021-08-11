@@ -84,7 +84,7 @@ int CognaLauncher::run_cogna(){
             std::cout << "After storing new UDP data..." << std::endl;
 
             for(unsigned int i=0; i < _network_list.size(); i++){
-                _network_list[i]->receive_data();   // Maybe here happens seg fault
+                _network_list[i]->receive_data();   // Here happens seg fault
             }
 
             std::cout << "After receiving data..." << std::endl;

@@ -46,7 +46,7 @@ int networking_sender::get_port(){
 //
 void networking_sender::add_data(std::string key, float value){
 	std::lock_guard<std::mutex> guard(_payload_mutex);
-	if(_payload.find(key) != _payload.end()){
+	if(_payload.find(key) == _payload.end()){
 		_payload[key] = value;
 	}
 	else{
@@ -55,7 +55,7 @@ void networking_sender::add_data(std::string key, float value){
 }
 void networking_sender::add_data(std::string key, int value){
 	std::lock_guard<std::mutex> guard(_payload_mutex);
-	if(_payload.find(key) != _payload.end()){
+	if(_payload.find(key) == _payload.end()){
 		_payload[key] = value;
 	}
 	else{
