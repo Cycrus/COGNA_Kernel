@@ -17,6 +17,7 @@
 #define NETWORKING_SENDER_HPP
 
 #include <string>
+#include <mutex>
 #include "json.hpp"
 #include "client_server.hpp"
 
@@ -102,6 +103,7 @@ public:
 private:
 	udp_client_server::udp_client *_sender;
 	nlohmann::json _payload;
+	std::mutex _payload_mutex;
 };
 
 } //namespace utils

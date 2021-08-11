@@ -31,7 +31,7 @@ private:
     unsigned long long *_curr_cluster_step;
 
     int create_networking_workers();
-    int create_cogna_workers(std::condition_variable *thread_lock, int *main_lock);
+    int create_cogna_workers(std::condition_variable *thread_lock);
 };
 
 } //namespace COGNA

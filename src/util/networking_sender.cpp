@@ -10,6 +10,7 @@
 
 #include "networking_sender.hpp"
 #include <chrono>
+#include <iostream>
 
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 1024
@@ -44,12 +45,25 @@ int networking_sender::get_port(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 void networking_sender::add_data(std::string key, float value){
-	_payload[key] = value;
+	std::lock_guard<std::mutex> guard(_payload_mutex);
+	if(_payload.find(key) == _payload.end()){
+		_payload[key] = value;
+	}
+	else{
+		_payload[key] += value;
+	}
 }
 void networking_sender::add_data(std::string key, int value){
-	_payload[key] = value;
+	std::lock_guard<std::mutex> guard(_payload_mutex);
+	if(_payload.find(key) == _payload.end()){
+		_payload[key] = value;
+	}
+	else{
+		_payload[key] += value;
+	}
 }
 void networking_sender::add_data(std::string key, std::string value){
+	std::lock_guard<std::mutex> guard(_payload_mutex);
 	_payload[key] = value;
 }
 
@@ -67,7 +81,7 @@ void networking_sender::clear_payload(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-std::string networking_sender:: stringify_payload(int indent){
+std::string networking_sender::stringify_payload(int indent){
 	return _payload.dump(indent);
 }
 
@@ -75,9 +89,9 @@ std::string networking_sender:: stringify_payload(int indent){
 //
 void networking_sender::send_payload(){
 	auto time_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	_payload["time"] = time_in_ms;
-	std::string temp_payload = _payload.dump();
-	_sender->send(temp_payload.c_str(), temp_payload.size());
+	_payload["time"] = (long long)time_in_ms;
+	std::string stringified_payload = _payload.dump();
+	_sender->send(stringified_payload.c_str(), stringified_payload.size());
 	clear_payload();
 }
 

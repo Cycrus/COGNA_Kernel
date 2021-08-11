@@ -23,7 +23,9 @@ namespace COGNA{
 
     //----------------------------------------------------------------------------------------------------------------------
     //
-    Neuron::Neuron(NeuralNetworkParameterHandler *default_parameter){
+    Neuron::Neuron(NeuralNetworkParameterHandler *default_parameter, int network_id=0){
+        _network_id = network_id;
+
         _parameter = new NeuronParameterHandler();
 
         _parameter->activation_type = default_parameter->activation_type;
@@ -79,7 +81,8 @@ namespace COGNA{
 
         _id = s_max_id;
         s_max_id++;
-        
+
+        _next_activation = 0.0f;
         _activation = 0.0f;
         _was_activated = true;
         _last_activated_step = 0;

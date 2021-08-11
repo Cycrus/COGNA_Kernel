@@ -26,8 +26,10 @@ namespace COGNA{
 	class Neuron{
 		public:
 	        int _id;
+			int _network_id;
 	        static int s_max_id;
-	        float _activation;                     /**< Current activation potential level */
+			float _next_activation;				   /**< New activation level the neuron got in this step */
+	        float _activation;                     /**< Current activation potential level the neuron fires with in this step */
 	        int64_t _last_activated_step;          /**< Network step count, when neuron was last activated */
 	        bool _was_activated;                   /**< Indicates if neuron was activated last time or this time */
 	        int _last_fired_step;                  /**< Step when neuron last fired */
@@ -41,7 +43,7 @@ namespace COGNA{
 			 * @brief Initializes a neuron by setting its parameters to the default parameters coming from the network.
 			 *
 			 */
-	        Neuron(NeuralNetworkParameterHandler *default_parameter);
+	        Neuron(NeuralNetworkParameterHandler *default_parameter, int network_id);
 
 			/**
 			 * @brief Frees all memory allocated by the neuron.
