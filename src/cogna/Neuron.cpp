@@ -82,6 +82,7 @@ namespace COGNA{
         _id = s_max_id;
         s_max_id++;
 
+        _next_activation = 0.0f;
         _activation = 0.0f;
         _was_activated = true;
         _last_activated_step = 0;

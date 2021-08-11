@@ -343,7 +343,7 @@ Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
 //
 int NeuralNetwork::init_activation(int target_neuron, float activation){
     if(target_neuron >= MIN_NEURON_ID && (unsigned int)target_neuron < _neurons.size()){
-        _neurons[target_neuron]->_activation = activation;
+        _neurons[target_neuron]->_activation += activation;
 
         _curr_connections.insert(std::end(_curr_connections),
                                  std::begin(_neurons[target_neuron]->_connections),
@@ -533,7 +533,7 @@ void NeuralNetwork::save_next_neurons(std::vector<NeuralNetwork*> network_list){
         printf("\n*******************NEXT STEP*******************\n\n");
 
     for(unsigned int con=0; con<_curr_connections.size(); con++){
-        int next_network_id = _curr_connections[con]->next_neuron->_network_id;
+        int next_network_id = _id; //_curr_connections[con]->next_neuron->_network_id;
         std::cout << "Prev Network: " << _curr_connections[con]->prev_neuron->_network_id
                   << " - Prev Neuron: " << _curr_connections[con]->prev_neuron->_id
                   << "| Next Network: " << next_network_id
@@ -543,10 +543,14 @@ void NeuralNetwork::save_next_neurons(std::vector<NeuralNetwork*> network_list){
         _curr_connections[con]->prev_neuron->clear_neuron_activation(_network_step_counter);
 
         if(_curr_connections[con]->next_neuron){
+            if(_curr_connections[con]->next_neuron->_was_activated == true){
+                _curr_connections[con]->next_neuron->_activation = _curr_connections[con]->next_neuron->_next_activation;
+                _curr_connections[con]->next_neuron->_next_activation = 0.0f;
+            }
             _curr_connections[con]->next_neuron->_was_activated = false;
 
             /* Only do if next neuron is really activated */
-            if(_curr_connections[con]->next_neuron->_activation > 0){
+            if(_curr_connections[con]->next_neuron->_activation > 0.0f){
                 _curr_connections[con]->next_neuron->set_step(_network_step_counter);
 
                 int is_contained = false;
@@ -555,6 +559,7 @@ void NeuralNetwork::save_next_neurons(std::vector<NeuralNetwork*> network_list){
                         is_contained = true;
                     }
                 }
+
                 /* Only do if neuron is not already in the next_connections list */
                 if(is_contained == false){
                     network_list[next_network_id]->_next_connections.insert(std::end(_next_connections),

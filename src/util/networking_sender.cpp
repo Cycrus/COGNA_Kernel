@@ -89,10 +89,8 @@ std::string networking_sender::stringify_payload(int indent){
 //
 void networking_sender::send_payload(){
 	auto time_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-	std::cout << "TIME = " << (long long)time_in_ms << std::endl;
 	_payload["time"] = (long long)time_in_ms;
 	std::string stringified_payload = _payload.dump();
-	std::cout << stringified_payload << std::endl;
 	_sender->send(stringified_payload.c_str(), stringified_payload.size());
 	clear_payload();
 }

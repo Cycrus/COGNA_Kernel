@@ -81,13 +81,13 @@ int CognaLauncher::run_cogna(){
             for(unsigned int i=0; i < _client_list.size(); i++){
                 _client_list[i]->store_message();
             }
-            std::cout << "After storing new UDP data..." << std::endl;
+            //std::cout << "After storing new UDP data..." << std::endl;
 
             for(unsigned int i=0; i < _network_list.size(); i++){
                 _network_list[i]->receive_data();   // Here happens seg fault
             }
 
-            std::cout << "After receiving data..." << std::endl;
+            //std::cout << "After receiving data..." << std::endl;
             thread_condition_lock->notify_all();
 
             std::cout << iterator << std::endl;
@@ -103,16 +103,16 @@ int CognaLauncher::run_cogna(){
                 _network_list[i]->_is_finished = false;
             }
 
-            std::cout << "After waiting loop..." << std::endl;
+            //std::cout << "After waiting loop..." << std::endl;
             for(unsigned int i=0; i < _sender_list.size(); i++){
                 _sender_list[i]->send_payload();
             }
-            std::cout << "After sending payload..." << std::endl;
+            //std::cout << "After sending payload..." << std::endl;
 
             for(unsigned int i=0; i < _client_list.size(); i++){
                 _client_list[i]->clear_message();
             }
-            std::cout << "After clearing messages..." << std::endl;
+            //std::cout << "After clearing messages..." << std::endl;
 
             curr_time = utils::get_time_microsec(_cluster_time);
 
