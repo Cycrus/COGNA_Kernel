@@ -624,7 +624,7 @@ int CognaBuilder::connect_subnet_outputs(unsigned int curr_network_id, NeuralNet
         nlohmann::json source_con = source_network->_subnet_output_connection_list;
         int next_network_id = curr_network_id + (int)source_con[oc]["next_subnetwork"]+1;
 
-        std::cout << source_con[oc] << std::endl;
+        //std::cout << source_con[oc] << std::endl;
 
         if(source_con[oc]["next_neuron_function"] == "output"){
             int next_subnet_node = (int)source_con[oc]["next_subnet_node_id"];

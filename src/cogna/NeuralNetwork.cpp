@@ -596,8 +596,6 @@ void NeuralNetwork::receive_data(){
         float injected_activation = (float)_extern_input_nodes[i]->_client->get_json_value(_extern_input_nodes[i]->channel());
         for(unsigned int j=0; j < _extern_input_nodes[i]->targets().size(); j++){
             if(injected_activation > 0){
-                std::cout << "ACTIVATION = " << injected_activation << std::endl;
-                std::cout << "NEURON ID = " << _extern_input_nodes[i]->targets()[j]->_id << std::endl;
                 init_activation(_extern_input_nodes[i]->targets()[j]->_id, injected_activation);
             }
         }
