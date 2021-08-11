@@ -599,7 +599,7 @@ void NeuralNetwork::receive_data(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-void NeuralNetwork::send_data(){
+void NeuralNetwork::store_sent_data(){
     for(unsigned int i=0; i < _extern_output_nodes.size(); i++){
         float injected_activation = 0.0f;
         for(unsigned int j=0; j < _extern_output_nodes[i]->targets().size(); j++){
@@ -618,7 +618,7 @@ void NeuralNetwork::feed_forward(std::vector<NeuralNetwork*> network_list){
     transmitter_backfall();
     activate_random_neurons();
     activate_next_entities();
-    send_data();
+    store_sent_data();
     save_next_neurons(network_list);
     switch_vectors();
 }

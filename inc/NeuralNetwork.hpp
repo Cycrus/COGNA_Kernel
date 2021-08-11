@@ -359,7 +359,7 @@ public:
          */
         void switch_vectors();
 
-        void send_data();
+        void store_sent_data();
 };
 
 } //namespace COGNA
