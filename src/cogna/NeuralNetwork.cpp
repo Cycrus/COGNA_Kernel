@@ -19,6 +19,7 @@
 #include "MathUtils.hpp"
 #include "LoggerStd.hpp"
 #include "json.hpp"
+#include <ctime>
 
 using namespace COGNA;
 
@@ -36,6 +37,7 @@ NeuralNetwork::NeuralNetwork(){
 
     _id = m_max_id;
     m_max_id++;
+    _is_finished = false;
 
     _parameter = new NeuralNetworkParameterHandler();
     add_neuron(99999.0);
@@ -625,8 +627,7 @@ void NeuralNetwork::feed_forward(std::vector<NeuralNetwork*> network_list){
 //
 
 void NeuralNetwork::listen_to_cluster(std::vector<NeuralNetwork*> network_list,
-                                      std::condition_variable *thread_halter,
-                                      int *main_thread_lock){
+                                      std::condition_variable *thread_halter){
     std::mutex worker_mutex;
     std::unique_lock<std::mutex> thread_lock(worker_mutex);
 
@@ -634,7 +635,7 @@ void NeuralNetwork::listen_to_cluster(std::vector<NeuralNetwork*> network_list,
         if(m_cluster_state != STATE_PAUSE){
             thread_halter->wait(thread_lock);
             feed_forward(network_list);
-            (*main_thread_lock)++;
+            _is_finished = true;
         }
     }
 }

@@ -34,6 +34,7 @@ namespace COGNA{
 class NeuralNetwork{
 public:
     int _id;
+    bool _is_finished;
     std::vector<COGNA::Neuron*> _neurons;                   // All neurons contained in the network
     std::vector<COGNA::Connection*> _curr_connections;      // All connections which will be activated in this step
     std::vector<COGNA::Connection*> _next_connections;      // All connections which will be activated in the next step
@@ -242,8 +243,7 @@ public:
      *
      */
     void listen_to_cluster(std::vector<NeuralNetwork*> network_list,
-                           std::condition_variable *thread_halter,
-                           int *main_thread_lock);
+                           std::condition_variable *thread_halter);
 
     /**
      * @brief A debug function to print the activation of each firing neuron to std output.
