@@ -34,13 +34,14 @@ int NeuralNetwork::m_max_id = 0;
 NeuralNetwork::NeuralNetwork(){
     Logger::init_Global(new LoggerStd());
 
+    _id = m_max_id;
+    m_max_id++;
+
     _parameter = new NeuralNetworkParameterHandler();
     add_neuron(99999.0);
     _network_step_counter = 0;
     _transmitter_weights.push_back(1.0f);
     _network_step_counter = 0;
-    _id = m_max_id;
-    m_max_id++;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -67,7 +68,7 @@ NeuralNetwork::~NeuralNetwork(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 int NeuralNetwork::add_neuron(float threshold){
-    Neuron *temp_neuron = new Neuron(_parameter);
+    Neuron *temp_neuron = new Neuron(_parameter, _id);
 
     temp_neuron->_parameter->activation_threshold = threshold;
 
@@ -521,12 +522,21 @@ void NeuralNetwork::activate_next_entities(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-void NeuralNetwork::save_next_neurons(){
-    // TODO Too chaotic
+void NeuralNetwork::save_next_neurons(std::vector<NeuralNetwork*> network_list){
+    if(network_list.size() == 0){
+        network_list.push_back(this);
+    }
+
     if(DEBUG_MODE && _curr_connections.size() > 0)
         printf("\n*******************NEXT STEP*******************\n\n");
 
     for(unsigned int con=0; con<_curr_connections.size(); con++){
+        int next_network_id = _curr_connections[con]->next_neuron->_network_id;
+        std::cout << "Prev Network: " << _curr_connections[con]->prev_neuron->_network_id
+                  << " - Prev Neuron: " << _curr_connections[con]->prev_neuron->_id
+                  << "| Next Network: " << next_network_id
+                  << " - Next Neuron: " << _curr_connections[con]->next_neuron->_id << std::endl;
+
         /* Only do if neuron fired in this round */
         _curr_connections[con]->prev_neuron->clear_neuron_activation(_network_step_counter);
 
@@ -538,16 +548,16 @@ void NeuralNetwork::save_next_neurons(){
                 _curr_connections[con]->next_neuron->set_step(_network_step_counter);
 
                 int is_contained = false;
-                for(unsigned int nex=0; nex<_next_connections.size(); nex++){
-                    if(_curr_connections[con]->next_neuron == _next_connections[nex]->prev_neuron){
+                for(unsigned int nex=0; nex < network_list[next_network_id]->_next_connections.size(); nex++){
+                    if(_curr_connections[con]->next_neuron == network_list[next_network_id]->_next_connections[nex]->prev_neuron){
                         is_contained = true;
                     }
                 }
                 /* Only do if neuron is not already in the next_connections list */
                 if(is_contained == false){
-                    _next_connections.insert(std::end(_next_connections),
-                                             std::begin(_curr_connections[con]->next_neuron->_connections),
-                                             std::end(_curr_connections[con]->next_neuron->_connections));
+                    network_list[next_network_id]->_next_connections.insert(std::end(_next_connections),
+                                                                            std::begin(_curr_connections[con]->next_neuron->_connections),
+                                                                            std::end(_curr_connections[con]->next_neuron->_connections));
                 }
             }
         }
@@ -578,7 +588,9 @@ void NeuralNetwork::receive_data(){
     for(unsigned int i=0; i < _extern_input_nodes.size(); i++){
         float injected_activation = (float)_extern_input_nodes[i]->_client->get_json_value(_extern_input_nodes[i]->channel());
         for(unsigned int j=0; j < _extern_input_nodes[i]->targets().size(); j++){
-            init_activation(_extern_input_nodes[i]->targets()[j]->_id, injected_activation);
+            if(injected_activation > 0){
+                init_activation(_extern_input_nodes[i]->targets()[j]->_id, injected_activation);
+            }
         }
     }
 }
@@ -598,29 +610,30 @@ void NeuralNetwork::send_data(){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-void NeuralNetwork::feed_forward(){
+void NeuralNetwork::feed_forward(std::vector<NeuralNetwork*> network_list){
     _network_step_counter += 1;
 
-    //receive_data();
     transmitter_backfall();
     activate_random_neurons();
     activate_next_entities();
     send_data();
-    save_next_neurons();
+    save_next_neurons(network_list);
     switch_vectors();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
 //
 
-void NeuralNetwork::listen_to_cluster(std::condition_variable *thread_halter, int *main_thread_lock){
+void NeuralNetwork::listen_to_cluster(std::vector<NeuralNetwork*> network_list,
+                                      std::condition_variable *thread_halter,
+                                      int *main_thread_lock){
     std::mutex worker_mutex;
     std::unique_lock<std::mutex> thread_lock(worker_mutex);
 
     while(m_cluster_state != STATE_STOPPED){
         if(m_cluster_state != STATE_PAUSE){
             thread_halter->wait(thread_lock);
-            feed_forward();
+            feed_forward(network_list);
             (*main_thread_lock)++;
         }
     }

@@ -10,6 +10,7 @@
 
 #include "networking_sender.hpp"
 #include <chrono>
+#include <iostream>
 
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 1024
@@ -75,7 +76,9 @@ std::string networking_sender:: stringify_payload(int indent){
 //
 void networking_sender::send_payload(){
 	auto time_in_ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+	std::cout << time_in_ms << std::endl;
 	_payload["time"] = time_in_ms;
+	std::cout << _payload << std::endl;
 	std::string temp_payload = _payload.dump();
 	_sender->send(temp_payload.c_str(), temp_payload.size());
 	clear_payload();

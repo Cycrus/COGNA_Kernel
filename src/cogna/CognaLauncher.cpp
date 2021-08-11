@@ -47,6 +47,10 @@ CognaLauncher::~CognaLauncher(){
 void CognaLauncher::tester(){
     std::cout << "Frequency = " << _frequency << std::endl;
     std::cout << std::endl;
+    for(unsigned int i=0; i<_network_list.size(); i++){
+        //std::cout << "Network " << i << " network_list has " << _network_list[i]->_all_networks_list->size() << " elements." << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -76,25 +80,29 @@ int CognaLauncher::run_cogna(){
             for(unsigned int i=0; i < _client_list.size(); i++){
                 _client_list[i]->store_message();
             }
+            std::cout << "After storing new UDP data..." << std::endl;
 
             for(unsigned int i=0; i < _network_list.size(); i++){
-                _network_list[i]->receive_data();
+                _network_list[i]->receive_data();   // Maybe here happens seg fault
             }
 
-            thread_condition_lock->notify_all();
+            std::cout << "After receiving data..." << std::endl;
+            thread_condition_lock->notify_all();    // Maybe here happens seg fault
 
-            while(*main_thread_lock < (int)_cogna_worker_list.size()){
-
+            // Waiting and checking if all threads have finished
+            while(*main_thread_lock < (int)_cogna_worker_list.size()){  // Here endless loops and unresponsiveness happen
             }
             *main_thread_lock = 0;
-
+            std::cout << "After waiting loop..." << std::endl;
             for(unsigned int i=0; i < _sender_list.size(); i++){
-                _sender_list[i]->send_payload();
+                _sender_list[i]->send_payload();    // Here Json Errors Happen
             }
+            std::cout << "After sending payload..." << std::endl;
 
             for(unsigned int i=0; i < _client_list.size(); i++){
                 _client_list[i]->clear_message();
             }
+            std::cout << "After clearing messages..." << std::endl;
 
             curr_time = utils::get_time_microsec(_cluster_time);
 
@@ -139,6 +147,7 @@ int CognaLauncher::create_cogna_workers(std::condition_variable *thread_lock, in
     for(unsigned int i=0; i < _network_list.size(); i++){
         std::thread *cogna_worker1 = new std::thread(&NeuralNetwork::listen_to_cluster,
                                                     _network_list[i],
+                                                    _network_list,
                                                     thread_lock,
                                                     main_lock);
         _cogna_worker_list.push_back(cogna_worker1);

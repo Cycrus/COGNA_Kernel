@@ -33,8 +33,10 @@ namespace COGNA{
  */
 class NeuralNetwork{
 public:
+    int _id;
     std::vector<COGNA::Neuron*> _neurons;                   // All neurons contained in the network
     std::vector<COGNA::Connection*> _curr_connections;      // All connections which will be activated in this step
+    std::vector<COGNA::Connection*> _next_connections;      // All connections which will be activated in the next step
     COGNA::NeuralNetworkParameterHandler *_parameter;
     std::vector<COGNA::NetworkingNode*> _extern_input_nodes;
     std::vector<COGNA::NetworkingNode*> _extern_output_nodes;
@@ -233,13 +235,15 @@ public:
      * Usually called inside of the network function.
      *
      */
-    void feed_forward();
+    void feed_forward(std::vector<NeuralNetwork*> network_list=std::vector<NeuralNetwork*>());
 
     /**
      * @brief This function listens to the cluster step counter and activates the network, if required.
      *
      */
-    void listen_to_cluster(std::condition_variable *thread_halter, int *main_thread_lock);
+    void listen_to_cluster(std::vector<NeuralNetwork*> network_list,
+                           std::condition_variable *thread_halter,
+                           int *main_thread_lock);
 
     /**
      * @brief A debug function to print the activation of each firing neuron to std output.
@@ -298,9 +302,7 @@ public:
     private:
         std::vector<COGNA::Neuron*> _random_neurons;            // All neurons in the network which can activate randomly
         std::vector<float> _transmitter_weights;
-        std::vector<COGNA::Connection*> _next_connections;      // All connections which will be activated in the next step
         int64_t _network_step_counter;
-        int _id;
         static int m_max_id;
 
         /**
@@ -349,7 +351,7 @@ public:
          * @brief Stores the connections of all activated neurons, if their activation is higher than their threshold in a vector.
          *
          */
-        void save_next_neurons();
+        void save_next_neurons(std::vector<NeuralNetwork*> network_list);
 
         /**
          * @brief Clears the vector containing the current connections and pushes the vector with the next connection to the current ones.
