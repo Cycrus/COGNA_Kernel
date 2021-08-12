@@ -624,29 +624,35 @@ int CognaBuilder::connect_subnet_outputs(unsigned int curr_network_id, NeuralNet
         nlohmann::json source_con = source_network->_subnet_output_connection_list;
         int next_network_id = curr_network_id + (int)source_con[oc]["next_subnetwork"]+1;
 
-        //std::cout << source_con[oc] << std::endl;
+        std::cout << std::endl << "OUTPUT = " << source_con[oc] << std::endl;
 
         if(source_con[oc]["next_neuron_function"] == "output"){
             int next_subnet_node = (int)source_con[oc]["next_subnet_node_id"];
             NeuralNetwork *target_network = _network_list[next_network_id];
 
-            for(unsigned int ic=0; ic < target_network->_subnet_input_connection_list.size(); ic++){
-                nlohmann::json target_con = target_network->_subnet_input_connection_list;
-                int prev_subnet_node = (int)target_con[ic]["prev_subnet_node_id"];
+            if(source_con[oc]["prev_neuron_function"] == "input"){
+                std::cout << "OUTPUT " << source_con[oc]["id"] << " = IN INPUT" << std::endl;
+            }
+            else{
+                std::cout << "OUTPUT " << source_con[oc]["id"] << " IN ELSE" << std::endl;
+                for(unsigned int ic=0; ic < target_network->_subnet_input_connection_list.size(); ic++){
+                    nlohmann::json target_con = target_network->_subnet_input_connection_list;
+                    int prev_subnet_node = (int)target_con[ic]["prev_subnet_node_id"];
 
-                if(next_subnet_node == prev_subnet_node && target_con[ic]["prev_neuron_function"] == "subnet_input"){
-                    int source_neuron = (int)source_con[oc]["prev_neuron"];
-                    int target_neuron_id = (int)target_con[ic]["next_neuron"];
-                    Neuron *target_neuron = target_network->_neurons[target_neuron_id];
-                    float base_weight = load_connection_init_parameter(source_network, source_con[oc], "base_weight", source_neuron);
-                    int connection_type = (int)load_connection_init_parameter(source_network, source_con[oc], "activation_type", source_neuron);
-                    int function_type = (int)load_connection_init_parameter(source_network, source_con[oc], "activation_function", source_neuron);
-                    int learning_type = (int)load_connection_init_parameter(source_network, source_con[oc], "learning_type", source_neuron);
-                    int transmitter_type = (int)load_connection_init_parameter(source_network, source_con[oc], "transmitter_type", source_neuron);
-                    Connection *temp_con = source_network->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
-                                                                                 function_type, learning_type, transmitter_type);
-                    load_all_connection_parameter(temp_con, source_con[oc]);
-                    target_neuron = nullptr;
+                    if(next_subnet_node == prev_subnet_node && target_con[ic]["prev_neuron_function"] == "subnet_input"){
+                        int source_neuron = (int)source_con[oc]["prev_neuron"];
+                        int target_neuron_id = (int)target_con[ic]["next_neuron"];
+                        Neuron *target_neuron = target_network->_neurons[target_neuron_id];
+                        float base_weight = load_connection_init_parameter(source_network, source_con[oc], "base_weight", source_neuron);
+                        int connection_type = (int)load_connection_init_parameter(source_network, source_con[oc], "activation_type", source_neuron);
+                        int function_type = (int)load_connection_init_parameter(source_network, source_con[oc], "activation_function", source_neuron);
+                        int learning_type = (int)load_connection_init_parameter(source_network, source_con[oc], "learning_type", source_neuron);
+                        int transmitter_type = (int)load_connection_init_parameter(source_network, source_con[oc], "transmitter_type", source_neuron);
+                        Connection *temp_con = source_network->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
+                                                                                     function_type, learning_type, transmitter_type);
+                        load_all_connection_parameter(temp_con, source_con[oc]);
+                        target_neuron = nullptr;
+                    }
                 }
             }
 
@@ -664,30 +670,36 @@ int CognaBuilder::connect_subnet_inputs(unsigned int curr_network_id, NeuralNetw
         nlohmann::json source_con = source_network->_subnet_input_connection_list;
         int next_network_id = curr_network_id + (int)source_con[ic]["prev_subnetwork"]+1;
 
-        std::cout << source_con[ic] << std::endl;
+        std::cout << std::endl << "INPUT = " << source_con[ic] << std::endl;
 
         if(source_con[ic]["prev_neuron_function"] == "input"){
             int prev_subnet_node = (int)source_con[ic]["prev_subnet_node_id"];
             NeuralNetwork *target_network = _network_list[next_network_id];
 
-            for(unsigned int oc=0; oc < target_network->_subnet_output_connection_list.size(); oc++){
-                nlohmann::json target_con = target_network->_subnet_output_connection_list;
-                int next_subnet_node = (int)target_con[oc]["next_subnet_node_id"];
+            if(source_con[ic]["next_neuron_function"] == "output"){
+                std::cout << "INPUT "<< source_con[ic]["id"] << " = IN OUTPUT" << std::endl;
+            }
+            else{
+                std::cout << "INPUT "<< source_con[ic]["id"] << " = IN ELSE" << std::endl;
+                for(unsigned int oc=0; oc < target_network->_subnet_output_connection_list.size(); oc++){
+                    nlohmann::json target_con = target_network->_subnet_output_connection_list;
+                    int next_subnet_node = (int)target_con[oc]["next_subnet_node_id"];
 
-                if(prev_subnet_node == next_subnet_node && target_con[oc]["next_neuron_function"] == "subnet_output"){
-                    int target_neuron_id = (int)source_con[ic]["next_neuron"];
-                    int source_neuron_id = (int)target_con[oc]["prev_neuron"];
-                    Neuron *target_neuron = source_network->_neurons[target_neuron_id];
-                    float base_weight = load_connection_init_parameter(target_network, target_con[oc], "base_weight", source_neuron_id);
-                    int connection_type = (int)load_connection_init_parameter(target_network, target_con[oc], "activation_type", source_neuron_id);
-                    int function_type = (int)load_connection_init_parameter(target_network, target_con[oc], "activation_function", source_neuron_id);
-                    int learning_type = (int)load_connection_init_parameter(target_network, target_con[oc], "learning_type", source_neuron_id);
-                    int transmitter_type = (int)load_connection_init_parameter(target_network, target_con[oc], "transmitter_type", source_neuron_id);
-                    Connection *temp_con = target_network->add_neuron_connection(source_neuron_id, target_neuron, base_weight, connection_type,
-                                                                                 function_type, learning_type, transmitter_type);
+                    if(prev_subnet_node == next_subnet_node && target_con[oc]["next_neuron_function"] == "subnet_output"){
+                        int target_neuron_id = (int)source_con[ic]["next_neuron"];
+                        int source_neuron_id = (int)target_con[oc]["prev_neuron"];
+                        Neuron *target_neuron = source_network->_neurons[target_neuron_id];
+                        float base_weight = load_connection_init_parameter(target_network, target_con[oc], "base_weight", source_neuron_id);
+                        int connection_type = (int)load_connection_init_parameter(target_network, target_con[oc], "activation_type", source_neuron_id);
+                        int function_type = (int)load_connection_init_parameter(target_network, target_con[oc], "activation_function", source_neuron_id);
+                        int learning_type = (int)load_connection_init_parameter(target_network, target_con[oc], "learning_type", source_neuron_id);
+                        int transmitter_type = (int)load_connection_init_parameter(target_network, target_con[oc], "transmitter_type", source_neuron_id);
+                        Connection *temp_con = target_network->add_neuron_connection(source_neuron_id, target_neuron, base_weight, connection_type,
+                                                                                     function_type, learning_type, transmitter_type);
 
-                    load_all_connection_parameter(temp_con, target_con[oc]);
-                    target_neuron = nullptr;
+                        load_all_connection_parameter(temp_con, target_con[oc]);
+                        target_neuron = nullptr;
+                    }
                 }
             }
 
