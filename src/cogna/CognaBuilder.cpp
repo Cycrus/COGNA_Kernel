@@ -436,7 +436,24 @@ int CognaBuilder::load_node_connection(NeuralNetwork *nn, nlohmann::json network
                 target_node = nn->_extern_input_nodes[j];
             }
         }
-        target_node->add_target(nn->_neurons[next_id]);
+
+        if(network_json["connections"][i]["next_neuron_function"] == "neuron"){
+            target_node->add_target(nn->_neurons[next_id]);
+        }
+        else if(network_json["connections"][i]["next_neuron_function"] == "interface_output"){
+            int output_node_id = (int)network_json["connections"][i]["next_neuron"] - 1;
+            std::string sender_ip = network_json["nodes"][output_node_id]["ip_address"];
+            int sender_port = std::stoi((std::string)network_json["nodes"][output_node_id]["port"]);
+            std::string sender_channel = network_json["nodes"][output_node_id]["channel"];
+
+            for(unsigned int i=0; i < nn->_extern_output_nodes.size(); i++){
+                if(nn->_extern_output_nodes[i]->_sender->get_ip() == sender_ip &&
+                        nn->_extern_output_nodes[i]->_sender->get_port() == sender_port &&
+                        nn->_extern_output_nodes[i]->channel() == sender_channel){
+                    target_node->add_target(nn->_extern_output_nodes[i]);
+                }
+            }
+        }
     }
 
     else if(network_json["connections"][i]["next_neuron_function"] == "interface_output"){
@@ -445,7 +462,10 @@ int CognaBuilder::load_node_connection(NeuralNetwork *nn, nlohmann::json network
                 target_node = nn->_extern_output_nodes[j];
             }
         }
-        target_node->add_target(nn->_neurons[prev_id]);
+
+        if(network_json["connections"][i]["prev_neuron_function"] == "neuron"){
+            target_node->add_target(nn->_neurons[prev_id]);
+        }
     }
 
     return SUCCESS_CODE;

@@ -41,6 +41,38 @@ int NetworkingNode::add_target(Neuron *target){
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+int NetworkingNode::add_target(NetworkingNode *target){
+    bool can_add = true;
+    for(unsigned int i=0; i < _output_target_list.size(); i++){
+        if(target->_sender->get_ip() == _output_target_list[i]->_sender->get_ip() &&
+                target->_sender->get_port() == _output_target_list[i]->_sender->get_port()){
+            can_add = false;
+        }
+    }
+
+    if(can_add){
+        _output_target_list.push_back(target);
+        return SUCCESS_CODE;
+    }
+    else{
+        std::string client_address = _client->get_ip() + ":" + std::to_string(_client->get_port());
+        std::string target_address = target->_sender->get_ip() + ":" + std::to_string(target->_sender->get_port());
+        std::cout << "[ERROR] Cannot add connection between node with address " << client_address
+                  << " and node with address " << target_address << "." << std::endl;
+        return ERROR_CODE;
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+void NetworkingNode::remote_activate_senders(float injected_activation){
+    for(unsigned int i=0; i < _output_target_list.size(); i++){
+        _output_target_list[i]->_sender->add_data(_output_target_list[i]->channel(), injected_activation);
+    }
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 int NetworkingNode::setup_client(utils::networking_client *client){
     if(_client == nullptr && _sender == nullptr){
         _client = client;

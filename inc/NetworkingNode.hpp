@@ -18,8 +18,11 @@ public:
     ~NetworkingNode();
 
     int add_target(Neuron *target);
+    int add_target(NetworkingNode *target);
     int setup_client(utils::networking_client *client);
     int setup_sender(utils::networking_sender *sender);
+
+    void remote_activate_senders(float injected_activation);
 
     int id();
     int role();
@@ -31,6 +34,7 @@ private:
     int _role;
     std::string _channel;
     std::vector<Neuron*> _target_list;
+    std::vector<NetworkingNode*> _output_target_list;
 };
 
 } //namespace COGNA
