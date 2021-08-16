@@ -481,6 +481,12 @@ int CognaBuilder::load_subnet_input_connection(NeuralNetwork *nn, nlohmann::json
 
     nn->_subnet_input_connection_list.push_back(network_json["connections"][i]);
 
+    if(network_json["connections"][i]["prev_neuron_function"] == "input"){
+        int subnet_id = (int)network_json["connections"][i]["prev_subnetwork"];
+        std::string prev_network_name = network_json["subnetworks"][subnet_id]["network_name"];
+        nn->_subnet_input_connection_list[nn->_subnet_input_connection_list.size()-1]["prev_subnet_name"] = prev_network_name;
+    }
+
     return SUCCESS_CODE;
 }
 
@@ -493,6 +499,12 @@ int CognaBuilder::load_subnet_output_connection(NeuralNetwork *nn, nlohmann::jso
     }
 
     nn->_subnet_output_connection_list.push_back(network_json["connections"][i]);
+
+    if(network_json["connections"][i]["next_neuron_function"] == "output"){
+        int subnet_id = (int)network_json["connections"][i]["next_subnetwork"];
+        std::string next_network_name = network_json["subnetworks"][subnet_id]["network_name"];
+        nn->_subnet_output_connection_list[nn->_subnet_output_connection_list.size()-1]["next_subnet_name"] = next_network_name;
+    }
 
     return SUCCESS_CODE;
 }
@@ -598,6 +610,7 @@ int CognaBuilder::load_network(std::string network_name){
     int error_code = SUCCESS_CODE;
 
     NeuralNetwork *nn = new NeuralNetwork();
+    nn->_network_name = network_name;
     std::cout << "[INFO] Loading network parameters." << std::endl;
     if(load_network_parameter(nn, network_json) == ERROR_CODE) error_code = ERROR_CODE;
     if(error_code == SUCCESS_CODE){
@@ -732,20 +745,32 @@ int CognaBuilder::connect_subnet_inputs(unsigned int curr_network_id, NeuralNetw
 
 //----------------------------------------------------------------------------------------------------------------------
 //
-nlohmann::json CognaBuilder::find_end_point(int source_network_id, int curr_network_id, nlohmann::json source_connection){
-    nlohmann::json end_point;
+std::vector<nlohmann::json> CognaBuilder::find_end_point(int source_network_id, int curr_network_id, nlohmann::json source_connection){
+    std::vector<nlohmann::json> end_point;
     NeuralNetwork *curr_network = _network_list[curr_network_id];
 
     for(unsigned int next_id = 0; next_id < curr_network->_subnet_input_connection_list.size(); next_id++){
-        nlohmann::json target_connection = curr_network->_subnet_output_connection_list[next_id];
+        nlohmann::json target_connection = curr_network->_subnet_input_connection_list[next_id];
 
         if(source_connection["next_neuron"] == target_connection["prev_neuron"]){
             if(target_connection["next_neuron_function"] == "neuron" || target_connection["next_neuron_function"] == "interface_output"){
-                end_point = target_connection;
+                std::cout << "Found an end point..." << std::endl;
+                end_point.push_back(target_connection);
             }
-            else if(target_connection["next_neuron_function"] == "input"){
+            else if(target_connection["next_neuron_function"] == "output"){
                 int next_network_id = curr_network_id + (int)source_connection["next_subnetwork"] + 1;
-                end_point = find_end_point(curr_network_id, next_network_id, target_connection);
+                std::vector<nlohmann::json> temp_end_point = find_end_point(curr_network_id, next_network_id, target_connection);
+                end_point.insert(std::end(end_point), std::begin(temp_end_point), std::end(temp_end_point));
+            }
+            else if(target_connection["next_neuron_function"] == "subnet_output"){
+                for(unsigned int nn = 0; nn < _network_list.size(); nn++){
+                    NeuralNetwork *temp_network = _network_list[nn];
+                    for(unsigned int input_id = 0; input_id < temp_network->_subnet_input_connection_list.size(); input_id++){
+                        //TODO Continue Here!
+                    }
+                    std::cout << "CURR NETWORK = " << _network_list[nn]->_network_name << std::endl;
+                    std::cout << ""
+                }
             }
         }
     }
@@ -760,22 +785,26 @@ void CognaBuilder::connect_subnet_endpoints(unsigned int curr_network_id){
     //std::cout << "NETWORK <" << curr_network_id << "> INPUT = " << source_network->_subnet_input_connection_list << std::endl;
     //std::cout << "NETWORK <" << curr_network_id << "> OUTPUT = " << source_network->_subnet_output_connection_list << std::endl;
 
+    std::cout << std::endl << "Curr Network <" << curr_network_id << "> = " << source_network->_network_name << std::endl;
     for(unsigned int output_id = 0; output_id < source_network->_subnet_output_connection_list.size(); output_id++){
-        nlohmann::json starting_point;
-        nlohmann::json end_point;
-        nlohmann::json source_connection = source_network->_subnet_output_connection_list[output_id];
+        if(source_network->_subnet_output_connection_list[output_id]["next_neuron_function"] == "output"){
+            std::cout << std::endl;
+            nlohmann::json starting_point;
+            std::vector<nlohmann::json> end_points;
+            nlohmann::json source_connection = source_network->_subnet_output_connection_list[output_id];
 
-        int next_network_id = curr_network_id + (int)source_connection["next_subnetwork"] + 1;
-        if(source_connection["prev_neuron_function"] == "neuron" || source_connection["prev_neuron_function"] == "interface_input"){
-            starting_point = source_connection;
+            int next_network_id = curr_network_id + (int)source_connection["next_subnetwork"] + 1;
+            if(source_connection["prev_neuron_function"] == "neuron" || source_connection["prev_neuron_function"] == "interface_input"){
+                starting_point = source_connection;
+            }
+
+            if(!starting_point.empty()){
+                end_points = find_end_point(curr_network_id, next_network_id, starting_point);
+            }
+
+            std::cout << "START POINT = " << starting_point << std::endl;
+            std::cout << "END POINT = " << end_points << std::endl;
         }
-
-        if(!starting_point.empty()){
-            end_point = find_end_point(curr_network_id, next_network_id, starting_point);
-        }
-
-        std::cout << std::endl << "START POINT = " << starting_point << std::endl;
-        std::cout << "END POINT = " << end_point << std::endl << std::endl;
     }
 }
 
