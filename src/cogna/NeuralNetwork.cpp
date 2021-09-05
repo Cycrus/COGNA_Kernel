@@ -594,10 +594,11 @@ void NeuralNetwork::switch_vectors(){
 void NeuralNetwork::receive_data(){
     for(unsigned int i=0; i < _extern_input_nodes.size(); i++){
         float injected_activation = (float)_extern_input_nodes[i]->_client->get_json_value(_extern_input_nodes[i]->channel());
-        for(unsigned int j=0; j < _extern_input_nodes[i]->targets().size(); j++){
-            if(injected_activation > 0){
+        if(injected_activation > 0){
+            for(unsigned int j=0; j < _extern_input_nodes[i]->targets().size(); j++){
                 init_activation(_extern_input_nodes[i]->targets()[j]->_id, injected_activation);
             }
+            _extern_input_nodes[i]->remote_activate_senders(injected_activation);
         }
     }
 }
@@ -648,7 +649,6 @@ void NeuralNetwork::listen_to_cluster(std::vector<NeuralNetwork*> network_list,
 //----------------------------------------------------------------------------------------------------------------------
 //
 void NeuralNetwork::print_activation(){
-    // TODO Too many nested constructs
     if(_curr_connections.size() > 0){
         printf("\n");
         for(unsigned int con=0; con<_curr_connections.size(); con++){
