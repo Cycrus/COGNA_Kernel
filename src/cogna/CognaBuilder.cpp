@@ -745,7 +745,48 @@ int CognaBuilder::connect_subnet_inputs(unsigned int curr_network_id, NeuralNetw
 
 //----------------------------------------------------------------------------------------------------------------------
 //
+std::vector<nlohmann::json> CognaBuilder::find_starting_points(int source_network_id, nlohmann::json source_connection){
+    // TODO Find Start Points by recursively going through prev networks to look for neuron or interface_input
+    //      If neuron or interface_input is found, save the new connections, change their data and use them for finding end_points
+    //      If input is found, go into the corresponding network and continue with every connection leading to the subnet_output
+    //      If subnet_input is found, look into every usage of the network as a subnetwork and look for corresponding outputs
+
+    std::vector<nlohmann::json> starting_points;
+    NeuralNetwork *curr_network = _network_list[source_network_id];
+
+    source_connection["network_id"] = source_network_id;
+
+    if(source_connection["prev_neuron_function"] == "neuron" || source_connection["prev_neuron_function"] == "interface_input"){
+        starting_points.push_back(source_connection);
+    }
+
+    else if(source_connection["prev_neuron_function"] == "input"){
+        int next_network_id = source_network_id + (int)source_connection["prev_subnetwork"] + 1;
+        NeuralNetwork *next_network = _network_list[next_network_id];
+        for(unsigned int next_con = 0; next_con < next_network->_subnet_output_connection_list.size(); next_con++){
+            nlohmann::json next_connection = next_network->_subnet_output_connection_list[next_con];
+            if(source_connection["prev_subnet_node_id"] == next_connection["next_subnet_node_id"] &&
+                    next_connection["next_neuron_function"] == "subnet_output"){
+                std::vector<nlohmann::json> temp_starting_points = find_starting_points(next_network_id, next_connection);
+                starting_points.insert(std::end(starting_points), std::begin(temp_starting_points), std::end(temp_starting_points));
+            }
+        }
+    }
+
+    else if(source_connection["prev_neuron_function"] == "subnet_input"){
+    }
+
+    return starting_points;
+}
+
+//----------------------------------------------------------------------------------------------------------------------
+//
 std::vector<nlohmann::json> CognaBuilder::find_end_points(int source_network_id, int curr_network_id, std::vector<nlohmann::json> source_connections){
+    // TODO Find End Points by recursively going through next networks to look for neuron or interface_output
+    //      If neuron or interface_output is found, connect the starting points with the end_point
+    //      If output is found, go into corresponding network and continue with every connection coming from the subnet_input
+    //      If subnet_output is found do nothing
+
     std::vector<nlohmann::json> end_points;
     NeuralNetwork *curr_network = _network_list[curr_network_id];
 
@@ -785,34 +826,27 @@ void CognaBuilder::connect_subnet_endpoints(unsigned int curr_network_id){
 
     std::cout << std::endl << "Curr Network <" << curr_network_id << "> = " << source_network->_network_name << std::endl;
     //Walking over all connections(!) leading to an output or subnet output.
-    for(unsigned int output_id = 0; output_id < source_network->_subnet_output_connection_list.size(); output_id++){
-        if(source_network->_subnet_output_connection_list[output_id]["next_neuron_function"] == "output"){
+    std::vector<nlohmann::json> combined_connection_list = source_network->_subnet_output_connection_list;
+    combined_connection_list.insert(std::end(combined_connection_list),
+                                    std::begin(source_network->_subnet_input_connection_list),
+                                    std::end(source_network->_subnet_input_connection_list));
+
+    for(unsigned int con_id = 0; con_id < combined_connection_list.size(); con_id++){
+        if(combined_connection_list[con_id]["next_neuron_function"] == "output" ||
+                combined_connection_list[con_id]["prev_neuron_function"] == "input"){
             std::cout << std::endl;
             std::vector<nlohmann::json> starting_points;
             std::vector<nlohmann::json> end_points;
-            nlohmann::json source_connection = source_network->_subnet_output_connection_list[output_id];
-
+            nlohmann::json source_connection = combined_connection_list[con_id];
             int next_network_id = curr_network_id + (int)source_connection["next_subnetwork"] + 1;
-            if(source_connection["prev_neuron_function"] == "neuron" || source_connection["prev_neuron_function"] == "interface_input"){
-                starting_points.push_back(source_connection);
-            }
-            else{
-                // TODO Find Start Points by recursively going through prev networks to look for neuron or interface_input
-                //      If neuron or interface_input is found, save the new connections, change their data and use them for finding end_points
-                //      If input is found, go into the corresponding network and continue with every connection leading to the subnet_output
-                //      If subnet_input is found, look into every usage of the network as a subnetwork and look for corresponding outputs
-            }
 
+            starting_points = find_starting_points(curr_network_id, source_connection);
             if(starting_points.size() > 0){
-                end_points = find_end_points(curr_network_id, next_network_id, starting_points);
-                // TODO Find End Points by recursively going through next networks to look for neuron or interface_output
-                //      If neuron or interface_output is found, connect the starting points with the end_point
-                //      If output is found, go into corresponding network and continue with every connection coming from the subnet_input
-                //      If subnet_output is found do nothing
+                //end_points = find_end_points(curr_network_id, next_network_id, starting_points);
             }
 
-            std::cout << "START POINT = " << starting_points << std::endl;
-            std::cout << "END POINT = " << end_points << std::endl;
+            std::cout << "START POINTS = " << starting_points << std::endl;
+            //std::cout << "END POINTS = " << end_points << std::endl;
         }
     }
 }
