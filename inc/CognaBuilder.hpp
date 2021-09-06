@@ -65,6 +65,7 @@ private:
     int load_connections(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network_parameter(NeuralNetwork *nn, nlohmann::json network_json);
     int load_network(std::string network_name);
+    std::vector<nlohmann::json> find_starting_points(int source_network_id, nlohmann::json source_connection);
     std::vector<nlohmann::json> find_end_points(int source_network_id, int curr_network_id, std::vector<nlohmann::json> source_connections);
     void connect_subnet_endpoints(unsigned int curr_network_id);
     int connect_subnet_outputs(unsigned int curr_network_id, NeuralNetwork *source_network);
