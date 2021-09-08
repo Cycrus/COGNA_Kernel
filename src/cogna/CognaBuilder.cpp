@@ -708,7 +708,6 @@ std::vector<nlohmann::json> CognaBuilder::find_end_points(int source_network_id,
 
 void CognaBuilder::create_subnet_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points){
     for(unsigned int start_id = 0; start_id < starting_points.size(); start_id++){
-        std::cout << "STARTER = " << start_id << std::endl;
         int source_network_id = (int)starting_points[start_id]["network_id"];
         NeuralNetwork *source_network = _network_list[source_network_id];
         int source_neuron_id = (int)starting_points[start_id]["prev_neuron"];
@@ -724,7 +723,6 @@ void CognaBuilder::create_subnet_connections(std::vector<nlohmann::json> startin
                                                                    "transmitter_type", source_neuron_id);
 
         for(unsigned int end_id = 0; end_id < end_points.size(); end_id++){
-            std::cout << "ENDER = " << end_id << std::endl;
             int target_network_id = (int)end_points[end_id]["network_id"];
             int target_neuron_id = (int)end_points[end_id]["next_neuron"];
             Neuron *target_neuron = _network_list[target_network_id]->_neurons[target_neuron_id];
@@ -743,7 +741,6 @@ void CognaBuilder::create_subnet_connections(std::vector<nlohmann::json> startin
 void CognaBuilder::connect_subnet_endpoints(unsigned int curr_network_id){
     NeuralNetwork *source_network = _network_list[curr_network_id];
 
-    std::cout << std::endl << "Curr Network <" << curr_network_id << "> = " << source_network->_network_name << std::endl;
     //Walking over all connections(!) leading to an output or subnet output.
     std::vector<nlohmann::json> combined_connection_list = source_network->_subnet_output_connection_list;
     combined_connection_list.insert(std::end(combined_connection_list),
@@ -762,9 +759,6 @@ void CognaBuilder::connect_subnet_endpoints(unsigned int curr_network_id){
             if(starting_points.size() > 0){
                 end_points = find_end_points(curr_network_id, source_connection);
             }
-
-            std::cout << "START POINTS = " << starting_points << std::endl;
-            std::cout << "END POINTS = " << end_points << std::endl;
 
             create_subnet_connections(starting_points, end_points);
         }
