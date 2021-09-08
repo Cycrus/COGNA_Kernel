@@ -112,7 +112,7 @@ namespace COGNA{
     //
     bool Neuron::check_neuron_connection(Neuron *n){
         for(unsigned int i=0; i<_connections.size(); i++){
-            if(n->_id == _connections[i]->next_neuron->_id){
+            if(n == _connections[i]->next_neuron){
                 return true;
             }
         }
@@ -124,13 +124,8 @@ namespace COGNA{
     bool Neuron::check_synaptic_connection(Connection *con){
         for(unsigned int i=0; i<_connections.size(); i++){
             if(_connections[i]->next_connection){
-                if(con->prev_neuron == _connections[i]->next_connection->prev_neuron){
-                    if(con->next_neuron == _connections[i]->next_connection->next_neuron){
-                           return true;
-                    }
-                    else if(con->next_connection == _connections[i]->next_connection->next_connection){
-                           return true;
-                    }
+                if(con == _connections[i]){
+                    return true;
                 }
             }
         }
@@ -146,8 +141,8 @@ namespace COGNA{
                                               int learn_type,
                                               int transmitter_type){
         if(check_neuron_connection(n) == true){
-            LOG_WARN("N-%d is already connected with N-%d.\n",
-                   this->_id, n->_id);
+            LOG_WARN("N-%d in NN-%d is already connected with N-%d in NN-%d.\n",
+                   this->_id, _network_id, n->_id, n->_network_id);
         }
         else{
             Connection *temp_con = new Connection(_parameter);
@@ -182,12 +177,12 @@ namespace COGNA{
                                                 int transmitter_type){
         if(check_synaptic_connection(con) == true){
             if(con->next_neuron){
-                LOG_WARN("N-%d is already connected with C-%d~%d.\n",
-                       this->_id, con->prev_neuron->_id, con->next_neuron->_id);
+                LOG_WARN("N-%d in NN-%d is already connected with C-%d~%d.\n",
+                       this->_id, _network_id, con->prev_neuron->_id, con->next_neuron->_id);
             }
             else if(con->next_connection){
-                LOG_WARN("N-%d is already connected with the connection between N-%d and another connection coming from N-%d\n",
-                       this->_id, con->prev_neuron->_id, con->next_connection->prev_neuron->_id);
+                LOG_WARN("N-%d in NN-%d is already connected with the connection between N-%d and another connection coming from N-%d\n",
+                       this->_id, _network_id, con->prev_neuron->_id, con->next_connection->prev_neuron->_id);
             }
         }
         else{
@@ -212,7 +207,8 @@ namespace COGNA{
     //
     void Neuron::del_connection(Neuron *n){
         if(check_neuron_connection(n) == false){
-            LOG_WARN("N-%d is not connected with N-%d.\n", this->_id, n->_id);
+            LOG_WARN("N-%d in NN-%d is not connected with N-%d in NN-%d.\n",
+                     this->_id, _network_id, n->_id, n->_network_id);
         }
         else{
             for(unsigned int i=0; i<n->_previous.size(); i++){

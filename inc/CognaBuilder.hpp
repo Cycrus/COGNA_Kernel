@@ -67,6 +67,7 @@ private:
     int load_network(std::string network_name);
     std::vector<nlohmann::json> find_starting_points(int source_network_id, nlohmann::json source_connection);
     std::vector<nlohmann::json> find_end_points(int source_network_id, nlohmann::json source_connection);
+    void create_subnet_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
     void connect_subnet_endpoints(unsigned int curr_network_id);
     int connect_subnetworks();
 
