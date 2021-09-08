@@ -653,11 +653,6 @@ int CognaBuilder::load_network(std::string network_name){
 //----------------------------------------------------------------------------------------------------------------------
 //
 std::vector<nlohmann::json> CognaBuilder::find_starting_points(int source_network_id, nlohmann::json source_connection){
-    // TODO Find Start Points by recursively going through prev networks to look for neuron or interface_input
-    //      If neuron or interface_input is found, save the new connections, change their data and use them for finding end_points
-    //      If input is found, go into the corresponding network and continue with every connection leading to the subnet_output
-    //      If subnet_input is found, look into every usage of the network as a subnetwork and look for corresponding outputs
-
     std::vector<nlohmann::json> starting_points;
 
     source_connection["network_id"] = source_network_id;
@@ -685,16 +680,13 @@ std::vector<nlohmann::json> CognaBuilder::find_starting_points(int source_networ
 //----------------------------------------------------------------------------------------------------------------------
 //
 std::vector<nlohmann::json> CognaBuilder::find_end_points(int source_network_id, nlohmann::json source_connection){
-    // TODO Find End Points by recursively going through next networks to look for neuron or interface_output
-    //      If neuron or interface_output is found, connect the starting points with the end_point
-    //      If output is found, go into corresponding network and continue with every connection coming from the subnet_input
-    //      If subnet_output is found do nothing
-
     std::vector<nlohmann::json> end_points;
 
     source_connection["network_id"] = source_network_id;
 
-    if(source_connection["next_neuron_function"] == "neuron" || source_connection["next_neuron_function"] == "interface_output"){
+    if(source_connection["next_neuron_function"] == "neuron" ||
+            source_connection["next_neuron_function"] == "interface_output" ||
+            source_connection.find("next_connection") != source_connection.end()){
         end_points.push_back(source_connection);
     }
 
@@ -712,6 +704,38 @@ std::vector<nlohmann::json> CognaBuilder::find_end_points(int source_network_id,
     }
 
     return end_points;
+}
+
+void CognaBuilder::create_subnet_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points){
+    for(unsigned int start_id = 0; start_id < starting_points.size(); start_id++){
+        std::cout << "STARTER = " << start_id << std::endl;
+        int source_network_id = (int)starting_points[start_id]["network_id"];
+        NeuralNetwork *source_network = _network_list[source_network_id];
+        int source_neuron_id = (int)starting_points[start_id]["prev_neuron"];
+        float base_weight = load_connection_init_parameter(source_network, starting_points[start_id],
+                                                           "base_weight", source_neuron_id);
+        int connection_type = (int)load_connection_init_parameter(source_network, starting_points[start_id],
+                                                                  "activation_type", source_neuron_id);
+        int function_type = (int)load_connection_init_parameter(source_network, starting_points[start_id],
+                                                                "activation_function", source_neuron_id);
+        int learning_type = (int)load_connection_init_parameter(source_network, starting_points[start_id],
+                                                               "learning_type", source_neuron_id);
+        int transmitter_type = (int)load_connection_init_parameter(source_network, starting_points[start_id],
+                                                                   "transmitter_type", source_neuron_id);
+
+        for(unsigned int end_id = 0; end_id < end_points.size(); end_id++){
+            std::cout << "ENDER = " << end_id << std::endl;
+            int target_network_id = (int)end_points[end_id]["network_id"];
+            int target_neuron_id = (int)end_points[end_id]["next_neuron"];
+            Neuron *target_neuron = _network_list[target_network_id]->_neurons[target_neuron_id];
+
+            Connection *temp_connection = source_network->add_neuron_connection(source_neuron_id, target_neuron, base_weight, connection_type,
+                                                                                function_type, learning_type, transmitter_type);
+            if(temp_connection != nullptr){
+                load_all_connection_parameter(temp_connection, starting_points[start_id]);
+            }
+        }
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -741,6 +765,8 @@ void CognaBuilder::connect_subnet_endpoints(unsigned int curr_network_id){
 
             std::cout << "START POINTS = " << starting_points << std::endl;
             std::cout << "END POINTS = " << end_points << std::endl;
+
+            create_subnet_connections(starting_points, end_points);
         }
     }
 }
