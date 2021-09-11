@@ -706,6 +706,8 @@ std::vector<nlohmann::json> CognaBuilder::find_end_points(int source_network_id,
     return end_points;
 }
 
+//----------------------------------------------------------------------------------------------------------------------
+//
 void CognaBuilder::create_subnet_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points){
     for(unsigned int start_id = 0; start_id < starting_points.size(); start_id++){
         int source_network_id = (int)starting_points[start_id]["network_id"];

@@ -1,3 +1,13 @@
+/**
+ * @file NetworkingNode.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of the NetworkingNode class.
+ *
+ * @date 2021-05-31
+ *
+ */
+
 #include "NetworkingNode.hpp"
 #include "Constants.hpp"
 #include <iostream>

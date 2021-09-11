@@ -1,3 +1,13 @@
+/**
+ * @file CognaLauncher.cpp
+ * @author Cyril Marx (https://github.com/cycrus)
+ *
+ * @brief Implementation of CognaLauncher class.
+ *
+ * @date 2021-05-31
+ *
+ */
+
 #include "CognaLauncher.hpp"
 #include "Constants.hpp"
 #include "HelperFunctions.hpp"
