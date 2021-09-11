@@ -13,6 +13,9 @@
 using namespace COGNA;
 
 namespace COGNA{
+    /**
+     * @brief Constructor. Initializes a parameter handler with default variables.
+     */
     ConnectionParameterHandler::ConnectionParameterHandler(){
         activation_type = 0;
         activation_function = 0;

@@ -54,6 +54,7 @@ namespace COGNA{
 			/**
 			 * @brief Sets the neurons last_activated_step to the current network step number.
 			 *
+			 * @param new_step	The new step.
 			 */
 	        void set_step(long new_step);
 
