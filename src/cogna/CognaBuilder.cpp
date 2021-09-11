@@ -417,6 +417,7 @@ int CognaBuilder::load_neuron_connection(NeuralNetwork *nn, nlohmann::json netwo
 
     Connection *temp_con = nn->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
                                                      function_type, learning_type, transmitter_type);
+    temp_con->_id = (int)network_json["connections"][i]["id"];
 
     load_all_connection_parameter(temp_con, network_json["connections"][i]);
 
@@ -536,6 +537,7 @@ int CognaBuilder::load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json 
 
         Connection *temp_con = nn->add_synaptic_connection(source_neuron, target_connection_pointer, base_weight, connection_type,
                                                            function_type, learning_type, transmitter_type);
+        temp_con->_id = (int)network_json["connections"][i]["id"];
 
         load_all_connection_parameter(temp_con, network_json["connections"][i]);
     }
@@ -726,11 +728,38 @@ void CognaBuilder::create_subnet_connections(std::vector<nlohmann::json> startin
 
         for(unsigned int end_id = 0; end_id < end_points.size(); end_id++){
             int target_network_id = (int)end_points[end_id]["network_id"];
-            int target_neuron_id = (int)end_points[end_id]["next_neuron"];
-            Neuron *target_neuron = _network_list[target_network_id]->_neurons[target_neuron_id];
 
-            Connection *temp_connection = source_network->add_neuron_connection(source_neuron_id, target_neuron, base_weight, connection_type,
-                                                                                function_type, learning_type, transmitter_type);
+            Connection *temp_connection = nullptr;
+
+            int target_neuron_id = 0;
+            Neuron *target_neuron = nullptr;
+            if(end_points[end_id].find("next_neuron") != end_points[end_id].end()){
+                target_neuron_id = (int)end_points[end_id]["next_neuron"];
+                target_neuron = _network_list[target_network_id]->_neurons[target_neuron_id];
+                temp_connection = source_network->add_neuron_connection(source_neuron_id, target_neuron, base_weight, connection_type,
+                                                                        function_type, learning_type, transmitter_type);
+            }
+
+            Connection *target_connection = nullptr;
+            if(end_points[end_id].find("next_connection") != end_points[end_id].end()){
+                std::cout << "Next connection found." << std::endl;
+                for(unsigned int con = 0; con < _network_list[target_network_id]->_connections.size(); con++){
+                    std::cout << "con = " << con << std::endl;
+                    std::cout << "id  = " << _network_list[target_network_id]->_connections[con]->_id << std::endl;
+                    std::cout << "next= " << (int)end_points[end_id]["next_connection"] << std::endl;
+                    // TODO Continue here. Next step is to find the correct network where the connection is located in.
+                    //      Otherwise connect all presynaptic connections after loading all neuron connections.
+                    if((int)end_points[end_id]["next_connection"] == _network_list[target_network_id]->_connections[con]->_id){
+                        target_connection = _network_list[target_network_id]->_connections[con];
+                    }
+                }
+                if(target_connection){
+                    std::cout << "Connect connection." << std::endl;
+                    temp_connection = source_network->add_synaptic_connection(source_neuron_id, target_connection, base_weight, connection_type,
+                                                                              function_type, learning_type, transmitter_type);
+                }
+            }
+
             if(temp_connection != nullptr){
                 load_all_connection_parameter(temp_connection, starting_points[start_id]);
             }

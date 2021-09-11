@@ -55,12 +55,7 @@ CognaLauncher::~CognaLauncher(){
 //----------------------------------------------------------------------------------------------------------------------
 //
 void CognaLauncher::tester(){
-    std::cout << "Frequency = " << _frequency << std::endl;
-    std::cout << std::endl;
-    for(unsigned int i=0; i<_network_list.size(); i++){
-        //std::cout << "Network " << i << " network_list has " << _network_list[i]->_all_networks_list->size() << " elements." << std::endl;
-    }
-    std::cout << std::endl;
+    std::cout << "Frequency = " << _frequency << std::endl << std::endl;
 }
 
 //----------------------------------------------------------------------------------------------------------------------

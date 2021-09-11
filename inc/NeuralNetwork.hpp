@@ -37,6 +37,7 @@ public:
     std::string _network_name;
     bool _is_finished;
     std::vector<COGNA::Neuron*> _neurons;                   // All neurons contained in the network
+    std::vector<COGNA::Connection*> _connections;
     std::vector<COGNA::Connection*> _curr_connections;      // All connections which will be activated in this step
     std::vector<COGNA::Connection*> _next_connections;      // All connections which will be activated in the next step
     COGNA::NeuralNetworkParameterHandler *_parameter;
