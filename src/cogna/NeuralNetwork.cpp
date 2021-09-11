@@ -190,6 +190,7 @@ Connection* NeuralNetwork::add_neuron_connection(int source_neuron, int target_n
                                                                                   function_type,
                                                                                   learning_type,
                                                                                   transmitter_type);
+            _connections.push_back(temp_con);
             return temp_con;
         }
         else{
@@ -235,6 +236,7 @@ Connection* NeuralNetwork::add_neuron_connection(int source_neuron, Neuron *targ
                                                                              function_type,
                                                                              learning_type,
                                                                              transmitter_type);
+       _connections.push_back(temp_con);
        return temp_con;
    }
    else{
@@ -284,6 +286,7 @@ Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
             if(temp_connection){
                 temp_connection = _neurons[source_neuron]->add_synaptic_connection(temp_connection, weight, connection_type,
                                                                                   function_type, learning_type, transmitter_type);
+                _connections.push_back(temp_connection);
                 return temp_connection;
             }
             else{
@@ -326,6 +329,7 @@ Connection* NeuralNetwork::add_synaptic_connection(int source_neuron,
         if((unsigned int)source_neuron < _neurons.size()){
             Connection *temp_con = _neurons[source_neuron]->add_synaptic_connection(con, weight, connection_type,
                                                                                     function_type, learning_type, transmitter_type);
+            _connections.push_back(temp_con);
             return temp_con;
         }
         else{
