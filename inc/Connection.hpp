@@ -36,6 +36,7 @@ namespace COGNA{
     class Connection{
     public:
         int _id;
+        int _json_id;
         static int s_max_id;
         COGNA::Neuron* next_neuron;
         COGNA::Connection* next_connection;
