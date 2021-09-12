@@ -249,7 +249,11 @@ private:
      * @param starting_points   The list of all starting neurons.
      * @param end_points        The list of all end neurons.
      */
-    void create_subnet_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
+    void create_subnet_neuron_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points,
+                                          std::vector<nlohmann::json> *synaptic_connection_indicator);
+
+    void create_subnet_synaptic_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points,
+                                            std::vector<nlohmann::json> *synaptic_connection_indicator);
 
     /**
      * @brief Finds all starting neurons and end neurons of all subnetwork connection in a certain network.
