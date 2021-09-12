@@ -69,6 +69,7 @@ namespace COGNA{
         _parameter->long_learning_weight_backfall_steepness = default_parameter->long_learning_weight_backfall_steepness;
 
         _id = s_max_id;
+        _json_id = -1;
         s_max_id++;
 
         next_neuron = NULL;
