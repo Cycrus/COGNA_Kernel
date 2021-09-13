@@ -68,6 +68,7 @@ private:
     int _frequency;
 
     nlohmann::json _neuron_types;
+    std::vector<nlohmann::json> _final_synaptic_connections;
     std::vector<std::string> _transmitter_types;
     std::string _project_name;
     std::string _project_path;

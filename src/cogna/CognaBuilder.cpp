@@ -50,8 +50,7 @@ void CognaBuilder::tester(){
                     std::cout << "N_" << i << " in NN_" << _network_list[n]->_neurons[i]->_network_id
                               << " is connected to C_" << _network_list[n]->_neurons[i]->_connections[j]->next_connection->_id
                               << " in NN_" << _network_list[n]->_neurons[i]->_connections[j]->next_connection->prev_neuron->_network_id
-                              << " with connection <" << _network_list[n]->_neurons[i]->_connections[j]->_id
-                              << ">." << std::endl;
+                              << " with connection <" << _network_list[n]->_neurons[i]->_connections[j]->_id << ">." << std::endl;
                 }
             }
         }
@@ -111,6 +110,11 @@ int CognaBuilder::build_cogna_cluster(){
 
     std::cout << "[INFO] Connecting individual subnetworks." << std::endl;
     if(connect_subnetworks() == ERROR_CODE) return ERROR_CODE;
+
+    // TODO Here when everything is already loaded, make another round for synaptic connections.
+    for(unsigned int i = 0; i < _final_synaptic_connections.size(); i++){
+        std::cout << "FINAL SYNAPTIC <" << i << "> = " << _final_synaptic_connections[i] << std::endl;
+    }
 
     for(unsigned int i=0; i < _network_list.size(); i++){
         if(_network_list[i]->setup_network() == ERROR_CODE) return ERROR_CODE;
@@ -422,7 +426,6 @@ int CognaBuilder::load_neuron_connection(NeuralNetwork *nn, nlohmann::json netwo
     Connection *temp_con = nn->add_neuron_connection(source_neuron, target_neuron, base_weight, connection_type,
                                                      function_type, learning_type, transmitter_type);
     temp_con->_json_id = (int)network_json["connections"][i]["id"];
-    std::cout << "DEBUG = " << temp_con->_id << std::endl;
 
     load_all_connection_parameter(temp_con, network_json["connections"][i]);
 
@@ -528,7 +531,7 @@ int CognaBuilder::load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json 
         int learning_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "learning_type", source_neuron);
         int transmitter_type = (int)load_connection_init_parameter(nn, network_json["connections"][i], "transmitter_type", source_neuron);
 
-        Connection *target_connection_pointer;
+        Connection *target_connection_pointer = nullptr;
 
         for(unsigned int n=0; n < nn->_neurons.size(); n++){
             for(unsigned int c=0; c < nn->_neurons[n]->_connections.size(); c++){
@@ -540,11 +543,18 @@ int CognaBuilder::load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json 
         }
         break_loops:
 
-        Connection *temp_con = nn->add_synaptic_connection(source_neuron, target_connection_pointer, base_weight, connection_type,
-                                                           function_type, learning_type, transmitter_type);
-        temp_con->_json_id = (int)network_json["connections"][i]["id"];
+        if(target_connection_pointer != nullptr){
+            Connection *temp_con = nn->add_synaptic_connection(source_neuron, target_connection_pointer, base_weight, connection_type,
+                                                               function_type, learning_type, transmitter_type);
+            temp_con->_json_id = (int)network_json["connections"][i]["id"];
 
-        load_all_connection_parameter(temp_con, network_json["connections"][i]);
+            load_all_connection_parameter(temp_con, network_json["connections"][i]);
+        }
+        else{
+            nlohmann::json temp_connection_json = network_json["connections"][i];
+            temp_connection_json["network_id"] = nn->_id;
+            _final_synaptic_connections.push_back(temp_connection_json);
+        }
     }
 
     return SUCCESS_CODE;
@@ -717,7 +727,6 @@ std::vector<nlohmann::json> CognaBuilder::find_end_points(int source_network_id,
 //
 void CognaBuilder::create_subnet_neuron_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points,
                                                     std::vector<nlohmann::json> *synaptic_connection_indicator){
-    // Neuron Connections
     for(unsigned int start_id = 0; start_id < starting_points.size(); start_id++){
         int source_network_id = (int)starting_points[start_id]["network_id"];
         NeuralNetwork *source_network = _network_list[source_network_id];
@@ -781,8 +790,8 @@ void CognaBuilder::create_subnet_synaptic_connections(std::vector<nlohmann::json
             Connection *target_connection = nullptr;
 
             if(end_points[end_id].find("next_connection") != end_points[end_id].end()){
-                std::cout << "Next connection found." << std::endl;
                 unsigned int synaptic_info_size = synaptic_connection_indicator[0].size();
+                std::vector<int> delete_synaptic_id;
 
                 for(unsigned int synaptic_id = 0; synaptic_id < synaptic_info_size; synaptic_id++){
                     nlohmann::json temp_synaptic_information = synaptic_connection_indicator[0][synaptic_id]["starting_point"];
@@ -792,19 +801,13 @@ void CognaBuilder::create_subnet_synaptic_connections(std::vector<nlohmann::json
                     if((int)end_points[end_id]["next_connection"] == target_connection_json_id){
                         int target_network_id = (int)temp_synaptic_information["network_id"];
                         target_connection = _network_list[target_network_id]->_connections[target_connection_id];
-                        std::cout << "Connection size = " << _network_list[target_network_id]->_connections.size() << std::endl;
-                        std::cout << "Connection ID = " << target_connection_id << std::endl;
                         Connection::s_max_id = source_network->_connections.size();
-                        std::cout << "MAX ID = " << Connection::s_max_id << std::endl;
                         temp_connection = source_network->add_synaptic_connection(source_neuron_id, target_connection, base_weight,
                                                                                   connection_type, function_type, learning_type,
                                                                                   transmitter_type);
                         if(temp_connection != nullptr){
                             load_all_connection_parameter(temp_connection, starting_points[start_id]);
                         }
-                        //TODO Here I must connect neuron with the connection.
-                        //      I will do this by connecting the current starting point with the connection with the kernel ID in the
-                        //      synaptic info list.
                     }
                 }
             }
@@ -876,12 +879,10 @@ int CognaBuilder::connect_subnetworks(){
     std::vector<nlohmann::json> *synaptic_connection_indicator = new std::vector<nlohmann::json>;
 
     for(unsigned int nn=0; nn < _network_list.size(); nn++){
-        std::cout << "NETWORK NEURONS = " << nn << std::endl;
         connect_subnet_endpoints_neurons(nn, synaptic_connection_indicator);
     }
 
     for(unsigned int nn=0; nn < _network_list.size(); nn++){
-        std::cout << "NETWORK SYNAPTIC = " << nn << std::endl;
         connect_subnet_endpoints_synaptic(nn, synaptic_connection_indicator);
     }
 
