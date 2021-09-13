@@ -68,6 +68,7 @@ private:
     int _frequency;
 
     nlohmann::json _neuron_types;
+    std::vector<nlohmann::json> _final_synaptic_connections;
     std::vector<std::string> _transmitter_types;
     std::string _project_name;
     std::string _project_path;
@@ -260,7 +261,9 @@ private:
      *
      * @param curr_network_id   The ID of the network where the search should happen.
      */
-    void connect_subnet_endpoints(unsigned int curr_network_id);
+    void connect_subnet_endpoints_neurons(unsigned int curr_network_id, std::vector<nlohmann::json> *synaptic_connection_indicator);
+
+    void connect_subnet_endpoints_synaptic(unsigned int curr_network_id, std::vector<nlohmann::json> *synaptic_connection_indicator);
 
     /**
      * @brief Calls the connect_subnet_endpoints() for all networks in the cluster.
