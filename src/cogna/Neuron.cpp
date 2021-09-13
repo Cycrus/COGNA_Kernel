@@ -112,8 +112,10 @@ namespace COGNA{
     //
     bool Neuron::check_neuron_connection(Neuron *n){
         for(unsigned int i=0; i<_connections.size(); i++){
-            if(n == _connections[i]->next_neuron){
-                return true;
+            if(_connections[i]->next_neuron){
+                if(n == _connections[i]->next_neuron){
+                    return true;
+                }
             }
         }
         return false;
@@ -124,7 +126,7 @@ namespace COGNA{
     bool Neuron::check_synaptic_connection(Connection *con){
         for(unsigned int i=0; i<_connections.size(); i++){
             if(_connections[i]->next_connection){
-                if(con == _connections[i]){
+                if(con == _connections[i]->next_connection){
                     return true;
                 }
             }
