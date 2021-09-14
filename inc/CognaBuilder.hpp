@@ -131,22 +131,20 @@ private:
      *
      * @param nn            A pointer to the network the connection should be added to.
      * @param network_json  The json where the connection is contained in.
-     * @param i             The ID of the connection in the json data.
      *
      * @return              Error code.
      */
-    int load_neuron_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
+    int load_neuron_connection(NeuralNetwork *nn, nlohmann::json connection_json);
 
     /**
      * @brief Loads a connection to an interface nodes.
      *
      * @param nn            A pointer to the network the connection should be added to.
      * @param network_json  The json where the connection is contained in.
-     * @param i             The ID of the connection in the json data.
      *
      * @return              Error code.
      */
-    int load_node_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
+    int load_node_connection(NeuralNetwork *nn, nlohmann::json connection_json);
 
     /**
      * @brief Loads all connections to subnetwork related input nodes.
@@ -156,11 +154,11 @@ private:
      *
      * @param nn            A pointer to the network the connection should be added to.
      * @param network_json  The json where the connection is contained in.
-     * @param i             The ID of the connection in the json data.
      *
      * @return              Error code.
      */
-    int load_subnet_input_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
+    int load_subnet_input_connection(NeuralNetwork *nn, nlohmann::json connection_json,
+                                     nlohmann::json network_json);
 
     /**
      * @brief Loads a connection to subnetwork related output nodes.
@@ -170,22 +168,21 @@ private:
      *
      * @param nn            A pointer to the network the connection should be added to.
      * @param network_json  The json where the connection is contained in.
-     * @param i             The ID of the connection in the json data.
      *
      * @return              Error code.
      */
-    int load_subnet_output_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
+    int load_subnet_output_connection(NeuralNetwork *nn, nlohmann::json connection_json,
+                                      nlohmann::json network_json);
 
     /**
      * @brief Loads a connection to other connections.
      *
      * @param nn            A pointer to the network the connection should be added to.
      * @param network_json  The json where the connection is contained in.
-     * @param i             The ID of the connection in the json data.
      *
      * @return              Error code.
      */
-    int load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json network_json, unsigned int i);
+    int load_presynaptic_connection(NeuralNetwork *nn, nlohmann::json connection_json);
 
     /**
      * @brief Loads all connections from a network json into a network.
