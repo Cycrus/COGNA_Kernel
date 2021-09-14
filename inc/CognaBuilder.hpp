@@ -69,6 +69,7 @@ private:
 
     nlohmann::json _neuron_types;
     std::vector<nlohmann::json> _final_synaptic_connections;
+    std::vector<nlohmann::json> _synaptic_connection_indicator;
     std::vector<std::string> _transmitter_types;
     std::string _project_name;
     std::string _project_path;
@@ -247,20 +248,18 @@ private:
      * @param starting_points   The list of all starting neurons.
      * @param end_points        The list of all end neurons.
      */
-    void create_subnet_neuron_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points,
-                                          std::vector<nlohmann::json> *synaptic_connection_indicator);
+    void create_subnet_neuron_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
 
-    void create_subnet_synaptic_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points,
-                                            std::vector<nlohmann::json> *synaptic_connection_indicator);
+    void create_subnet_synaptic_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
 
     /**
      * @brief Finds all starting neurons and end neurons of all subnetwork connection in a certain network.
      *
      * @param curr_network_id   The ID of the network where the search should happen.
      */
-    void connect_subnet_endpoints_neurons(unsigned int curr_network_id, std::vector<nlohmann::json> *synaptic_connection_indicator);
+    void connect_subnet_endpoints_neurons(unsigned int curr_network_id);
 
-    void connect_subnet_endpoints_synaptic(unsigned int curr_network_id, std::vector<nlohmann::json> *synaptic_connection_indicator);
+    void connect_subnet_endpoints_synaptic(unsigned int curr_network_id);
 
     /**
      * @brief Calls the connect_subnet_endpoints() for all networks in the cluster.

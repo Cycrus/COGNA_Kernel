@@ -12,6 +12,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include <ctime>
 #include "MathUtils.hpp"
 #include "LoggerStd.hpp"
