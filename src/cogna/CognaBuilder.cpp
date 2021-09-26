@@ -96,7 +96,7 @@ int CognaBuilder::get_frequency(){
 //
 int CognaBuilder::build_cogna_cluster(){
     std::cout << std::endl;
-    std::cout << "####################### Loading COGNA #######################"
+    std::cout << "\032[31m####################### Loading COGNA #######################\032[0m"
               << std::endl << std::endl;
 
     std::cout << "[INFO] Loading global parameters." << std::endl;
