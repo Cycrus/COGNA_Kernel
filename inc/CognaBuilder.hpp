@@ -68,8 +68,7 @@ private:
     int _frequency;
 
     nlohmann::json _neuron_types;
-    std::vector<nlohmann::json> _final_synaptic_connections;
-    std::vector<nlohmann::json> _synaptic_connection_indicator;
+    std::vector<nlohmann::json> _presynaptic_connections;
     std::vector<std::string> _transmitter_types;
     std::string _project_name;
     std::string _project_path;
@@ -250,7 +249,7 @@ private:
      */
     void create_subnet_neuron_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
 
-    void create_subnet_synaptic_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
+    int create_presynaptic_connections();
 
     /**
      * @brief Finds all starting neurons and end neurons of all subnetwork connection in a certain network.
@@ -259,7 +258,7 @@ private:
      */
     void connect_subnet_endpoints_neurons(unsigned int curr_network_id);
 
-    void connect_subnet_endpoints_synaptic(unsigned int curr_network_id);
+    void find_synaptic_connection_endpoints(unsigned int curr_network_id);
 
     /**
      * @brief Calls the connect_subnet_endpoints() for all networks in the cluster.
