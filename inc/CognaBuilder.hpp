@@ -249,15 +249,27 @@ private:
      */
     void create_subnet_neuron_connections(std::vector<nlohmann::json> starting_points, std::vector<nlohmann::json> end_points);
 
+    /**
+     * @brief Compiles the presynaptic connections of the whole network cluster.
+     *
+     * @return  Error code.
+     */
     int create_presynaptic_connections();
 
     /**
-     * @brief Finds all starting neurons and end neurons of all subnetwork connection in a certain network.
+     * @brief Finds all starting neurons and end neurons of all subnetwork connection in a certain network
+     *        and connects them afterwards.
      *
      * @param curr_network_id   The ID of the network where the search should happen.
      */
     void connect_subnet_endpoints_neurons(unsigned int curr_network_id);
 
+    /**
+     * @brief Finds all starting neurons and end connections of all subnetwork connection in a certain network
+     *        and appends them to the list @_presynaptic_connections.
+     *
+     * @param curr_network_id   The ID of the network where the search should happen.
+     */
     void find_synaptic_connection_endpoints(unsigned int curr_network_id);
 
     /**
