@@ -749,7 +749,6 @@ int CognaBuilder::create_presynaptic_connections(){
             int start_network = (int)_presynaptic_connections[con]["start_network"];
             int end_network = (int)_presynaptic_connections[con]["end_network"];
             int target_con_json_id = (int)_presynaptic_connections[con]["next_connection"];
-            int target_con_id = -1;
 
             float base_weight = load_connection_init_parameter(_network_list[start_network], _presynaptic_connections[con],
                                                                "base_weight", source_neuron);
@@ -767,10 +766,10 @@ int CognaBuilder::create_presynaptic_connections(){
                     Connection::s_max_id = _network_list[start_network]->_connections.size();
                     Connection *new_con = _network_list[start_network]->add_synaptic_connection(source_neuron, next_con, base_weight, connection_type,
                                                                                                function_type, learning_type, transmitter_type);
-                    new_con->_json_id = (int)_presynaptic_connections[con]["id"];
-                    target_con_id = new_con->_id;
-
-                    load_all_connection_parameter(new_con, _presynaptic_connections[con]);
+                    if(new_con != nullptr){
+                        new_con->_json_id = (int)_presynaptic_connections[con]["id"];
+                        load_all_connection_parameter(new_con, _presynaptic_connections[con]);
+                    }
                 }
             }
 
