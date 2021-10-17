@@ -791,10 +791,18 @@ void CognaBuilder::connect_subnet_endpoints_neurons(unsigned int curr_network_id
     NeuralNetwork *source_network = _network_list[curr_network_id];
 
     //Walking over all connections(!) leading to an output or subnet output.
-    std::vector<nlohmann::json> combined_connection_list = source_network->_subnet_output_connection_list;
-    combined_connection_list.insert(std::end(combined_connection_list),
-                                    std::begin(source_network->_subnet_input_connection_list),
-                                    std::end(source_network->_subnet_input_connection_list));
+    std::vector<nlohmann::json> combined_connection_list;
+    if(source_network->_subnet_output_connection_list.size() > 0){
+      std::vector<nlohmann::json> temp_combined_connection_list = source_network->_subnet_output_connection_list;
+      temp_combined_connection_list.insert(std::end(combined_connection_list),
+                                      std::begin(source_network->_subnet_input_connection_list),
+                                      std::end(source_network->_subnet_input_connection_list));
+      combined_connection_list = temp_combined_connection_list;
+    }
+    else if (source_network->_subnet_input_connection_list.size() > 0){
+      std::vector<nlohmann::json> temp_combined_connection_list = source_network->_subnet_input_connection_list;
+      combined_connection_list = temp_combined_connection_list;
+    }
 
     for(unsigned int con_id = 0; con_id < combined_connection_list.size(); con_id++){
         if(combined_connection_list[con_id]["next_neuron_function"] == "output" ||
@@ -820,10 +828,18 @@ void CognaBuilder::find_synaptic_connection_endpoints(unsigned int curr_network_
     NeuralNetwork *source_network = _network_list[curr_network_id];
 
     //Walking over all connections(!) leading to an output or subnet output.
-    std::vector<nlohmann::json> combined_connection_list = source_network->_subnet_output_connection_list;
-    combined_connection_list.insert(std::end(combined_connection_list),
-                                    std::begin(source_network->_subnet_input_connection_list),
-                                    std::end(source_network->_subnet_input_connection_list));
+    std::vector<nlohmann::json> combined_connection_list;
+    if(source_network->_subnet_output_connection_list.size() > 0){
+      std::vector<nlohmann::json> temp_combined_connection_list = source_network->_subnet_output_connection_list;
+      temp_combined_connection_list.insert(std::end(combined_connection_list),
+                                      std::begin(source_network->_subnet_input_connection_list),
+                                      std::end(source_network->_subnet_input_connection_list));
+      combined_connection_list = temp_combined_connection_list;
+    }
+    else if (source_network->_subnet_input_connection_list.size() > 0){
+      std::vector<nlohmann::json> temp_combined_connection_list = source_network->_subnet_input_connection_list;
+      combined_connection_list = temp_combined_connection_list;
+    }
 
     for(unsigned int con_id = 0; con_id < combined_connection_list.size(); con_id++){
         if(combined_connection_list[con_id]["next_neuron_function"] == "output" ||
