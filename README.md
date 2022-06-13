@@ -13,7 +13,6 @@
 The network has unique features which are listed below:
 
     • Excitatory & inhibitory connections:
-    State of the art neural networks use only excitatory connections, since they are sufficient for rather simple networks used for classification or limited tasks.
     The present network allows for excitatory and inhibitory connections.
     This means, that firing neurons not always activate receiving neurons, but (if predefined) they can also reduce activation from receiving neurons.
     This can be used for processing contrasts, which is an important ability for real life decision making.
@@ -25,6 +24,7 @@ The network has unique features which are listed below:
     Sensitization is the opposite where connections strenghten after strong activations.
     They allow for simple learning behavior.
     However, it is hypothesized, that with those two learning methods more complex methods, such as operant conditioning, can be constructed in multineural approaches.
+    The correct combination of sensitization and habituation allowed for
     
     • Presynaptic connections:
     A connection coming from a neuron can connect to another connection. This allows for biasing the connection.
