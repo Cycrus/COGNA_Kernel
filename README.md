@@ -1,5 +1,7 @@
 # COGNA
 
+## Currently not further developed, because of switch to the official Nengo neuro engineering framework.
+
 <h1>Idea</h1>
   The idea behind COGNA (Cognitive Oriented Generalized Neural Approach) is to emulate basic neurochemical principles from various neurological studies and combine them in one network architecture.
   
