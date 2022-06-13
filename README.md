@@ -42,13 +42,17 @@ The network has unique features which are listed below:
 
 <h1>Images</h1>
 Basic Learning Concepts Sensitization/Habituation
+
 ![Learning Concepts](images/basic_learning_concepts.png)
 
 Example to create a COGNA network with code
+
 ![Learning Concepts](images/cogna_code.png)
 
 Learning data for very simple reinforcement learning problem with two alternatives
+
 ![Learning Concepts](images/cogna_graphic.png)
 
 Basic UML diagram of COGNA system
+
 ![Learning Concepts](images/cogna_uml.png)
