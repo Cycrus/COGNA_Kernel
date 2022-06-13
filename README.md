@@ -3,7 +3,7 @@
 ## Currently not further developed, because of switch to the official Nengo neuro engineering framework.
 
 <h1>Idea</h1>
-  The idea behind COGNA (Cognitive Oriented Generalized Neural Approach) is to emulate basic neurochemical principles from various neurological studies and combine them in one network architecture.
+  The idea behind COGNA (Cognitive Oriented Generalized Neural Approach) is to simulate basic neurochemical principles from various neurological studies and combine them in one network architecture. Main research goal was to simulate the behavior of the gill reflex of the Aplysia Californica when stimulated as in the experiments conducted by Eric Kandel et al. in the 1960s - 1970s. The main modeled behavior is sensitization, habituation and basic classical conditioning. Additionally some other conceps, such as neurotransmitters also have been implemented.
   
 <h1>Concept</h1>
   Generally a COGNA network contains multiple neuron objects which are connected with dedicated connection objects. Each neuron can have multiple connections to different neurons, but only one connection to a single other neuron. Neurons can also have connections to other connections to modulate their activation and learning behavior.
