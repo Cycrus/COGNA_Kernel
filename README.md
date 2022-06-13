@@ -39,3 +39,16 @@ The network has unique features which are listed below:
 <h1>Architecture</h1>
   Contrary to most other network architectures not all connections are activated simultaneously, rather than one step after another. This allows for including time as a variable in the processing of information. When a neuron is activated, it activates all following neurons, those activate all next neurons and so on.
   This happens by storing pointers to all connections, which must be activated currently inside a global array. All connections which are inside of this array fire by clearing the array saving all next connections inside of it, if the activation threshold of a neuron is exceeded.
+
+<h1>Images</h1>
+Basic Learning Concepts Sensitization/Habituation
+![Learning Concepts](images/basic_learning_concepts.png)
+
+Example to create a COGNA network with code
+![Learning Concepts](images/cogna_code.png)
+
+Learning data for very simple reinforcement learning problem with two alternatives
+![Learning Concepts](images/cogna_graphic.png)
+
+Basic UML diagram of COGNA system
+![Learning Concepts](images/cogna_uml.png)
