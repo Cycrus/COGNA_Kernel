@@ -537,6 +537,10 @@ void NeuralNetwork::save_next_neurons(std::vector<NeuralNetwork*> network_list){
         printf("\n*******************NEXT STEP*******************\n\n");
 
     for(unsigned int con=0; con<_curr_connections.size(); con++){
+        if(_curr_connections[con]->next_neuron == NULL){
+            continue;
+        }
+        
         int next_network_id = _curr_connections[con]->next_neuron->_network_id;
         std::cout << "Prev Network: " << _curr_connections[con]->prev_neuron->_network_id
                   << " - Prev Neuron: " << _curr_connections[con]->prev_neuron->_id
