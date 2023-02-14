@@ -1,0 +1,165 @@
+{
+    "network": {
+        "base_weight": "1",
+        "max_weight": "5",
+        "min_weight": "0",
+        "long_learning_weight_reduction_curvature": "0.5",
+        "long_learning_weight_reduction_steepness": "0.5",
+        "long_learning_weight_backfall_curvature": "1",
+        "long_learning_weight_backfall_steepness": "0.00000006",
+        "transmitter_backfall_curvature": "1",
+        "transmitter_backfall_steepness": "0.0000001",
+        "max_transmitter_weight": "5",
+        "min_transmitter_weight": "0",
+        "input_nodes": "0",
+        "output_nodes": "0"
+    },
+    "neurons": [
+        {
+            "id": 1,
+            "posx": -450.0,
+            "posy": -350.0
+        },
+        {
+            "id": 2,
+            "posx": 50.0,
+            "posy": -350.0
+        },
+        {
+            "id": 3,
+            "posx": -450.0,
+            "posy": -50.0
+        }
+    ],
+    "nodes": [
+        {
+            "id": 1,
+            "posx": -700.0,
+            "posy": -350.0,
+            "function": "interface_input",
+            "ip_address": "0.0.0.0",
+            "port": "40001",
+            "channel": "1"
+        },
+        {
+            "id": 2,
+            "posx": -700.0,
+            "posy": -50.0,
+            "function": "interface_input",
+            "ip_address": "0.0.0.0",
+            "port": "40001",
+            "channel": "2"
+        },
+        {
+            "id": 3,
+            "posx": 350.0,
+            "posy": -350.0,
+            "function": "interface_output",
+            "ip_address": "192.168.0.87",
+            "port": "40002",
+            "channel": "1"
+        }
+    ],
+    "subnetworks": [],
+    "connections": [
+        {
+            "id": 0,
+            "prev_neuron": 1,
+            "prev_neuron_function": "neuron",
+            "next_neuron_function": "neuron",
+            "prev_subnetwork": -1,
+            "next_subnetwork": -1,
+            "next_neuron": 2,
+            "vertices": [
+                [
+                    -450.0,
+                    -350.0
+                ],
+                [
+                    50.0,
+                    -350.0
+                ]
+            ],
+            "learning_type": "Habituation"
+        },
+        {
+            "id": 1,
+            "prev_neuron": 3,
+            "prev_neuron_function": "neuron",
+            "prev_subnetwork": -1,
+            "next_subnetwork": -1,
+            "next_connection": 0,
+            "vertices": [
+                [
+                    -450.0,
+                    -50.0
+                ],
+                [
+                    -200.0,
+                    -50.0
+                ],
+                [
+                    -200.0,
+                    -350.0
+                ]
+            ]
+        },
+        {
+            "id": 2,
+            "prev_neuron": 1,
+            "prev_neuron_function": "interface_input",
+            "next_neuron_function": "neuron",
+            "prev_subnetwork": -1,
+            "next_subnetwork": -1,
+            "next_neuron": 1,
+            "vertices": [
+                [
+                    -700.0,
+                    -350.0
+                ],
+                [
+                    -450.0,
+                    -350.0
+                ]
+            ]
+        },
+        {
+            "id": 3,
+            "prev_neuron": 2,
+            "prev_neuron_function": "interface_input",
+            "next_neuron_function": "neuron",
+            "prev_subnetwork": -1,
+            "next_subnetwork": -1,
+            "next_neuron": 3,
+            "vertices": [
+                [
+                    -700.0,
+                    -50.0
+                ],
+                [
+                    -450.0,
+                    -50.0
+                ]
+            ]
+        },
+        {
+            "id": 4,
+            "prev_neuron": 2,
+            "prev_neuron_function": "neuron",
+            "next_neuron_function": "interface_output",
+            "prev_subnetwork": -1,
+            "next_subnetwork": -1,
+            "next_neuron": 3,
+            "vertices": [
+                [
+                    50.0,
+                    -350.0
+                ],
+                [
+                    350.0,
+                    -350.0
+                ]
+            ]
+        }
+    ]
+}
