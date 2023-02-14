@@ -21,7 +21,7 @@ namespace COGNA{
 
 CognaBuilder::CognaBuilder(std::string project_name){
     _project_name = project_name;
-    _project_path = "Projects/" + project_name + "/";
+    _project_path = "../../Projects/" + project_name + "/";
     _frequency = 0;
     _curr_network_neuron_number = 0;
 }

@@ -60,7 +60,7 @@ void networking_client::store_message(){
 			_hashtable = nlohmann::json::parse(_msg);
 		}
 		catch(...){
-			std::cout << "[ERROR] Could not parse message to json hashtable." << std::endl;
+			// std::cout << "[ERROR] Could not parse message to json hashtable." << std::endl;
 		}
 	}
 

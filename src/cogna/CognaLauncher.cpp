@@ -81,7 +81,6 @@ int CognaLauncher::run_cogna(){
     prev_time = curr_time;
     while(NeuralNetwork::m_cluster_state != STATE_STOPPED){
         if(NeuralNetwork::m_cluster_state != STATE_PAUSE){
-            std::cout << std::endl;
             prev_time = utils::get_time_microsec(_cluster_time);
             for(unsigned int i=0; i < _client_list.size(); i++){
                 _client_list[i]->store_message();
@@ -93,7 +92,8 @@ int CognaLauncher::run_cogna(){
 
             thread_condition_lock->notify_all();
 
-            std::cout << iterator << std::endl;
+            // std::cout << std::endl;
+            // std::cout << iterator << std::endl;
             // Waiting and checking if all threads have finished
             int finished_thread_number = 0;
             while(finished_thread_number < (int)_cogna_worker_list.size()){
