@@ -40,6 +40,12 @@ The network has unique features which are listed below:
   Contrary to most other network architectures not all connections are activated simultaneously, rather than one step after another. This allows for including time as a variable in the processing of information. When a neuron is activated, it activates all following neurons, those activate all next neurons and so on.
   This happens by storing pointers to all connections, which must be activated currently inside a global array. All connections which are inside of this array fire by clearing the array saving all next connections inside of it, if the activation threshold of a neuron is exceeded.
 
+<h1>Running Tests</h1>
+- First compile the project with the makefile. For this just type "make" in the when you are in the root folder of the project. The executable test files are now in the build/tests folder.
+- You can run "aplysia_test" or "simple_reinforcement_learning_test" to test out the basic functionalities of COGNA. Those files can be used standalone.
+- Running "builder_test" offers the whole functionality of COGNA, where you can run custom networks defined with the COGNA editor (which is in another repository). You must pass an existing project name in the "Projects" folder in the root folder as a program argument. If the project exists, it is automatically built and run. You can define custom networks with the COGNA editor and place them in the "Project" folder to run your own networks.
+- For a first test of the "builder_test", you can run "./builder_test Interface_Test", which will run a very simple network showcasing the UDP interface functions of COGNA. While the network is running start the "udp_listener.py" script in the "test_scripts" folder in the root folder. This starts a receiver listening to one defined port (40002) of the Interface_Test network. The script "udp_pulse.py" will emit one single packet on one port (40001) on channel 1. This will induce a short activation pulse if executed correctly. All networking here happens on the localhost.
+
 <h1>Images</h1>
 Basic Learning Concepts Sensitization/Habituation
 
