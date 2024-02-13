@@ -20,6 +20,6 @@ jobs:
     - name: Test_Network_Builder
       run: make test_network_builder
     - name: Test_Reinforcement_Learning
-      run: make test_simple_reinforcement_learning
+      run: make test_reinforcement_learning
     - name: Test_Aplysia
       run: make test_aplysia
