@@ -60,5 +60,53 @@ build:
 	mkdir -p build/tests
 	for dir in $(OBJDIRS); do mkdir -p $$dir; done
 
+.PHONY: test_utilities
+test_utilities:
+	@echo "########### Testing utilities. ###########" ;
+	@echo "Testing logger." ; \
+	./build/tests/logger_test ;
+	@echo "Testing pointer." ; \
+	./build/tests/pointer_test ;
+
+.PHONY: test_udp_sockets
+test_udp_sockets:
+	@echo ""########### Testing udp sockets. ###########"
+	@echo "Starting UDP receiver." ; \
+	./build/tests/udp_receiver_test & \
+	prog_pid_receiver=$$! ; \
+	sleep 1 ; \
+	echo "Starting UDP sender." ; \
+	./build/tests/udp_sender_test ; \
+	sleep 2 ; \
+	echo "Stopping UDP receiver" ; \
+	kill $$prog_pid_receiver ;
+
+.PHONY: test_network_builder
+test_network_builder:
+	@echo ""########### Testing network builder. ###########" ;
+	@echo "Starting network." ; \
+	cd build/tests ; \
+	./builder_test Variants_Test & \
+	prog_pid=$$! ; \
+	sleep 3 ; \
+	echo "Stopping network." ; \
+	kill $$prog_pid ;
+
+.PHONY: test_reinforcement_learning
+test_reinforcement_learning:
+	@echo ""########### Testing simple reinforcement learning. ###########"
+	@./build/tests/simple_reinforcement_learning_test
+	@echo "Test successful."
+
+.PHONY: test_aplysia
+test_aplysia:
+	@echo ""########### Testing Aplysia. ###########" ;
+	@echo "Starting aplysia network." ; \
+	./build/tests/aplysia_test & \
+	prog_pid=$$! ; \
+	sleep 3 ; \
+	echo "Stopping aplysia network." ; \
+	kill $$prog_pid ;
+
 clean:
 	rm -rf build

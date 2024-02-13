@@ -16,7 +16,7 @@ void worker_thread(int thread_number, int *local_thread_lock){
     std::cout << "Data is ready." << std::endl << std::endl;
     int counter = 0;
 
-    while(true){
+    for(int i = 0; i < 10; i++){
         worker_cond_var.wait(thread_lck);
         //usleep(1000000);
         counter ++;

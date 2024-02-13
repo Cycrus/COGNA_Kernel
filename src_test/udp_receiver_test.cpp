@@ -8,7 +8,7 @@
 
 int main(){
 	std::string ip = "0.0.0.0";
-	int port = 40001;
+	int port = 40002;
 	std::cout << "Starting Network test..." << std::endl;
 
 	utils::networking_client *json_worker = new utils::networking_client(ip, port, true);
@@ -25,7 +25,7 @@ int main(){
 		json_worker->store_message();
 		hello_worker->store_message();
 
-		float cast_test = (float)json_worker->get_json_value("eins") + (float)json_worker->get_json_value("zwei");
+		float cast_test = (float)json_worker->get_json_value("float_value") + (float)json_worker->get_json_value("float_value2");
 		float null_test = (float)json_worker->get_json_value("invalid_key");
 		null_test = (float)json_worker->get_json_value("invalid_key");
 
