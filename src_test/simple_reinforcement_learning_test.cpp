@@ -208,7 +208,7 @@ int main(){
         // Time Calculation TODO Put into function
         end_time = utils::get_time_microsec(time);
         d_time = end_time - start_time;
-    }while(learning_counter <= 20);
+    }while(learning_counter <= 10);
 
     printf("\n\n#########################################\n\n");
     if(machine_connection[0]->short_weight > machine_connection[1]->short_weight){

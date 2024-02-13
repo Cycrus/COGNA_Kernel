@@ -104,7 +104,7 @@ test_aplysia:
 	@echo "Starting aplysia network." ; \
 	./build/tests/aplysia_test & \
 	prog_pid=$$! ; \
-	sleep 3 ; \
+	sleep 1 ; \
 	echo "Stopping aplysia network." ; \
 	kill $$prog_pid ;
 
