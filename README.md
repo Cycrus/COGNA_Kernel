@@ -1,7 +1,5 @@
 # COGNA
 
-## Currently not further developed, because of switch to the official Nengo neuro engineering framework.
-
 <h1>Idea</h1>
   The idea behind COGNA (Cognitive Oriented Generalized Neural Approach) is to simulate basic neurochemical principles from various neurological studies and combine them in one network architecture. Main research goal was to simulate the behavior of the gill reflex of the Aplysia Californica when stimulated as in the experiments conducted by Eric Kandel et al. in the 1960s - 1970s. The main modeled behavior is sensitization, habituation and basic classical conditioning. Additionally some other conceps, such as neurotransmitters also have been implemented.
   
