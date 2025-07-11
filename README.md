@@ -1,4 +1,15 @@
-# COGNA
+<div align="center">
+  <img src="images/cogna_kernel_logo.png" alt="Cogna Kernel Logo" width="250">
+  <h1>Cogna Kernel</h1>
+  <h2>Cognitive Oriented Generalized Neural Approach</h2>
+</div>
+
+<div align="center">
+  <img alt="License" src=https://img.shields.io/badge/License-MIT-green?style=flat-square>
+  <img alt="OS" src=https://img.shields.io/badge/OS-Linux-yellow?style=flat-square>
+  <img alt="Platforms" src=https://img.shields.io/badge/Platforms-x86__64-blue?style=flat-square>
+  <img alt="Languages" src=https://img.shields.io/badge/Languages-C++-red?style=flat-square>
+</div>
 
 <h1>Idea</h1>
   The idea behind COGNA (Cognitive Oriented Generalized Neural Approach) is to simulate basic neurochemical principles from various neurological studies and combine them in one network architecture. Main research goal was to simulate the behavior of the gill reflex of the Aplysia Californica when stimulated as in the experiments conducted by Eric Kandel et al. in the 1960s - 1970s. The main modeled behavior is sensitization, habituation and basic classical conditioning. Additionally some other conceps, such as neurotransmitters also have been implemented.
